@@ -1,0 +1,57 @@
+<!DOCTYPE html><html lang="uk"><head><meta charset="utf-8"><title>Скретч-тренажер: виступ артистки</title>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<style>
+:root{--bg:#fff;--fg:#1f2430;--card:#f1f5fb;--bl:#4c97ff;--ok:#2e9d5b;--bad:#d64545;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);color-scheme:light dark}
+@media(prefers-color-scheme:dark){:root:not([data-theme=light]){--bg:#171a21;--fg:#eef1f7;--card:#242a36}}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--fg);font:17px/1.45 system-ui,sans-serif;padding:16px;max-width:1000px;margin:auto}
+h1{font-size:1.5em;color:#f58a1f;margin:.2em 0}.g{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:14px}.c{background:var(--card);border-radius:12px;padding:12px}
+button{font:inherit;color:#fff;border:0;border-radius:8px;padding:6px 12px;margin:3px;cursor:pointer;background:var(--bl)}
+.m{background:#4c97ff}.l{background:#9966ff}.e{background:#ffab19}.go{background:var(--ok)}.rs{background:#888}
+.blk{display:flex;align-items:center;flex-wrap:wrap;gap:4px;color:#fff;border-radius:8px;padding:6px 10px;margin:4px 0}
+.blk input{width:56px;font:inherit;border-radius:6px;border:0;padding:2px 4px}.blk input.t{width:90px}
+#st{position:relative;width:480px;height:360px;max-width:100%;transform-origin:top left;background:linear-gradient(#ffd6f0,#fff 60%,#ffe9a8);border:3px solid var(--bl);border-radius:10px;overflow:hidden}
+#sp{position:absolute;font-size:44px;line-height:44px}#sy{position:absolute;background:#fff;color:#000;border:2px solid #000;border-radius:12px;padding:2px 8px;display:none;font-size:16px;white-space:nowrap}
+#msg{font-weight:700;margin-top:8px}.x{background:#d64545;padding:0 8px}
+</style></head><body>
+<h1>🎭 Скретч-тренажер: виступ артистки</h1>
+<div id="tabs"></div><div class="c" id="task"></div>
+<div class="g" style="margin-top:12px">
+<div class="c"><b>Команди</b><br>
+<button class="m" onclick="add('goto')">перемістити в x y</button><button class="m" onclick="add('glide')">ковзати сек до x y</button><button class="m" onclick="add('dir')">повернути в напрямку</button><button class="m" onclick="add('chx')">змінити x на</button>
+<button class="l" onclick="add('say')">говорити сек</button><button class="l" onclick="add('cos')">змінити образ на №</button><button class="e" onclick="add('wait')">чекати сек</button></div>
+<div class="c"><b>Скрипт</b><div class="blk e">коли ⚑ натиснуто</div><div id="sc"></div>
+<button class="go" onclick="run()">⚑ Запустити</button><button class="rs" onclick="check()">✔ Перевірити</button><button class="rs" onclick="sc.innerHTML='';reset()">🗑 Очистити</button></div>
+<div><div id="st"><div id="sp">🩰</div><div id="sy"></div></div><div id="msg"></div></div></div>
+<p class="c">⭐ <b>Ускладнення:</b> додайте паузу «чекати» між діями та зробіть так, щоб артистка повернулась у центр і пішла вліво.</p>
+<script>
+const D={goto:['m','перемістити в x:',['x',-260],['y',0]],glide:['m','ковзати',['',1],'сек до x:',['x',0],['y',0]],dir:['m','повернути в напрямку',['',90]],chx:['m','змінити x на',['',10]],say:['l','говорити',['t','Привіт!'],['',2],'сек'],wait:['e','чекати',['',1],'секунд'],cos:['l','змінити образ на №',['',2],'(1–4)']};
+const sc=document.getElementById('sc'),sp=document.getElementById('sp'),sy=document.getElementById('sy'),msg=document.getElementById('msg');
+let st,tr;
+function add(t){const d=document.createElement('div');d.className='blk '+D[t][0];d.dataset.t=t;
+D[t].slice(1).forEach(p=>{if(typeof p=='string'){d.append(p);return}const i=document.createElement('input');if(p[0]=='t')i.className='t';else i.type='number';i.value=p[1];if(p[0]=='x'||p[0]=='y')i.title=p[0];d.append(i)});
+const r=document.createElement('button');r.textContent='✕';r.className='x';r.onclick=()=>d.remove();d.append(r);sc.append(d)}
+function draw(){sp.style.left=(240+st.x-22)+'px';sp.style.top=(180-st.y-22)+'px';sp.style.transform='rotate('+(st.d-90)+'deg)'}
+function reset(){st={x:0,y:0,d:90};tr={left:0,center:0,said:0,right:0,back:0,cos:0,pts:[]};sy.style.display='none';sp.textContent='🩰';draw();msg.textContent=''}
+const sl=ms=>new Promise(r=>setTimeout(r,ms));
+function note(){tr.pts.push([st.x,st.y]);if(tr.said&&st.x<-240)tr.back=1;if(st.x<-240)tr.left=1;if(Math.abs(st.x)<8&&Math.abs(st.y)<8&&tr.left)tr.center=1;if(st.x>240&&tr.said)tr.right=1}
+async function run(){reset();msg.textContent='Виконується…';for(const b of sc.children){const v=[...b.querySelectorAll('input')].map(i=>i.type=='number'?+i.value:i.value);const t=b.dataset.t;
+if(t=='goto'){st.x=v[0];st.y=v[1];draw();await sl(100)}
+if(t=='glide'){const n=30,x0=st.x,y0=st.y;for(let k=1;k<=n;k++){st.x=x0+(v[1]-x0)*k/n;st.y=y0+(v[2]-y0)*k/n;draw();await sl(Math.max(v[0],0)*1000/n)}st.x=v[1];st.y=v[2]}
+if(t=='dir'){st.d=v[0];draw();await sl(100)}
+if(t=='chx'){st.x+=v[0];draw();await sl(100)}
+if(t=='say'){sy.textContent=v[0];sy.style.display='block';sy.style.left=(240+st.x)+'px';sy.style.top=(180-st.y-70)+'px';if(tr.center)tr.said=1;await sl(v[1]*1000);sy.style.display='none'}
+if(t=='wait')await sl(v[0]*1000);if(t=='cos'){const k=Math.max(1,Math.min(4,Math.round(v[0])));sp.textContent=C[k-1];tr.cos++;await sl(100)}note()}
+msg.textContent='Скрипт завершено.'}
+const C=['🩰','💃','🧘','🤸'];
+function vis(a){let j=0;for(const [x,y] of tr.pts){if(j<a.length&&Math.abs(x-a[j][0])<2&&Math.abs(y-a[j][1])<2)j++}return j}
+const T=[
+{n:'1. Виступ',t:'<b>Завдання 1.</b> Артистка 🩰 з’являється <b>за лівим краєм</b> сцени (x менше −240), виходить у <b>центр (0, 0)</b>, каже «Привіт!» і йде <b>за правий край</b> (x більше 240).',l:()=>[[tr.left,'старт за лівим краєм'],[tr.center,'вихід у центр'],[tr.said,'привітання в центрі'],[tr.right,'вихід за правий край']]},
+{n:'2. Модель 2',t:'<b>Завдання 2 (модель 2).</b> Артистка з’являється зліва, виходить у центр, вітається і <b>повертається назад</b> — іде за лівий край. Додайте «повернути в напрямку −90» перед поверненням.',l:()=>[[tr.left,'старт за лівим краєм'],[tr.center,'вихід у центр'],[tr.said,'привітання'],[tr.back,'повернулась за лівий край']]},
+{n:'3. Координати',t:'<b>Завдання 3 (вправа 6).</b> Кіт 🩰 стоїть у (0, 0). Складіть скрипт: у точку <b>(150, 100)</b> → у <b>(−150, 100)</b> → знову в <b>центр</b>. Використайте «ковзати» і «чекати 2 секунди».',l:()=>{const n=vis([[150,100],[-150,100],[0,0]]);return[[n>=1,'точка (150, 100)'],[n>=2,'точка (−150, 100)'],[n>=3,'повернення в центр (0, 0)']]}},
+{n:'4. Образи ⭐',t:'<b>Завдання 4 (вправа 8).</b> Удоскональте виступ: коли артистка на сцені, <b>змінюйте образ</b> 4 → 2 → 3 → 1 із паузою «чекати 1 секунду» між змінами, потім нехай іде за правий край.',l:()=>[[tr.center,'артистка вийшла в центр'],[tr.cos>=3,'образ змінено щонайменше 3 рази'],[tr.right,'вихід за правий край']]}];
+let cur=0;
+function pick(k){cur=k;tabs.innerHTML='';T.forEach((o,i)=>{const b=document.createElement('button');b.textContent=o.n;b.className=i==k?'go':'rs';b.onclick=()=>pick(i);tabs.append(b)});task.innerHTML=T[k].t+'<br><small>Блоки додаються клацанням; змініть числа за потреби.</small>';sc.innerHTML='';reset();if(k<2)add('goto')}
+function check(){const l=T[cur].l();const ok=l.every(a=>a[0]);
+msg.innerHTML=(ok?'<span style="color:var(--ok)">🎉 Правильно! Лінійний алгоритм складено.</span>':'Спершу натисніть «Запустити». Результат:')+'<br>'+l.map(a=>(a[0]?'✅ ':'❌ ')+a[1]).join('<br>')}
+pick(0);
+</script></body></html>
