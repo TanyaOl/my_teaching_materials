@@ -1,0 +1,257 @@
+
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Інформатика | Навчальні матеріали</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background: #f3f6fc;
+            margin: 0;
+            padding: 35px 20px;
+            color: #25324a;
+        }
+
+        .container {
+            max-width: 1050px;
+            margin: auto;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 35px;
+        }
+
+        .back {
+            display: inline-block;
+            margin-bottom: 20px;
+            color: #64748b;
+            text-decoration: none;
+            font-size: 14px;
+        }
+
+        .back:hover {
+            color: #2457a7;
+        }
+
+        .icon {
+            font-size: 48px;
+            margin-bottom: 10px;
+        }
+
+        h1 {
+            color: #2457a7;
+            font-size: 32px;
+            margin: 10px 0;
+        }
+
+        header p {
+            color: #64748b;
+            line-height: 1.6;
+        }
+
+        .classes {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+        }
+
+        .card {
+            background: white;
+            padding: 25px;
+            border-radius: 16px;
+            box-shadow: 0 3px 12px #0000000d;
+            transition: 0.3s;
+            display: flex;
+            flex-direction: column;
+            min-height: 220px;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 20px #00000015;
+        }
+
+        .grade {
+            color: #2457a7;
+            font-size: 25px;
+            font-weight: bold;
+            margin-bottom: 12px;
+        }
+
+        .card h2 {
+            font-size: 19px;
+            margin: 0 0 10px;
+        }
+
+        .card p {
+            color: #64748b;
+            font-size: 14px;
+            line-height: 1.6;
+            flex-grow: 1;
+        }
+
+        .btn {
+            display: inline-block;
+            text-align: center;
+            background: #2457a7;
+            color: white;
+            padding: 11px 18px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: bold;
+            margin-top: 15px;
+        }
+
+        .btn:hover {
+            background: #173f80;
+        }
+
+        .coming {
+            opacity: 0.7;
+        }
+
+        .coming .btn {
+            background: #94a3b8;
+            pointer-events: none;
+        }
+
+        footer {
+            text-align: center;
+            margin-top: 45px;
+            color: #94a3b8;
+            font-size: 13px;
+        }
+
+        @media (max-width: 750px) {
+            .classes {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 500px) {
+            .classes {
+                grid-template-columns: 1fr;
+            }
+
+            h1 {
+                font-size: 26px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="container">
+
+    <header>
+
+        <a href="../" class="back">
+            ← На головну сторінку
+        </a>
+
+        <div class="icon">💻</div>
+
+        <h1>Інформатика</h1>
+
+        <p>
+            Навчальні матеріали, інтерактивні уроки,
+            практичні роботи, презентації та тести.
+            <br>
+            Оберіть свій клас, щоб переглянути матеріали.
+        </p>
+
+    </header>
+
+    <main class="classes">
+
+        <!-- 5 клас -->
+        <section class="card">
+            <div class="grade">05</div>
+            <h2>5 клас</h2>
+            <p>
+                Навчальні матеріали, уроки та інтерактивні завдання.
+            </p>
+            <a href="lesson-1/" class="btn">
+                Переглянути матеріали →
+            </a>
+        </section>
+
+        <!-- 6 клас -->
+        <section class="card coming">
+            <div class="grade">06</div>
+            <h2>6 клас</h2>
+            <p>Навчальні матеріали та практичні роботи.</p>
+            <span class="btn">Матеріали готуються</span>
+        </section>
+
+        <!-- 7 клас -->
+        <section class="card coming">
+            <div class="grade">07</div>
+            <h2>7 клас</h2>
+            <p>Навчальні матеріали та практичні роботи.</p>
+            <span class="btn">Матеріали готуються</span>
+        </section>
+
+        <!-- 8 клас -->
+        <section class="card coming">
+            <div class="grade">08</div>
+            <h2>8 клас</h2>
+            <p>Графіка, кодування даних та інші теми.</p>
+            <span class="btn">Матеріали готуються</span>
+        </section>
+
+        <!-- 9 клас -->
+        <section class="card coming">
+            <div class="grade">09</div>
+            <h2>9 клас</h2>
+            <p>Програмування, проєкти та практичні завдання.</p>
+            <span class="btn">Матеріали готуються</span>
+        </section>
+
+        <!-- 10 клас -->
+        <section class="card">
+            <div class="grade">10</div>
+            <h2>10 клас</h2>
+            <p>
+                Профільний рівень. Уроки, презентації,
+                інтерактивні завдання та практичні роботи.
+            </p>
+            <a href="grade-10-profile/lesson-1/" class="btn">
+                Переглянути матеріали →
+            </a>
+        </section>
+
+        <!-- 11 клас -->
+        <section class="card">
+            <div class="grade">11</div>
+            <h2>11 клас</h2>
+            <p>
+                Вебтехнології, HTML, CSS,
+                створення сайтів та практичні роботи.
+            </p>
+            <a href="grade-11/html/lesson-3/" class="btn">
+                Переглянути матеріали →
+            </a>
+        </section>
+
+    </main>
+
+    <footer>
+        © Моя бібліотека навчальних матеріалів
+    </footer>
+
+</div>
+
+</body>
+</html>
