@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Практична робота № 3. Створення структурованої вебсторінки засобами HTML</title>
+<style>
+:root{--ink:#1d1b3a;--muted:#5d5a7d;--line:#222;--soft:#f4f4f8;--accent:#4f33d6;--ok:#0b6b2c;--bg:#f2f2f8}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:17px/1.55 "Times New Roman","Liberation Serif",Georgia,serif}
+.page{max-width:840px;margin:24px auto;background:#fff;padding:44px 52px;border-radius:6px;box-shadow:0 4px 24px rgba(40,30,110,.12)}
+h1{font-size:1.25rem;text-align:center;margin:.1rem 0}
+h1.sub{font-size:1.1rem;margin-bottom:.9rem}
+h2{font-size:1.08rem;margin:1.5rem 0 .45rem;break-after:avoid}
+p{margin:.35rem 0 .6rem}
+.note{font-style:italic}
+code{font-family:Consolas,"DejaVu Sans Mono",monospace;font-size:.86em;background:#efecff;padding:.05em .3em;border-radius:4px}
+table{border-collapse:collapse;width:100%;margin:.5rem 0;font-size:.95rem}
+th,td{border:1px solid var(--line);padding:6px 9px;vertical-align:top;text-align:left}
+th{background:#ececf5}
+ol,ul{margin:.3rem 0 .7rem;padding-left:1.5rem}
+li{margin:.25rem 0}
+.codewrap{position:relative;margin:.6rem 0}
+pre{margin:0;background:var(--soft);border:1px solid #9a9ab5;border-radius:6px;padding:10px 12px;overflow:auto;font:.8rem/1.45 Consolas,"DejaVu Sans Mono",monospace;white-space:pre;tab-size:2}
+.copy{position:absolute;top:6px;right:6px;border:1px solid #b9b5e6;background:#fff;color:var(--accent);border-radius:6px;padding:2px 9px;font:600 .72rem system-ui,Arial,sans-serif;cursor:pointer}
+.copy:hover{background:#efecff}
+input[type=text],textarea{font:inherit;color:var(--ink);background:#fbfbff;border:0;border-bottom:1.5px solid #777;padding:1px 4px;border-radius:2px}
+input[type=text]:focus,textarea:focus{outline:2px solid #8a78ff;background:#fff}
+textarea{width:100%;border:1.5px solid #999;border-radius:6px;padding:6px 8px;font:.88rem/1.45 Consolas,"DejaVu Sans Mono",monospace;resize:vertical}
+td input[type=text]{width:100%}
+td textarea{border:0;min-height:44px;width:100%}
+.w-s{width:7em}.w-m{width:14em}.w-l{width:100%}
+.codeblank input{font:.8rem Consolas,"DejaVu Sans Mono",monospace;width:5.5em;text-align:center;background:#fff;border-bottom:1.5px solid var(--accent)}
+.chk{display:flex;gap:.6rem;align-items:flex-start;margin:.45rem 0;cursor:pointer}
+.chk input{width:1.15rem;height:1.15rem;margin-top:.3rem;accent-color:#0fb5a3;flex:none}
+.ans{color:var(--ok);font-weight:700}
+.toolbar{max-width:840px;margin:16px auto 0;display:flex;gap:10px;justify-content:flex-end;padding:0 12px}
+.toolbar button{font:600 .85rem system-ui,Arial,sans-serif;border:1px solid #b9b5e6;background:#fff;color:var(--accent);padding:7px 14px;border-radius:8px;cursor:pointer}
+.toolbar button:hover{background:#efecff}
+.idrow{display:grid;grid-template-columns:1fr auto auto;gap:14px;margin:.4rem 0 .6rem}
+.idrow label{display:flex;gap:6px;align-items:baseline;white-space:nowrap}.idrow label input{flex:1;min-width:0}
+.tablewrap{overflow-x:auto}
+.tag{font-family:Consolas,"DejaVu Sans Mono",monospace;font-size:.88em}
+@media (max-width:700px){.page{margin:0;padding:22px 16px;border-radius:0}.idrow{grid-template-columns:1fr}}
+@media print{body{background:#fff;font-size:12pt}.page{box-shadow:none;margin:0;padding:0;max-width:none}.toolbar,.copy{display:none}
+ input[type=text],textarea{background:transparent}pre{white-space:pre-wrap}table,pre,.codewrap{break-inside:avoid}}
+</style>
+</head>
+<body>
+<div class="toolbar"><button id="printBtn" type="button">🖨 Друк / зберегти як PDF</button></div>
+<main class="page">
+<h1>ПРАКТИЧНА РОБОТА № 3</h1><h1 class="sub">Створення структурованої вебсторінки засобами HTML</h1><h1 class="sub">Урок 9</h1><p><b>Мета:</b> На основі власного проєкту створити сайт із кількох сторінок: оновити головну сторінку, створити сторінки «Про сайт» і «Корисна інформація», додати списки й таблицю, з’єднати сторінки посиланнями та перевірити результат у браузері.</p><h2>Проєкт «Мій сайт: від ідеї до вебсторінки»</h2><p>Ви вже створили каркас головної сторінки (практична робота № 1) і додали зображення та гіперпосилання (урок 7). Сьогодні ваш сайт стане багатосторінковим: на основі файлу <b>index.html</b> ви створите ще дві сторінки й наповните їх змістом. Тема залишається тією, яку ви обрали раніше. Оформлення (кольори, шрифти, відступи) ми додамо пізніше за допомогою CSS.</p><p>Що потрібно мати: папку <b>my-site</b> з файлом <b>index.html</b>, зображення з папки <b>images</b>, відкритий проєкт у VS Code та браузер. Після кожної зміни зберігайте файл (<b>Ctrl + S</b>) і оновлюйте сторінку в браузері (<b>F5</b>).</p><h2>Завдання 1. Сплануйте сайт із трьох сторінок</h2><p>Заповніть таблицю перед написанням коду. Використовуйте свою тему.</p><div class="tablewrap"><table><tr><th>Частина сайту</th><th>Мій варіант</th></tr><tr><td>Назва сайту</td><td><textarea rows="1" aria-label="Назва сайту"></textarea></td></tr><tr><td>Головна (index.html): список із трьох пунктів «Що ви знайдете на сайті»</td><td><textarea rows="3" aria-label="Список головної" placeholder="1.&#10;2.&#10;3."></textarea></td></tr><tr><td>Про сайт (about.html): три цілі сайту (нумерований список)</td><td><textarea rows="3" aria-label="Цілі сайту" placeholder="1.&#10;2.&#10;3."></textarea></td></tr><tr><td>Корисна інформація (info.html): назва таблиці</td><td><textarea rows="1" aria-label="Назва таблиці"></textarea></td></tr><tr><td>Заголовки трьох стовпців таблиці</td><td><textarea rows="3" aria-label="Заголовки" placeholder="1.&#10;2.&#10;3."></textarea></td></tr><tr><td>Три рядки даних для таблиці (по одному слову або короткій фразі на стовпець)</td><td><textarea rows="3" aria-label="Дані" placeholder="1.&#10;2.&#10;3."></textarea></td></tr><tr><td>Яке зображення буде на сторінці (назва файлу в папці images)</td><td><textarea rows="1" aria-label="Зображення"></textarea></td></tr></table></div><h2>Завдання 2. Перевірте структуру проєкту</h2><p>Переконайтеся, що у папці <b>my-site</b> є файл index.html і папка images із зображенням. Після виконання роботи проєкт матиме таку структуру:</p><div class="codewrap"><pre>my-site/
+├── index.html
+├── about.html
+├── info.html
+└── images/
+    └── photo.jpg</pre></div><h2>Завдання 3. Оновіть головну сторінку (index.html)</h2><ol start="1"><li>Відкрийте <b>my-site/index.html</b> у VS Code.</li><li>Перевірте каркас: <b>DOCTYPE</b>, <code>&lt;html lang="uk"&gt;</code>, <b>meta</b>, <b>title</b> (назва вашого сайту), блоки <b>header</b>, <b>nav</b>, <b>main</b>, <b>footer</b>.</li><li>Замініть меню <b>nav</b> на список із трьох посилань:</li></ol><div class="codewrap"><pre>&lt;nav&gt;
+  &lt;ul&gt;
+    &lt;li&gt;&lt;a href=&quot;index.html&quot;&gt;Головна&lt;/a&gt;&lt;/li&gt;
+    &lt;li&gt;&lt;a href=&quot;about.html&quot;&gt;Про сайт&lt;/a&gt;&lt;/li&gt;
+    &lt;li&gt;&lt;a href=&quot;info.html&quot;&gt;Корисна інформація&lt;/a&gt;&lt;/li&gt;
+  &lt;/ul&gt;
+&lt;/nav&gt;</pre><button class="copy" type="button">Копіювати</button></div><p class="note">Сторінок about.html та info.html ще немає — ви створите їх у наступних завданнях.</p><p>4. Замініть вміст <b>main</b>: вступ із 2–3 реченнями та зображенням і розділ зі списком щонайменше з трьох пунктів. Замініть текст-зразок власним:</p><div class="codewrap"><pre>&lt;main&gt;
+  &lt;section&gt;
+    &lt;h2&gt;Вступ до теми&lt;/h2&gt;
+    &lt;p&gt;Напишіть 2–3 речення про обрану тему.&lt;/p&gt;
+    &lt;img src=&quot;images/photo.jpg&quot; alt=&quot;Опис зображення&quot;&gt;
+  &lt;/section&gt;
+  &lt;section&gt;
+    &lt;h2&gt;Що ви знайдете на сайті&lt;/h2&gt;
+    &lt;ul&gt;
+      &lt;li&gt;Перший пункт&lt;/li&gt;
+      &lt;li&gt;Другий пункт&lt;/li&gt;
+      &lt;li&gt;Третій пункт&lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/section&gt;
+&lt;/main&gt;</pre><button class="copy" type="button">Копіювати</button></div><p class="note">Примітка: пункти меню матимуть маркери — так і має бути. Прибирати їх та розташовувати пункти в рядок ви навчитеся за допомогою CSS.</p><h2>Завдання 4. Створіть сторінку «Про сайт» (about.html)</h2><ol start="1"><li>Зробіть копію файлу <b>index.html</b>: у панелі файлів VS Code натисніть <b>Ctrl + C</b>, потім <b>Ctrl + V</b>, перейменуйте копію на <b>about.html</b>. (Або виконайте File → Save As…)</li><li>Змініть <code>&lt;title&gt;</code>, наприклад: «Про сайт — Назва сайту». Шапку <b>header</b>, меню <b>nav</b> і підвал <b>footer</b> залиште без змін.</li><li>Замініть вміст <b>main</b> на шаблон:</li></ol><div class="codewrap"><pre>&lt;main&gt;
+  &lt;article&gt;
+    &lt;h2&gt;Про сайт&lt;/h2&gt;
+    &lt;p&gt;Цей сайт створено для ... Він розповідає про ...&lt;/p&gt;
+    &lt;h3&gt;Мета сайту&lt;/h3&gt;
+    &lt;ol&gt;
+      &lt;li&gt;Розповісти про ...&lt;/li&gt;
+      &lt;li&gt;Показати ...&lt;/li&gt;
+      &lt;li&gt;Допомогти ...&lt;/li&gt;
+    &lt;/ol&gt;
+  &lt;/article&gt;
+  &lt;section&gt;
+    &lt;h2&gt;Про автора&lt;/h2&gt;
+    &lt;p&gt;Мене звати ... Я навчаюся в ... класі.&lt;/p&gt;
+  &lt;/section&gt;
+&lt;/main&gt;</pre><button class="copy" type="button">Копіювати</button></div><ol start="4"><li>Замініть крапки на власний текст. Виділіть одне важливе слово тегом <code>&lt;strong&gt;</code>.</li></ol><p class="note">Підказка: розповідь про сайт має сенс і без решти сторінки, тому її розміщують в <b>article</b>. А «Про автора» — це тематичний розділ, тому <b>section</b>.</p><h2>Завдання 5. Створіть сторінку з таблицею (info.html)</h2><ol start="1"><li>Скопіюйте <b>index.html</b> ще раз і назвіть копію <b>info.html</b>.</li><li>Змініть <code>&lt;title&gt;</code> («Корисна інформація — Назва сайту»). Шапку, меню й підвал залиште.</li><li>Замініть вміст <b>main</b> на шаблон:</li></ol><div class="codewrap"><pre>&lt;main&gt;
+  &lt;section&gt;
+    &lt;h2&gt;Корисна інформація&lt;/h2&gt;
+    &lt;p&gt;У таблиці зібрано ...&lt;/p&gt;
+    &lt;table&gt;
+      &lt;caption&gt;Назва таблиці&lt;/caption&gt;
+      &lt;tr&gt;
+        &lt;th&gt;Назва&lt;/th&gt;
+        &lt;th&gt;Категорія&lt;/th&gt;
+        &lt;th&gt;Опис&lt;/th&gt;
+      &lt;/tr&gt;
+      &lt;tr&gt;
+        &lt;td&gt;Приклад 1&lt;/td&gt;
+        &lt;td&gt;Категорія А&lt;/td&gt;
+        &lt;td&gt;Короткий опис&lt;/td&gt;
+      &lt;/tr&gt;
+      &lt;tr&gt;
+        &lt;td&gt;Приклад 2&lt;/td&gt;
+        &lt;td&gt;Категорія Б&lt;/td&gt;
+        &lt;td&gt;Короткий опис&lt;/td&gt;
+      &lt;/tr&gt;
+      &lt;tr&gt;
+        &lt;td&gt;Приклад 3&lt;/td&gt;
+        &lt;td&gt;Категорія А&lt;/td&gt;
+        &lt;td&gt;Короткий опис&lt;/td&gt;
+      &lt;/tr&gt;
+    &lt;/table&gt;
+  &lt;/section&gt;
+  &lt;section&gt;
+    &lt;h2&gt;Поради&lt;/h2&gt;
+    &lt;ol&gt;
+      &lt;li&gt;Перша порада&lt;/li&gt;
+      &lt;li&gt;Друга порада&lt;/li&gt;
+      &lt;li&gt;Третя порада&lt;/li&gt;
+    &lt;/ol&gt;
+  &lt;/section&gt;
+&lt;/main&gt;</pre><button class="copy" type="button">Копіювати</button></div><ol start="4"><li>Замініть назву таблиці, заголовки стовпців і дані на свої (ідеї — у вашому плані із завдання 1).</li><li>У таблиці мають бути <b>назва</b>, <b>заголовки</b> та <b>щонайменше три рядки з даними</b>.</li><li>Замініть поради на власні (нумерований список із трьох пунктів).</li></ol><p class="note">Примітка: без CSS таблиця відображається без рамок — це нормально. Головне, щоб дані стояли у своїх рядках і стовпцях.</p><h2>Завдання 6. З’єднайте сторінки та перевірте сайт у браузері</h2><ol start="1"><li>Переконайтеся, що меню <b>nav</b> із трьома посиланнями однакове на <b>всіх трьох</b> сторінках.</li><li>Замініть підвал на всіх сторінках, щоб у ньому було посилання на головну:</li></ol><div class="codewrap"><pre>&lt;footer&gt;
+  &lt;p&gt;&lt;a href=&quot;index.html&quot;&gt;На головну&lt;/a&gt;&lt;/p&gt;
+  &lt;p&gt;Навчальний проєкт. 11 клас.&lt;/p&gt;
+&lt;/footer&gt;</pre><button class="copy" type="button">Копіювати</button></div><ol start="3"><li>Додайте зображення з атрибутом <b>alt</b> хоча б на одну сторінку, крім головної (шлях <code>images/назва.jpg</code>).</li><li>Відкрийте <b>index.html</b> у браузері та пройдіть усіма посиланнями: Головна → Про сайт → Корисна інформація → Головна.</li><li>Якщо зміни не відображаються, збережіть файл і оновіть сторінку.</li></ol><h2>Якщо щось не працює</h2><div class="tablewrap"><table><tr><th>Проблема</th><th>Що перевірити</th></tr><tr><td>Посилання не відкривається</td><td>Назва файлу в href збігається з назвою файлу (з розширенням .html); файл лежить в тій самій папці.</td></tr><tr><td>Немає зображення</td><td>Шлях і розширення (.jpg, .png, .webp) збігаються з назвою файлу в папці images.</td></tr><tr><td>Список виглядає як звичайний текст</td><td>Кожен пункт у <code>&lt;li&gt;</code>, а всі пункти — у <code>&lt;ul&gt;</code> або <code>&lt;ol&gt;</code>.</td></tr><tr><td>Таблиця «розсипалась»</td><td>Комірки td/th — усередині <code>&lt;tr&gt;</code>, а рядки — усередині <code>&lt;table&gt;</code>.</td></tr><tr><td>Сторінка відображається неправильно</td><td>Кожен відкритий тег має закривальний; перевірте вкладеність і правопис тегів.</td></tr></table></div><h2>Чекліст самоперевірки</h2><label class="chk"><input type="checkbox"><span>Створено три сторінки: index.html, about.html, info.html.</span></label><label class="chk"><input type="checkbox"><span>На кожній сторінці є логічні заголовки й абзаци; є власні title і h1.</span></label><label class="chk"><input type="checkbox"><span>Використано header, nav, main, section, article і footer.</span></label><label class="chk"><input type="checkbox"><span>Є список щонайменше з трьох пунктів (маркований і нумерований).</span></label><label class="chk"><input type="checkbox"><span>Є таблиця з назвою (caption), заголовками (th) і даними (td).</span></label><label class="chk"><input type="checkbox"><span>У меню на кожній сторінці працюють усі три посилання.</span></label><label class="chk"><input type="checkbox"><span>Зображення й гіперпосилання з попередніх робіт працюють.</span></label><label class="chk"><input type="checkbox"><span>Усі файли збережено в одній папці my-site; сторінки відкриваються в браузері без помітних помилок.</span></label><h2>Додаткові завдання</h2><ul><li>Додайте до одного з розділів вкладений список (список усередині пункту <b>li</b>).</li><li>Відокремте розділи сторінки тегом <code>&lt;hr&gt;</code>, а в адресі чи вірші використайте <code>&lt;br&gt;</code>.</li><li>Об’єднайте дві комірки заголовка таблиці атрибутом <code>colspan="2"</code>.</li><li>Додайте посилання на розділ сторінки: <code>&lt;a href="#contacts"&gt;</code> та <code>id="contacts"</code>.</li><li>Поясніть призначення <code>&lt;caption&gt;</code>, <code>&lt;tr&gt;</code>, <code>&lt;th&gt;</code>, <code>&lt;td&gt;</code>, <code>&lt;article&gt;</code>.</li><li>Виправте помилку: <code>&lt;ul&gt;&lt;li&gt;Музика&lt;/li&gt; Книги &lt;/ul&gt;</code>.</li></ul><h2>Домашнє завдання</h2><ol start="1"><li>Завершіть наповнення всіх трьох сторінок: щонайменше два абзаци на кожній.</li><li>Перевірте наявність назви, опису, розділів, списків і таблиці. Виправте помилки.</li><li>Підготуйте 1–2 тематичні зображення, які дозволено використовувати, і збережіть посилання на джерело.</li><li>Наступного разу ми оформлюватимемо сайт за допомогою CSS — принесіть проєкт у папці <b>my-site</b>.</li></ol>
+</main>
+<script>
+document.querySelectorAll('.copy').forEach(function(b){b.addEventListener('click',function(){
+ var t=b.parentNode.querySelector('pre').textContent;
+ var done=function(){var o=b.dataset.o||b.textContent;b.dataset.o=o;b.textContent='✓ Скопійовано';setTimeout(function(){b.textContent=o;},1500);};
+ var fb=function(){var a=document.createElement('textarea');a.value=t;a.style.position='fixed';a.style.opacity='0';document.body.appendChild(a);a.select();try{document.execCommand('copy');}catch(e){}document.body.removeChild(a);done();};
+ if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(t).then(done,fb);}else fb();});});
+document.getElementById('printBtn').addEventListener('click',function(){window.print();});
+</script>
+</body>
+</html>

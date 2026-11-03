@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Урок 8. Практичні завдання — робочий аркуш учня</title>
+<style>
+:root{--ink:#1d1b3a;--muted:#5d5a7d;--line:#222;--soft:#f4f4f8;--accent:#4f33d6;--ok:#0b6b2c;--bg:#f2f2f8}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:17px/1.55 "Times New Roman","Liberation Serif",Georgia,serif}
+.page{max-width:840px;margin:24px auto;background:#fff;padding:44px 52px;border-radius:6px;box-shadow:0 4px 24px rgba(40,30,110,.12)}
+h1{font-size:1.25rem;text-align:center;margin:.1rem 0}
+h1.sub{font-size:1.1rem;margin-bottom:.9rem}
+h2{font-size:1.08rem;margin:1.5rem 0 .45rem;break-after:avoid}
+p{margin:.35rem 0 .6rem}
+.note{font-style:italic}
+code{font-family:Consolas,"DejaVu Sans Mono",monospace;font-size:.86em;background:#efecff;padding:.05em .3em;border-radius:4px}
+table{border-collapse:collapse;width:100%;margin:.5rem 0;font-size:.95rem}
+th,td{border:1px solid var(--line);padding:6px 9px;vertical-align:top;text-align:left}
+th{background:#ececf5}
+ol,ul{margin:.3rem 0 .7rem;padding-left:1.5rem}
+li{margin:.25rem 0}
+.codewrap{position:relative;margin:.6rem 0}
+pre{margin:0;background:var(--soft);border:1px solid #9a9ab5;border-radius:6px;padding:10px 12px;overflow:auto;font:.8rem/1.45 Consolas,"DejaVu Sans Mono",monospace;white-space:pre;tab-size:2}
+.copy{position:absolute;top:6px;right:6px;border:1px solid #b9b5e6;background:#fff;color:var(--accent);border-radius:6px;padding:2px 9px;font:600 .72rem system-ui,Arial,sans-serif;cursor:pointer}
+.copy:hover{background:#efecff}
+input[type=text],textarea{font:inherit;color:var(--ink);background:#fbfbff;border:0;border-bottom:1.5px solid #777;padding:1px 4px;border-radius:2px}
+input[type=text]:focus,textarea:focus{outline:2px solid #8a78ff;background:#fff}
+textarea{width:100%;border:1.5px solid #999;border-radius:6px;padding:6px 8px;font:.88rem/1.45 Consolas,"DejaVu Sans Mono",monospace;resize:vertical}
+td input[type=text]{width:100%}
+td textarea{border:0;min-height:44px;width:100%}
+.w-s{width:7em}.w-m{width:14em}.w-l{width:100%}
+.codeblank input{font:.8rem Consolas,"DejaVu Sans Mono",monospace;width:5.5em;text-align:center;background:#fff;border-bottom:1.5px solid var(--accent)}
+.chk{display:flex;gap:.6rem;align-items:flex-start;margin:.45rem 0;cursor:pointer}
+.chk input{width:1.15rem;height:1.15rem;margin-top:.3rem;accent-color:#0fb5a3;flex:none}
+.ans{color:var(--ok);font-weight:700}
+.toolbar{max-width:840px;margin:16px auto 0;display:flex;gap:10px;justify-content:flex-end;padding:0 12px}
+.toolbar button{font:600 .85rem system-ui,Arial,sans-serif;border:1px solid #b9b5e6;background:#fff;color:var(--accent);padding:7px 14px;border-radius:8px;cursor:pointer}
+.toolbar button:hover{background:#efecff}
+.idrow{display:grid;grid-template-columns:1fr auto auto;gap:14px;margin:.4rem 0 .6rem}
+.idrow label{display:flex;gap:6px;align-items:baseline;white-space:nowrap}.idrow label input{flex:1;min-width:0}
+.tablewrap{overflow-x:auto}
+.tag{font-family:Consolas,"DejaVu Sans Mono",monospace;font-size:.88em}
+@media (max-width:700px){.page{margin:0;padding:22px 16px;border-radius:0}.idrow{grid-template-columns:1fr}}
+@media print{body{background:#fff;font-size:12pt}.page{box-shadow:none;margin:0;padding:0;max-width:none}.toolbar,.copy{display:none}
+ input[type=text],textarea{background:transparent}pre{white-space:pre-wrap}table,pre,.codewrap{break-inside:avoid}}
+</style>
+</head>
+<body>
+<div class="toolbar"><button id="printBtn" type="button">🖨 Друк / зберегти як PDF</button></div>
+<main class="page">
+<h1>ПРАКТИЧНІ ЗАВДАННЯ ДО УРОКУ 8</h1><h1 class="sub">Мова HTML: повторення, списки, таблиці, семантичні елементи, сайт із кількох сторінок</h1><div class="idrow"><label>Прізвище, ім’я: <input type="text" class="w-l" aria-label="Відповідь" placeholder=""></label><label>Клас: <input type="text" class="w-s" aria-label="Відповідь" placeholder=""></label><label>Дата: <input type="text" class="w-s" aria-label="Відповідь" placeholder=""></label></div><p class="note">Заповнюйте аркуш під час уроку разом з інтерактивним матеріалом. Завдання відповідають розділам уроку та підсумковому тесту.</p><h2>Завдання 1. Пригадай: структура HTML-документа</h2><p>Вставте пропущені елементи.</p><div class="codewrap codeblank"><pre style="white-space:pre-wrap">&lt;!DOCTYPE html&gt;
+&lt;html <input type="text" aria-label="Пропуск" style="width:6em">="uk"&gt;
+&lt;<input type="text" aria-label="Пропуск" style="width:6em">&gt;
+  &lt;meta charset="UTF-8"&gt;
+  &lt;<input type="text" aria-label="Пропуск" style="width:6em">&gt;Мій сайт&lt;/<input type="text" aria-label="Пропуск" style="width:6em">&gt;
+&lt;/<input type="text" aria-label="Пропуск" style="width:6em">&gt;
+&lt;<input type="text" aria-label="Пропуск" style="width:6em">&gt;
+  &lt;h1&gt;Привіт!&lt;/h1&gt;
+&lt;/<input type="text" aria-label="Пропуск" style="width:6em">&gt;
+&lt;/html&gt;</pre></div><p>Що відображається у вкладці браузера? <input type="text" class="w-m" aria-label="Відповідь" placeholder=""></p><h2>Завдання 2. Заголовки й форматування тексту</h2><p>З’єднайте (запишіть букву): тег — призначення.</p><div class="tablewrap"><table><tr><th>Тег</th><th>Буква</th><th>Призначення</th></tr><tr><td><code>&lt;h1&gt;</code></td><td><input type="text" class="w-s" maxlength="2" aria-label="Буква" style="width:3em;text-align:center"></td><td>А. абзац</td></tr><tr><td><code>&lt;p&gt;</code></td><td><input type="text" class="w-s" maxlength="2" aria-label="Буква" style="width:3em;text-align:center"></td><td>Б. горизонтальна лінія</td></tr><tr><td><code>&lt;strong&gt;</code></td><td><input type="text" class="w-s" maxlength="2" aria-label="Буква" style="width:3em;text-align:center"></td><td>В. важливий текст</td></tr><tr><td><code>&lt;em&gt;</code></td><td><input type="text" class="w-s" maxlength="2" aria-label="Буква" style="width:3em;text-align:center"></td><td>Г. перенесення рядка</td></tr><tr><td><code>&lt;br&gt;</code></td><td><input type="text" class="w-s" maxlength="2" aria-label="Буква" style="width:3em;text-align:center"></td><td>Д. головний заголовок</td></tr><tr><td><code>&lt;hr&gt;</code></td><td><input type="text" class="w-s" maxlength="2" aria-label="Буква" style="width:3em;text-align:center"></td><td>Е. логічний наголос</td></tr></table></div><h2>Завдання 3. Зображення та посилання</h2><p>Запишіть код. Файл зображення: images/photo.jpg, опис — «Гірський краєвид». Посилання на сторінку about.html з текстом «Про сайт».</p><p>Зображення: <input type="text" class="w-l" aria-label="Відповідь" placeholder=""></p><p>Посилання: <input type="text" class="w-l" aria-label="Відповідь" placeholder=""></p><p>Яким атрибутом задають шлях до зображення? <input type="text" class="w-s" aria-label="Відповідь" placeholder=""> &nbsp; А адресу посилання? <input type="text" class="w-s" aria-label="Відповідь" placeholder=""></p><h2>Завдання 4. Списки: ul, ol, li</h2><p>Для кожного списку запишіть, який тег потрібен: ul чи ol.</p><div class="tablewrap"><table><tr><th>Список</th><th>Тег</th></tr><tr><td>Покупки: молоко, хліб, яйця (порядок неважливий)</td><td><input type="text" class="w-s" aria-label="Відповідь" placeholder=""></td></tr><tr><td>Кроки встановлення програми: завантажити, запустити, підтвердити</td><td><input type="text" class="w-s" aria-label="Відповідь" placeholder=""></td></tr><tr><td>Топ-5 найвищих гір (місця в рейтингу)</td><td><input type="text" class="w-s" aria-label="Відповідь" placeholder=""></td></tr><tr><td>Меню сайту: Головна, Про сайт, Корисна інформація</td><td><input type="text" class="w-s" aria-label="Відповідь" placeholder=""></td></tr></table></div><p>Запишіть код маркованого списку з трьох пунктів: Музика, Книги, Подорожі.</p><textarea rows="5" aria-label="Код списку" spellcheck="false"></textarea><p>Тег <b>li</b> створює <input type="text" class="w-m" aria-label="Відповідь" placeholder="">, він розташовується лише всередині <input type="text" class="w-s" aria-label="Відповідь" placeholder="">.</p><h2>Завдання 5. Таблиці</h2><p>Заповніть таблицю: який тег за що відповідає.</p><div class="tablewrap"><table><tr><th>Тег</th><th>Призначення</th></tr><tr><td><code>&lt;table&gt;</code></td><td><input type="text" class="w-l" aria-label="Відповідь" placeholder=""></td></tr><tr><td><code>&lt;caption&gt;</code></td><td><input type="text" class="w-l" aria-label="Відповідь" placeholder=""></td></tr><tr><td><code>&lt;tr&gt;</code></td><td><input type="text" class="w-l" aria-label="Відповідь" placeholder=""></td></tr><tr><td><code>&lt;th&gt;</code></td><td><input type="text" class="w-l" aria-label="Відповідь" placeholder=""></td></tr><tr><td><code>&lt;td&gt;</code></td><td><input type="text" class="w-l" aria-label="Відповідь" placeholder=""></td></tr></table></div><p>Складіть код таблиці з назвою «Мій розклад» і двома стовпцями («День», «Заняття») та одним рядком даних: Понеділок — Інформатика.</p><textarea rows="7" aria-label="Код таблиці" spellcheck="false"></textarea><h2>Завдання 6. Семантичні елементи</h2><p>Запишіть назву елемента за його призначенням: header, nav, main, section, article, footer.</p><div class="tablewrap"><table><tr><th>Призначення</th><th>Елемент</th></tr><tr><td>Верхня частина сторінки: назва сайту, головний заголовок</td><td><input type="text" class="w-m" aria-label="Відповідь" placeholder=""></td></tr><tr><td>Блок навігації з посиланнями</td><td><input type="text" class="w-m" aria-label="Відповідь" placeholder=""></td></tr><tr><td>Основний вміст сторінки</td><td><input type="text" class="w-m" aria-label="Відповідь" placeholder=""></td></tr><tr><td>Тематичний розділ із заголовком h2</td><td><input type="text" class="w-m" aria-label="Відповідь" placeholder=""></td></tr><tr><td>Самостійний завершений матеріал (стаття, новина)</td><td><input type="text" class="w-m" aria-label="Відповідь" placeholder=""></td></tr><tr><td>Нижня частина сторінки: автор, рік, посилання «На головну»</td><td><input type="text" class="w-m" aria-label="Відповідь" placeholder=""></td></tr></table></div><h2>Завдання 7. Сайт із кількох сторінок</h2><p>1) Скільки заголовків h1 зазвичай має сторінка? <input type="text" class="w-s" aria-label="Відповідь" placeholder=""></p><p>2) Що має відрізнятися на різних сторінках сайту? <input type="text" class="w-l" aria-label="Відповідь" placeholder=""></p><p>3) Що має бути однаковим на всіх сторінках? <input type="text" class="w-l" aria-label="Відповідь" placeholder=""></p><p>4) Як швидко створити нову сторінку з тією самою структурою? <input type="text" class="w-l" aria-label="Відповідь" placeholder=""></p><h2>Завдання 8. Знайди й виправ помилку</h2><p>Знайдіть помилку й запишіть правильний варіант.</p><p><b>1.</b></p><div class="codewrap"><pre>&lt;h1&gt;Моя сторінка&lt;/h2&gt;</pre></div><p>Правильно: <input type="text" class="w-l" aria-label="Відповідь" placeholder=""></p><p><b>2.</b></p><div class="codewrap"><pre>&lt;p&gt;Це &lt;strong&gt;важлива новина.&lt;/p&gt;&lt;/strong&gt;</pre></div><p>Правильно: <input type="text" class="w-l" aria-label="Відповідь" placeholder=""></p><p><b>3.</b></p><div class="codewrap"><pre>&lt;ul&gt;
+  &lt;li&gt;Музика&lt;/li&gt;
+  Книги
+  &lt;li&gt;Фільми&lt;/li&gt;
+&lt;/ul&gt;</pre></div><p>Правильно: <input type="text" class="w-l" aria-label="Відповідь" placeholder=""></p><p><b>4.</b></p><div class="codewrap"><pre>&lt;table&gt;
+  &lt;th&gt;День&lt;/th&gt;&lt;th&gt;Заняття&lt;/th&gt;
+  &lt;tr&gt;&lt;td&gt;Пн&lt;/td&gt;&lt;td&gt;Інф.&lt;/td&gt;&lt;/tr&gt;
+&lt;/table&gt;</pre></div><p>Правильно: <input type="text" class="w-l" aria-label="Відповідь" placeholder=""></p><h2>Завдання 9. Підсумкові запитання (відповідають тесту)</h2><p>Дайте коротку відповідь. Ці запитання збігаються з темами 10 запитань підсумкового тесту.</p><div class="tablewrap"><table><tr><th>№</th><th>Запитання</th><th>Відповідь</th></tr><tr><td>1</td><td>Який тег створює нумерований список?</td><td><textarea rows="2" aria-label="Відповідь" spellcheck="false" style="min-height:48px"></textarea></td></tr><tr><td>2</td><td>Який тег позначає окремий пункт списку?</td><td><textarea rows="2" aria-label="Відповідь" spellcheck="false" style="min-height:48px"></textarea></td></tr><tr><td>3</td><td>Чим відрізняються ul та ol?</td><td><textarea rows="2" aria-label="Відповідь" spellcheck="false" style="min-height:48px"></textarea></td></tr><tr><td>4</td><td>Який тег задає назву таблиці?</td><td><textarea rows="2" aria-label="Відповідь" spellcheck="false" style="min-height:48px"></textarea></td></tr><tr><td>5</td><td>Яку роль виконує тег tr?</td><td><textarea rows="2" aria-label="Відповідь" spellcheck="false" style="min-height:48px"></textarea></td></tr><tr><td>6</td><td>Чим th відрізняється від td?</td><td><textarea rows="2" aria-label="Відповідь" spellcheck="false" style="min-height:48px"></textarea></td></tr><tr><td>7</td><td>Який елемент містить основний вміст сторінки?</td><td><textarea rows="2" aria-label="Відповідь" spellcheck="false" style="min-height:48px"></textarea></td></tr><tr><td>8</td><td>Запишіть правильну розмітку списку з двох пунктів: Музика, Книги.</td><td><textarea rows="2" aria-label="Відповідь" spellcheck="false" style="min-height:48px"></textarea></td></tr><tr><td>9</td><td>Запишіть посилання на сторінку about.html з текстом «Про сайт».</td><td><textarea rows="2" aria-label="Відповідь" spellcheck="false" style="min-height:48px"></textarea></td></tr><tr><td>10</td><td>Який елемент найкраще підходить для меню з посиланнями?</td><td><textarea rows="2" aria-label="Відповідь" spellcheck="false" style="min-height:48px"></textarea></td></tr></table></div><h2>Самооцінювання</h2><div class="tablewrap"><table><tr><th>Питання</th><th>Моя відповідь</th></tr><tr><td>Підсумковий тест в інтерактивному уроці: правильних відповідей з 10</td><td><input type="text" class="w-s" aria-label="Відповідь" placeholder=""></td></tr><tr><td>Що я добре зрозумів(ла)</td><td><textarea rows="2" aria-label="Зрозумів"></textarea></td></tr><tr><td>Що потрібно повторити</td><td><textarea rows="2" aria-label="Повторити"></textarea></td></tr><tr><td>Оцінка вчителя</td><td><input type="text" class="w-s" aria-label="Відповідь" placeholder=""></td></tr></table></div>
+</main>
+<script>
+document.querySelectorAll('.copy').forEach(function(b){b.addEventListener('click',function(){
+ var t=b.parentNode.querySelector('pre').textContent;
+ var done=function(){var o=b.dataset.o||b.textContent;b.dataset.o=o;b.textContent='✓ Скопійовано';setTimeout(function(){b.textContent=o;},1500);};
+ var fb=function(){var a=document.createElement('textarea');a.value=t;a.style.position='fixed';a.style.opacity='0';document.body.appendChild(a);a.select();try{document.execCommand('copy');}catch(e){}document.body.removeChild(a);done();};
+ if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(t).then(done,fb);}else fb();});});
+document.getElementById('printBtn').addEventListener('click',function(){window.print();});
+</script>
+</body>
+</html>
