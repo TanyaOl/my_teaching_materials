@@ -1,1 +1,214 @@
 
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Навчальні матеріали з математики для учнів 8 класу">
+  <title>Математика — 8 клас</title>
+
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: "Segoe UI", Arial, sans-serif;
+      background: #f5f6fb;
+      color: #252b45;
+      line-height: 1.6;
+    }
+
+    header {
+      background: linear-gradient(135deg, #4f46e5, #7c3aed);
+      color: white;
+      padding: 45px 20px;
+      text-align: center;
+    }
+
+    header h1 {
+      font-size: clamp(28px, 5vw, 42px);
+      margin-bottom: 10px;
+    }
+
+    header p {
+      font-size: 17px;
+      opacity: 0.9;
+    }
+
+    .container {
+      width: min(1100px, 92%);
+      margin: 35px auto;
+    }
+
+    .back-link {
+      display: inline-block;
+      color: #4f46e5;
+      text-decoration: none;
+      margin-bottom: 25px;
+      font-weight: 600;
+    }
+
+    .back-link:hover {
+      text-decoration: underline;
+    }
+
+    .section-title {
+      font-size: 25px;
+      margin-bottom: 20px;
+    }
+
+    .topic-card {
+      background: white;
+      border-radius: 20px;
+      padding: 28px;
+      box-shadow: 0 8px 25px rgba(45, 50, 90, 0.07);
+      border: 1px solid #ececf5;
+    }
+
+    .topic-label {
+      display: inline-block;
+      background: #ede9fe;
+      color: #6d28d9;
+      padding: 5px 13px;
+      border-radius: 20px;
+      font-size: 13px;
+      font-weight: 600;
+      margin-bottom: 15px;
+    }
+
+    .topic-card h3 {
+      font-size: 24px;
+      margin-bottom: 12px;
+    }
+
+    .topic-card p {
+      color: #646b80;
+      margin-bottom: 20px;
+    }
+
+    .materials {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+      gap: 14px;
+      margin-top: 25px;
+    }
+
+    .material-link {
+      display: block;
+      padding: 17px;
+      border-radius: 13px;
+      background: #f7f7ff;
+      border: 1px solid #e8e7fa;
+      color: #353b60;
+      text-decoration: none;
+      transition: 0.2s;
+    }
+
+    .material-link:hover {
+      background: #ede9fe;
+      transform: translateY(-3px);
+    }
+
+    .material-link strong {
+      display: block;
+      margin-bottom: 5px;
+      color: #4f46e5;
+    }
+
+    .material-link span {
+      font-size: 13px;
+      color: #777d91;
+    }
+
+    .coming {
+      opacity: 0.65;
+      cursor: default;
+    }
+
+    footer {
+      text-align: center;
+      padding: 25px 15px;
+      color: #85899a;
+      font-size: 14px;
+    }
+
+    @media (max-width: 600px) {
+      header {
+        padding: 35px 15px;
+      }
+
+      .topic-card {
+        padding: 20px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <header>
+    <h1>📐 Математика — 8 клас</h1>
+    <p>Навчайся, досліджуй, розв'язуй!</p>
+  </header>
+
+  <main class="container">
+
+    <a class="back-link" href="../index.html">
+      ← До всіх класів
+    </a>
+
+    <h2 class="section-title">Навчальні теми</h2>
+
+    <article class="topic-card">
+      <span class="topic-label">Алгебра</span>
+
+      <h3>Перетворення раціональних виразів</h3>
+
+      <p>
+        Вивчай раціональні вирази, досліджуй їхні властивості,
+        опановуй правила перетворення та закріплюй знання
+        за допомогою практичних завдань.
+      </p>
+
+      <div class="materials">
+
+        <a class="material-link coming" href="#" aria-disabled="true">
+          <strong>📘 Теорія</strong>
+          <span>Правила, формули та пояснення</span>
+        </a>
+
+        <a class="material-link coming" href="#" aria-disabled="true">
+          <strong>💡 Приклади</strong>
+          <span>Покрокове розв'язування</span>
+        </a>
+
+        <a class="material-link" href="interactive-lesson.html">
+          <strong>🖥️ Інтерактивний урок</strong>
+          <span>Навчання з інтерактивними завданнями</span>
+        </a>
+
+        <a class="material-link coming" href="#" aria-disabled="true">
+          <strong>✍️ Практика</strong>
+          <span>Завдання для самостійної роботи</span>
+        </a>
+
+        <a class="material-link coming" href="#" aria-disabled="true">
+          <strong>✅ Тест</strong>
+          <span>Перевір свої знання</span>
+        </a>
+
+      </div>
+    </article>
+
+  </main>
+
+  <footer>
+    © 2026 · Навчальні матеріали з математики
+  </footer>
+
+</body>
+</html>
+
