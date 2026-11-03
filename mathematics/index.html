@@ -1,0 +1,282 @@
+
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Математика | Навчальні матеріали</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background: #f3f6fc;
+            margin: 0;
+            padding: 35px 20px;
+            color: #25324a;
+        }
+
+        .container {
+            max-width: 1050px;
+            margin: auto;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 35px;
+        }
+
+        .back {
+            display: inline-block;
+            margin-bottom: 20px;
+            color: #64748b;
+            text-decoration: none;
+            font-size: 14px;
+        }
+
+        .back:hover {
+            color: #2457a7;
+        }
+
+        .icon {
+            font-size: 48px;
+            margin-bottom: 10px;
+        }
+
+        h1 {
+            color: #2457a7;
+            font-size: 32px;
+            margin: 10px 0;
+        }
+
+        header p {
+            color: #64748b;
+            line-height: 1.6;
+        }
+
+        .classes {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+        }
+
+        .card {
+            background: white;
+            padding: 25px;
+            border-radius: 16px;
+            box-shadow: 0 3px 12px #0000000d;
+            transition: 0.3s;
+            display: flex;
+            flex-direction: column;
+            min-height: 220px;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 20px #00000015;
+        }
+
+        .grade {
+            color: #2457a7;
+            font-size: 25px;
+            font-weight: bold;
+            margin-bottom: 12px;
+        }
+
+        .card h2 {
+            font-size: 19px;
+            margin: 0 0 10px;
+        }
+
+        .card p {
+            color: #64748b;
+            font-size: 14px;
+            line-height: 1.6;
+            flex-grow: 1;
+        }
+
+        .btn {
+            display: inline-block;
+            text-align: center;
+            background: #2457a7;
+            color: white;
+            padding: 11px 18px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: bold;
+            margin-top: 15px;
+        }
+
+        .btn:hover {
+            background: #173f80;
+        }
+
+        .coming {
+            opacity: 0.7;
+        }
+
+        .coming .btn {
+            background: #94a3b8;
+            pointer-events: none;
+        }
+
+        .nmt {
+            grid-column: 1 / -1;
+            background: linear-gradient(135deg, #e8edff, #f1eaff);
+            border: 1px solid #d8ddf5;
+        }
+
+        .nmt .grade {
+            color: #7045b5;
+        }
+
+        .nmt .btn {
+            background: #7045b5;
+        }
+
+        .nmt .btn:hover {
+            background: #57338f;
+        }
+
+        footer {
+            text-align: center;
+            margin-top: 45px;
+            color: #94a3b8;
+            font-size: 13px;
+        }
+
+        @media (max-width: 750px) {
+            .classes {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .nmt {
+                grid-column: 1 / -1;
+            }
+        }
+
+        @media (max-width: 500px) {
+            .classes {
+                grid-template-columns: 1fr;
+            }
+
+            .nmt {
+                grid-column: auto;
+            }
+
+            h1 {
+                font-size: 26px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="container">
+
+    <header>
+
+        <a href="../" class="back">
+            ← На головну сторінку
+        </a>
+
+        <div class="icon">📐</div>
+
+        <h1>Математика</h1>
+
+        <p>
+            Навчальні матеріали, пояснення, презентації,
+            інтерактивні вправи та практичні завдання.
+            <br>
+            Оберіть клас або перейдіть до підготовки до НМТ.
+        </p>
+
+    </header>
+
+    <main class="classes">
+
+        <!-- 5 клас -->
+        <section class="card coming">
+            <div class="grade">05</div>
+            <h2>5 клас</h2>
+            <p>Арифметика, дроби, геометричні величини та задачі.</p>
+            <span class="btn">Матеріали готуються</span>
+        </section>
+
+        <!-- 6 клас -->
+        <section class="card coming">
+            <div class="grade">06</div>
+            <h2>6 клас</h2>
+            <p>Раціональні числа, відношення, пропорції та відсотки.</p>
+            <span class="btn">Матеріали готуються</span>
+        </section>
+
+        <!-- 7 клас -->
+        <section class="card coming">
+            <div class="grade">07</div>
+            <h2>7 клас</h2>
+            <p>Алгебраїчні вирази, рівняння та геометрія.</p>
+            <span class="btn">Матеріали готуються</span>
+        </section>
+
+        <!-- 8 клас -->
+        <section class="card coming">
+            <div class="grade">08</div>
+            <h2>8 клас</h2>
+            <p>Квадратні корені, квадратні рівняння та геометрія.</p>
+            <span class="btn">Матеріали готуються</span>
+        </section>
+
+        <!-- 9 клас -->
+        <section class="card coming">
+            <div class="grade">09</div>
+            <h2>9 клас</h2>
+            <p>Функції, нерівності, прогресії та геометричні задачі.</p>
+            <span class="btn">Матеріали готуються</span>
+        </section>
+
+        <!-- 10 клас -->
+        <section class="card coming">
+            <div class="grade">10</div>
+            <h2>10 клас</h2>
+            <p>Тригонометрія, показникові та логарифмічні вирази.</p>
+            <span class="btn">Матеріали готуються</span>
+        </section>
+
+        <!-- 11 клас -->
+        <section class="card coming">
+            <div class="grade">11</div>
+            <h2>11 клас</h2>
+            <p>Похідна, інтеграл, стереометрія та повторення курсу.</p>
+            <span class="btn">Матеріали готуються</span>
+        </section>
+
+        <!-- НМТ -->
+        <section class="card nmt">
+            <div class="grade">🎓 НМТ</div>
+            <h2>Підготовка до НМТ з математики</h2>
+            <p>
+                Теоретичні матеріали, розбір типових завдань,
+                тематичні тести, тренажери та пробні варіанти НМТ.
+            </p>
+            <span class="btn">
+                Матеріали готуються
+            </span>
+        </section>
+
+    </main>
+
+    <footer>
+        © Моя бібліотека навчальних матеріалів
+    </footer>
+
+</div>
+
+</body>
+</html>
