@@ -1,0 +1,1950 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1"><style>:root{color-scheme:light}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Уроки 8–9. HTML: структура вебсторінки</title>
+<style>
+:root{
+  --violet:#6d4aff; --violet-d:#4f33d6; --violet-l:#efebff;
+  --blue:#2f6bff; --blue-l:#e8f0ff;
+  --teal:#0fb5a3; --teal-l:#dff7f3;
+  --ink:#23204a; --muted:#645f8c; --bg:#f5f6fd; --card:#ffffff; --line:#e3e1f5;
+  --ok:#15803d; --ok-l:#e6f8ec; --bad:#dc2626; --bad-l:#fdeaea; --warn:#b45309; --warn-l:#fff4dc;
+  --shadow:0 6px 22px rgba(60,50,140,.09);
+  --r:18px;
+}
+*{box-sizing:border-box}
+html{font-size:18px}
+body{margin:0;font-family:"Segoe UI",system-ui,-apple-system,Roboto,Arial,sans-serif;background:var(--bg);color:var(--ink);line-height:1.55}
+h1,h2,h3{line-height:1.25;margin:0 0 .5rem}
+h1{font-size:2.1rem}
+h2{font-size:1.6rem}
+h3{font-size:1.1rem}
+p{margin:.4rem 0 .8rem}
+code{font-family:Consolas,"Courier New",monospace;background:var(--violet-l);color:var(--violet-d);padding:.08em .35em;border-radius:6px;font-size:.88em}
+button{font-family:inherit}
+:focus-visible{outline:3px solid var(--blue);outline-offset:2px}
+.mini{font-size:.8rem;color:var(--muted);font-weight:700;margin:6px 0 2px;text-transform:uppercase;letter-spacing:.04em}
+
+/* ---------- layout ---------- */
+.app{display:grid;grid-template-columns:310px 1fr;min-height:100vh;transition:grid-template-columns .25s}
+.app.collapsed{grid-template-columns:0 1fr}
+.app.collapsed .sidebar{visibility:hidden;padding:0;border:0;overflow:hidden}
+.sidebar{position:sticky;top:0;height:100vh;overflow:auto;background:#fff;border-right:1px solid var(--line);padding:16px 12px;display:flex;flex-direction:column;gap:6px}
+.brand{display:flex;gap:12px;align-items:center;padding:4px 8px 10px}
+.brand b{display:block;font-size:1rem}
+.brand small{color:var(--muted);font-size:.78rem}
+.logo{width:46px;height:46px;border-radius:14px;background:linear-gradient(135deg,var(--violet),var(--blue) 60%,var(--teal));color:#fff;display:grid;place-items:center;font:700 .85rem Consolas,monospace;flex:none}
+.menu-group{font-size:.7rem;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);margin:12px 8px 3px;font-weight:700}
+.menu-item{display:flex;align-items:center;gap:10px;width:100%;text-align:left;border:0;background:transparent;padding:7px 10px;border-radius:12px;font-size:.86rem;color:var(--ink);cursor:pointer}
+.menu-item:hover{background:var(--violet-l)}
+.menu-item.active{background:linear-gradient(90deg,var(--violet-l),var(--blue-l));font-weight:700;box-shadow:inset 4px 0 0 var(--violet)}
+.menu-item .ic{width:26px;text-align:center;flex:none}
+.menu-item .ck{margin-left:auto;color:var(--ok);font-weight:700;visibility:hidden}
+.menu-item.visited .ck{visibility:visible}
+.timer{margin-top:auto;border:1px solid var(--line);border-radius:14px;padding:10px;background:var(--bg)}
+.timer .tl{font-size:.72rem;color:var(--muted);font-weight:700;text-transform:uppercase;letter-spacing:.05em}
+.timer .td{font:700 1.9rem Consolas,monospace;text-align:center;margin:2px 0}
+.timer .td.low{color:var(--warn)}
+.timer .td.end{color:var(--bad)}
+.timer .tr{display:flex;gap:6px}
+.timer select{flex:1;min-width:0;border:1px solid var(--line);border-radius:10px;padding:6px;font:inherit;font-size:.8rem;background:#fff}
+.timer button{border:0;border-radius:10px;padding:6px 10px;font-size:.8rem;cursor:pointer;background:var(--violet);color:#fff}
+.timer button.sec{background:#fff;color:var(--violet-d);border:1px solid var(--line)}
+.overlay{display:none;position:fixed;inset:0;background:rgba(20,10,60,.42);z-index:30}
+.overlay.show{display:block}
+.main{min-width:0;display:flex;flex-direction:column;min-height:100vh}
+.topbar{position:sticky;top:0;z-index:20;display:flex;align-items:center;gap:12px;padding:10px clamp(12px,3vw,32px);background:rgba(245,246,253,.93);backdrop-filter:blur(8px);border-bottom:1px solid var(--line)}
+.icon-btn{border:1px solid var(--line);background:#fff;border-radius:12px;min-width:42px;height:42px;font-size:1rem;cursor:pointer;color:var(--violet-d);font-weight:700}
+.icon-btn:hover{background:var(--violet-l)}
+.prog{flex:1;display:flex;align-items:center;gap:10px;min-width:0}
+.prog .lbl{font-size:.8rem;color:var(--muted);white-space:nowrap}
+.bar{flex:1;height:12px;background:#e6e3f8;border-radius:99px;overflow:hidden}
+.bar i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--violet),var(--blue),var(--teal));border-radius:99px;transition:width .4s}
+.prog .pct{font-weight:700;font-size:.9rem;min-width:3em;text-align:right}
+#content{flex:1}
+.panel{display:none;padding:22px clamp(14px,3vw,36px) 14px;max-width:1120px;width:100%;margin:0 auto}
+.panel.active{display:block;animation:fadeIn .35s ease}
+@keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+@media (prefers-reduced-motion:reduce){.panel.active,.tabpane.on{animation:none}.bar i,.app{transition:none}}
+.panel-head{display:flex;flex-wrap:wrap;align-items:center;gap:8px 12px;margin-bottom:12px}
+.panel-head h2{margin:0;flex:1 1 300px}
+.badge{display:inline-block;font-size:.72rem;font-weight:700;letter-spacing:.04em;text-transform:uppercase;padding:4px 10px;border-radius:99px;background:var(--violet-l);color:var(--violet-d)}
+.badge.p2{background:var(--teal-l);color:#0b7d70}
+.time{font-size:.82rem;color:var(--muted);background:#fff;border:1px solid var(--line);padding:3px 10px;border-radius:99px}
+.navbar{position:sticky;bottom:0;z-index:15;display:flex;align-items:center;justify-content:space-between;gap:10px;padding:10px clamp(12px,3vw,32px);background:rgba(255,255,255,.95);border-top:1px solid var(--line);backdrop-filter:blur(8px)}
+.navbar .info{font-size:.85rem;color:var(--muted);text-align:center}
+
+/* ---------- cards & grids ---------- */
+.card{background:var(--card);border-radius:var(--r);box-shadow:var(--shadow);padding:18px 20px;margin-bottom:16px;border:1px solid rgba(227,225,245,.7)}
+.card.tint{background:linear-gradient(135deg,var(--violet-l),var(--blue-l))}
+.card.teal{background:var(--teal-l)}
+.callout{background:var(--warn-l);border-left:5px solid #f59e0b;border-radius:12px;padding:10px 14px;margin:10px 0}
+.callout.info{background:var(--blue-l);border-left-color:var(--blue)}
+.callout.good{background:var(--ok-l);border-left-color:var(--ok)}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+.grid2>.card,.grid3>.card{margin-bottom:0}
+.grid2,.grid3{margin-bottom:16px}
+ul.check{list-style:none;padding:0;margin:.4rem 0}
+ul.check li{padding-left:1.7em;position:relative;margin:.35rem 0}
+ul.check li::before{content:"✔";position:absolute;left:0;color:var(--teal);font-weight:700}
+.hero{background:linear-gradient(135deg,#6d4aff 0%,#2f6bff 60%,#0fb5a3 100%);color:#fff;border-radius:26px;padding:clamp(22px,4vw,42px);box-shadow:0 14px 40px rgba(79,51,214,.28);margin-bottom:18px}
+.hero p{font-size:1.1rem;max-width:46em;opacity:.95}
+.hero .btnrow{display:flex;flex-wrap:wrap;gap:12px;margin-top:14px}
+.hero .prog-mini{margin-top:18px;max-width:420px}
+.hero .prog-mini .bar{background:rgba(255,255,255,.3)}
+.hero .prog-mini .bar i{background:#fff}
+.hero .prog-mini span{font-size:.85rem;opacity:.95}
+.chain{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:8px 0}
+.chain span{background:var(--violet-l);color:var(--violet-d);padding:6px 12px;border-radius:99px;font-size:.85rem;font-weight:600}
+.chain span.now{background:var(--violet);color:#fff}
+.chain span.next{background:var(--teal-l);color:#0b7d70}
+.chain i{color:var(--muted);font-style:normal}
+.home-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:12px}
+.home-item{display:flex;gap:12px;align-items:center;text-align:left;border:1px solid var(--line);background:#fff;border-radius:16px;padding:12px 14px;cursor:pointer;font-size:.92rem;box-shadow:var(--shadow);color:var(--ink)}
+.home-item:hover{border-color:var(--violet);transform:translateY(-2px)}
+.home-item .ic{font-size:1.5rem}
+.home-item small{display:block;color:var(--muted)}
+table{border-collapse:collapse;width:100%;font-size:.92rem;background:#fff}
+th,td{border:1px solid var(--line);padding:8px 10px;text-align:left;vertical-align:top}
+th{background:var(--violet-l);color:var(--violet-d)}
+.tablewrap{overflow-x:auto;border-radius:12px}
+
+/* ---------- buttons ---------- */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;border:2px solid var(--violet);background:#fff;color:var(--violet-d);border-radius:14px;padding:10px 18px;font-size:1rem;font-weight:700;cursor:pointer;transition:.15s}
+.btn:hover{background:var(--violet-l)}
+.btn.primary{background:var(--violet);color:#fff}
+.btn.primary:hover{background:var(--violet-d)}
+.btn.white{background:#fff;color:var(--violet-d);border-color:#fff}
+.btn.outline-w{background:transparent;color:#fff;border-color:rgba(255,255,255,.7)}
+.btn.outline-w:hover{background:rgba(255,255,255,.15)}
+.btn:disabled{opacity:.4;cursor:not-allowed}
+.btn.small{padding:6px 12px;font-size:.85rem;border-radius:10px}
+.seg{display:inline-flex;flex-wrap:wrap;gap:4px;background:var(--bg);padding:4px;border-radius:14px;border:1px solid var(--line);margin:6px 0}
+.seg button{border:0;background:transparent;padding:8px 14px;border-radius:10px;cursor:pointer;font-size:.92rem;color:var(--ink)}
+.seg button.on{background:var(--violet);color:#fff;font-weight:700}
+
+/* ---------- code ---------- */
+.codewrap{position:relative}
+pre.code{background:#1f1b4b;color:#e9e6ff;border-radius:14px;padding:14px 16px;overflow:auto;font:.82rem/1.6 Consolas,"Courier New",monospace;margin:.6rem 0;white-space:pre;tab-size:2}
+.copy{position:absolute;top:10px;right:10px;border:0;background:rgba(255,255,255,.16);color:#fff;border-radius:8px;padding:4px 10px;font-size:.75rem;cursor:pointer}
+.copy:hover{background:rgba(255,255,255,.3)}
+.frame{width:100%;height:340px;border:1px solid var(--line);border-radius:12px;background:#fff}
+.frame.s{height:200px}
+.frame.tall{height:430px}
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin:8px 0}
+.chip{border:1px solid var(--line);background:#fff;border-radius:99px;padding:6px 14px;cursor:pointer;font:.88rem Consolas,"Courier New",monospace;color:var(--violet-d)}
+.chip:hover{background:var(--violet-l)}
+.chip.on{background:var(--violet);color:#fff;border-color:var(--violet)}
+.chip.txt{font-family:inherit}
+.inrow{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.inrow input[type=text],.inrow select{border:2px solid var(--line);border-radius:12px;padding:8px 12px;font:1rem "Segoe UI",Arial,sans-serif;background:#fff;color:var(--ink)}
+.inrow input[type=text]{flex:1;min-width:140px}
+textarea.csstxt{width:100%;min-height:200px;border:2px solid var(--line);border-radius:14px;padding:12px;font:.85rem/1.5 Consolas,"Courier New",monospace;resize:vertical;background:#fbfbff;color:var(--ink)}
+textarea.csstxt:focus,.inrow input:focus,.inrow select:focus{border-color:var(--violet);outline:none}
+
+/* ---------- quiz ---------- */
+.qhead{display:flex;justify-content:space-between;align-items:center;gap:10px;font-size:.85rem;color:var(--muted);font-weight:700}
+.dots{display:inline-flex;gap:5px}
+.dots i{width:10px;height:10px;border-radius:50%;background:#dcd8f3}
+.dots i.done{background:var(--teal)}
+.dots i.cur{background:var(--violet)}
+.qtext{font-size:1.1rem;font-weight:700;margin:.6rem 0 .3rem}
+.opt{display:block;width:100%;text-align:left;padding:12px 16px;border:2px solid var(--line);border-radius:14px;background:#fff;font-size:1rem;cursor:pointer;margin:8px 0;transition:.15s;color:var(--ink)}
+.opt:hover{border-color:var(--violet);background:var(--violet-l)}
+.opt.mono{font-family:Consolas,"Courier New",monospace;font-size:.92rem}
+.locked .opt{cursor:default}
+.locked .opt:hover{background:#fff;border-color:var(--line)}
+.opt.ok,.locked .opt.ok:hover{border-color:var(--ok);background:var(--ok-l)}
+.opt.bad,.locked .opt.bad:hover{border-color:var(--bad);background:var(--bad-l)}
+.fb{margin:10px 0;padding:10px 14px;border-radius:12px;background:var(--bg);min-height:1.2em}
+.fb:empty{display:none}
+.fb.ok{background:var(--ok-l);color:#14532d}
+.fb.bad{background:var(--bad-l);color:#7f1d1d}
+.result{text-align:center;padding:10px}
+.result .big{font-size:3rem;font-weight:800;background:linear-gradient(90deg,var(--violet),var(--teal));-webkit-background-clip:text;background-clip:text;color:transparent}
+.result .bar{max-width:360px;margin:8px auto 12px}
+.lines{margin:.6rem 0;border-radius:14px;background:#1f1b4b;padding:8px;overflow:auto}
+.ln{display:flex;gap:12px;width:100%;text-align:left;border:2px solid transparent;background:transparent;color:#e9e6ff;font:.88rem/1.6 Consolas,"Courier New",monospace;padding:3px 10px;border-radius:8px;cursor:pointer}
+.ln:hover{background:rgba(255,255,255,.1)}
+.ln .num{color:#8f89c9;width:1.4em;text-align:right;flex:none}
+.ln .txt{white-space:pre}
+.locked .ln{cursor:default}
+.ln.ok{background:rgba(34,197,94,.28);border-color:#22c55e}
+.ln.bad{background:rgba(239,68,68,.3);border-color:#ef4444}
+
+/* ---------- special widgets ---------- */
+.lab{display:grid;grid-template-columns:1fr 1fr;gap:16px;align-items:start}
+.asm-pool,.asm-area{display:flex;flex-wrap:wrap;gap:8px;padding:10px;border-radius:14px;min-height:56px}
+.asm-pool{background:var(--bg);border:1px dashed #cfcaf0}
+.asm-area{background:#1f1b4b;flex-direction:column;align-items:stretch;gap:3px;min-height:90px;margin-top:10px}
+.asm-area:empty::before{content:"Натискай на рядки вище — вони з’являтимуться тут у твоєму порядку";color:#9c97d6;font-size:.85rem}
+.asm-btn{border:1px solid var(--line);background:#fff;border-radius:10px;padding:6px 12px;font:.85rem Consolas,"Courier New",monospace;cursor:pointer;color:var(--ink)}
+.asm-btn:hover{background:var(--violet-l);border-color:var(--violet)}
+.asm-area .asm-btn{background:transparent;color:#e9e6ff;border-color:transparent;text-align:left}
+.asm-area .asm-btn:hover{background:rgba(255,255,255,.14)}
+.asm-area .asm-btn.okk{background:rgba(34,197,94,.3);border-color:#22c55e}
+.asm-area .asm-btn.nok{background:rgba(239,68,68,.32);border-color:#ef4444}
+.demo-table{width:auto;min-width:60%;margin:8px 0}
+.demo-table caption{font-weight:700;padding:6px;caption-side:top;text-align:left}
+.demo-table [data-tag]{cursor:pointer}
+.demo-table .hit,.hit{outline:3px solid var(--teal);outline-offset:-2px;background:var(--teal-l)}
+.schema{border:2px dashed #cfcaf0;border-radius:16px;padding:12px;background:#fff;display:flex;flex-direction:column;gap:8px;max-width:560px}
+.sc{border:2px solid;border-radius:12px;padding:8px 12px;cursor:pointer;font:700 .92rem Consolas,"Courier New",monospace;transition:.15s}
+.sc:hover{transform:scale(1.01);filter:brightness(.97)}
+.sc.sel{box-shadow:0 0 0 4px rgba(109,74,255,.35)}
+.sc[data-sem=header]{background:#efebff;border-color:#6d4aff;color:#4f33d6}
+.sc[data-sem=nav]{background:#e8f0ff;border-color:#2f6bff;color:#1d4ed8}
+.sc[data-sem=main]{background:#f2fbf9;border-color:#0fb5a3;color:#0b7d70;min-height:160px}
+.sc[data-sem=section]{background:#dff7f3;border-color:#0fb5a3;color:#0b7d70}
+.sc[data-sem=article]{background:#fff4dc;border-color:#f59e0b;color:#b45309}
+.sc[data-sem=footer]{background:#fdeaf4;border-color:#db2777;color:#9d174d}
+.sc-row{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:10px}
+.sc-row .sc{min-height:72px}
+.browser{border:1px solid var(--line);border-radius:14px;overflow:hidden;box-shadow:var(--shadow);background:#fff}
+.bbar{display:flex;align-items:center;gap:10px;padding:8px 12px;background:#ece9fb}
+.bbar .dots i{width:10px;height:10px}
+.bbar .dots i:nth-child(1){background:#f87171}.bbar .dots i:nth-child(2){background:#fbbf24}.bbar .dots i:nth-child(3){background:#34d399}
+.addr{flex:1;background:#fff;border-radius:99px;padding:3px 14px;font:.85rem Consolas,"Courier New",monospace;color:var(--muted)}
+.bview{padding:10px 16px;min-height:320px;font-size:.9rem;background:#fff}
+.bview h1{font-size:1.4rem}
+.bview h2{font-size:1.15rem}
+.bview h3{font-size:1rem}
+.bview header{border-bottom:1px solid var(--line);margin-bottom:4px}
+.bview nav ul{display:flex;flex-wrap:wrap;gap:14px;list-style:none;padding:0;margin:6px 0}
+.bview nav a,.bview a{color:var(--blue);cursor:pointer}
+.bview table{width:auto;font-size:.85rem}
+.bview th{background:#efebff}
+.bview th,.bview td{border:1px solid #b9b3e6;padding:4px 10px}
+.bview img{max-width:100%;max-height:130px;border-radius:8px}
+.bview footer{border-top:1px solid var(--line);margin-top:10px;font-size:.8rem;color:var(--muted)}
+.step{display:flex;align-items:center;gap:8px;margin-top:8px;font-weight:700;color:var(--violet-d);cursor:pointer}
+.step input,.checklist input{width:22px;height:22px;accent-color:var(--teal);flex:none;cursor:pointer}
+.checklist{list-style:none;padding:0;margin:.5rem 0}
+.checklist li{margin:6px 0}
+.checklist label{display:flex;gap:10px;align-items:flex-start;padding:8px 12px;border-radius:12px;background:var(--bg);cursor:pointer}
+.checklist label:hover{background:var(--violet-l)}
+.verdicts{list-style:none;padding:0;margin:.6rem 0}
+.verdicts li{padding:8px 12px;border-radius:10px;margin:6px 0;display:flex;gap:10px}
+.verdicts li.ok{background:var(--ok-l)}
+.verdicts li.no{background:var(--bad-l)}
+.verdicts small{display:block;color:var(--muted)}
+.tabpane{display:none}
+details.card summary{cursor:pointer;font-weight:700;color:var(--violet-d)}
+details.card[open] summary{margin-bottom:8px}
+.final-msg{font-size:1.25rem;font-weight:700;line-height:1.4}
+.sum-list{list-style:none;padding:0;margin:.5rem 0}
+.sum-list li{display:flex;justify-content:space-between;gap:10px;padding:9px 12px;border-bottom:1px solid var(--line)}
+.sum-list li b{white-space:nowrap}
+noscript{display:block;padding:20px;background:#fff4dc}
+
+/* ---------- responsive ---------- */
+@media (max-width:980px){
+  .app{grid-template-columns:1fr}
+  .sidebar{position:fixed;left:0;top:0;bottom:0;width:min(86vw,330px);transform:translateX(-104%);transition:transform .25s;z-index:40;box-shadow:var(--shadow)}
+  .sidebar.open{transform:none}
+  .app.collapsed{grid-template-columns:1fr}
+  .app.collapsed .sidebar{visibility:visible;padding:16px 12px}
+  .grid3{grid-template-columns:1fr}
+}
+@media (max-width:760px){
+  html{font-size:16px}
+  .grid2,.lab{grid-template-columns:1fr}
+  .prog .lbl{display:none}
+  .btn{padding:9px 14px}
+  .navbar .info{display:none}
+  .hero .btnrow .btn{flex:1}
+}
+@media print{.sidebar,.topbar,.navbar{display:none}.panel{display:block!important}}
+</style>
+</head>
+<body>
+<noscript>Для роботи цього навчального ресурсу потрібно ввімкнути JavaScript у браузері.</noscript>
+
+<div class="app">
+  <aside class="sidebar" id="sidebar" aria-label="Меню розділів">
+    <div class="brand">
+      <div class="logo">&lt;/&gt;</div>
+      <div><b>Уроки 8–9 · Інформатика</b><small>Мова HTML · 8–11 класи</small></div>
+    </div>
+    <div id="menu"></div>
+    <div class="timer" aria-label="Таймер уроку">
+      <div class="tl">⏱ Таймер уроку</div>
+      <div class="td" id="tDisp">45:00</div>
+      <div class="tr">
+        <select id="tMin" aria-label="Тривалість, хвилин">
+          <option value="45" selected>45 хв</option>
+          <option value="30">30 хв</option>
+          <option value="20">20 хв</option>
+          <option value="10">10 хв</option>
+          <option value="5">5 хв</option>
+        </select>
+        <button id="tBtn" type="button">▶ Старт</button>
+        <button id="tReset" class="sec" type="button" title="Скинути">↺</button>
+      </div>
+    </div>
+  </aside>
+  <div class="overlay" id="overlay"></div>
+
+  <div class="main">
+    <header class="topbar">
+      <button id="menuToggle" class="icon-btn" type="button" aria-label="Показати або сховати меню розділів" aria-expanded="true" title="Показати / сховати меню">☰</button>
+      <div class="prog">
+        <span class="lbl">Проходження уроку</span>
+        <div class="bar" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" id="progBar"><i id="progFill"></i></div>
+        <span class="pct" id="progPct">0%</span>
+      </div>
+      <button id="fontBtn" class="icon-btn" type="button" title="Розмір тексту для екрана" aria-label="Змінити розмір тексту">Aa</button>
+      <button id="fsBtn" class="icon-btn" type="button" title="На весь екран" aria-label="На весь екран">⛶</button>
+    </header>
+
+    <main id="content">
+
+<!-- ====================== ГОЛОВНА ====================== -->
+<section class="panel" id="home" data-title="Головна" data-icon="🏠" data-part="0">
+  <div class="hero">
+    <span class="badge" style="background:rgba(255,255,255,.2);color:#fff">Урок 8 — теорія · Урок 9 — практична робота</span>
+    <h1 style="margin-top:10px">HTML: створюємо структуру вебсторінки</h1>
+    <p>Навчись структурувати інформацію, працювати з текстом, списками, таблицями та семантичними елементами HTML — і створи власний сайт із кількох сторінок.</p>
+    <div class="btnrow">
+      <button class="btn white" id="startBtn" type="button">🚀 Розпочати урок</button>
+      <button class="btn outline-w" id="toPractice" type="button">🛠 До практичної роботи (урок 9)</button>
+    </div>
+    <div class="prog-mini">
+      <span id="homeProgText">Пройдено 0 з 17 розділів</span>
+      <div class="bar"><i id="homeProgFill"></i></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>Де ми зараз у проєкті «Мій сайт: від ідеї до вебсторінки»</h3>
+    <div class="chain">
+      <span>Практична ч. 1: каркас головної сторінки</span><i>→</i>
+      <span>Урок 7: зображення й гіперпосилання</span><i>→</i>
+      <span class="now">Урок 8: повторення, списки, таблиці, семантика</span><i>→</i>
+      <span class="now">Урок 9: сайт із кількох сторінок</span><i>→</i>
+      <span class="next">Далі: оформлення за допомогою CSS</span>
+    </div>
+    <p style="margin-bottom:0"><b>Урок 8</b> (45 хв) — повторюємо те, що вже вміємо, і вивчаємо списки, таблиці та структуру сайту з кількох сторінок. <b>Урок 9</b> (45 хв) — практична робота: на основі власного <code>index.html</code> створюєш ще дві сторінки й наповнюєш сайт.</p>
+  </div>
+
+  <h3 style="margin:18px 0 10px">Меню розділів — переходь до будь-якого</h3>
+  <div id="homeGrid" class="home-grid"></div>
+
+  <details class="card" style="margin-top:16px">
+    <summary>👩‍🏫 Для вчителя: орієнтовний план і критерії</summary>
+    <div class="tablewrap"><table>
+      <tr><th colspan="3">Урок 8 — теорія (45 хв)</th></tr>
+      <tr><td>1. Пригадай</td><td>4 хв</td><td>Складання каркаса документа, тест</td></tr>
+      <tr><td>2. Заголовки й текст</td><td>4 хв</td><td>Інтерактивний огляд тегів із живим результатом</td></tr>
+      <tr><td>3. Зображення й посилання</td><td>4 хв</td><td>Шляхи до файлів, тест</td></tr>
+      <tr><td>4. Списки</td><td>6 хв</td><td>Конструктор списку, вправа «Який тег?»</td></tr>
+      <tr><td>5. Таблиці</td><td>8 хв</td><td>Клікабельна таблиця, конструктор, тест</td></tr>
+      <tr><td>6. Семантичні елементи</td><td>5 хв</td><td>Інтерактивна схема сторінки</td></tr>
+      <tr><td>7. Сайт із кількох сторінок</td><td>4 хв</td><td>Міні-браузер, правила, тест</td></tr>
+      <tr><td>8. Знайди помилку</td><td>5 хв</td><td>4 завдання з поясненням</td></tr>
+      <tr><td>9. Перевір себе</td><td>5 хв</td><td>Тест із 10 запитань</td></tr>
+      <tr><th colspan="3">Урок 9 — практична робота № 3 (45 хв)</th></tr>
+      <tr><td>Мета й підказки за темою</td><td>5 хв</td><td>Вибір теми, ідеї наповнення</td></tr>
+      <tr><td>Пам’ятка</td><td>3 хв</td><td>Довідник із тегів (для самостійної роботи)</td></tr>
+      <tr><td>Завдання 1: index.html</td><td>7 хв</td><td>Оновлення головної сторінки</td></tr>
+      <tr><td>Завдання 2: about.html</td><td>8 хв</td><td>Нова сторінка зі списком</td></tr>
+      <tr><td>Завдання 3: info.html</td><td>10 хв</td><td>Нова сторінка з таблицею</td></tr>
+      <tr><td>Завдання 4: зв’язки між сторінками</td><td>4 хв</td><td>Меню, зображення, перевірка посилань</td></tr>
+      <tr><td>Перевірка HTML</td><td>5 хв</td><td>Автоматична перевірка коду</td></tr>
+      <tr><td>Чекліст і домашнє</td><td>3 хв</td><td>Самоперевірка</td></tr>
+    </table></div>
+    <p><b>Оцінювання практичної роботи (приклад):</b> три сторінки з правильною структурою — 3 бали; список не менше ніж із трьох пунктів — 2 бали; таблиця з назвою, заголовками й даними — 3 бали; працюють усі посилання й зображення — 2 бали; код без помилок вкладеності — 2 бали.</p>
+    <p style="margin-bottom:0">Кнопка «Aa» збільшує текст для великого екрана, «⛶» — повноекранний режим, клавіші ← → перемикають розділи. Прогрес зберігається в браузері.</p>
+  </details>
+  <p style="text-align:right"><button class="btn small" id="resetBtn" type="button">↺ Скинути прогрес</button></p>
+</section>
+
+<!-- ====================== УРОК 8 ====================== -->
+<!-- 1. Пригадай -->
+<section class="panel" id="p1-1" data-title="Пригадай" data-icon="🧠" data-part="1" data-time="4">
+  <div class="panel-head"><span class="badge">Урок 8 · Теорія</span><h2>Пригадай: структура HTML-документа</h2><span class="time">⏱ 4 хв</span></div>
+  <div class="grid2">
+    <div class="card">
+      <h3>Каркас, який ми вже створювали</h3>
+      <pre class="code" data-code="recall_doc"></pre>
+    </div>
+    <div class="card tint">
+      <h3>Що тут важливо</h3>
+      <ul class="check">
+        <li><code>&lt;!DOCTYPE html&gt;</code> — документ HTML5;</li>
+        <li><code>lang="uk"</code> — українська мова сторінки;</li>
+        <li><code>&lt;head&gt;</code> — службова інформація (кодування, назва вкладки);</li>
+        <li><code>&lt;body&gt;</code> — усе, що бачить користувач;</li>
+        <li>більшість тегів парні: відкривальний і закривальний;</li>
+        <li>порожні елементи (<code>meta</code>, <code>img</code>, <code>br</code>, <code>hr</code>) закривального тега не мають.</li>
+      </ul>
+    </div>
+  </div>
+  <div class="card">
+    <h3>🧩 Склади HTML-документ</h3>
+    <p>Натискай на рядки у верхньому блоці — вони потраплять у документ. Натисни на рядок у документі, щоб повернути його назад.</p>
+    <div class="asm-pool" id="asmPool"></div>
+    <div class="asm-area" id="asmArea" aria-label="Твій документ"></div>
+    <div class="inrow" style="margin-top:10px">
+      <button class="btn primary" id="asmCheck" type="button">✔ Перевірити</button>
+      <button class="btn" id="asmReset" type="button">↺ Спочатку</button>
+    </div>
+    <div class="fb" id="asmOut" aria-live="polite"></div>
+  </div>
+  <div class="card"><h3>Швидка перевірка</h3><div class="quiz" data-quiz="recall"></div></div>
+</section>
+
+<!-- 2. Заголовки й текст -->
+<section class="panel" id="p1-2" data-title="Заголовки й текст" data-icon="🔤" data-part="1" data-time="4">
+  <div class="panel-head"><span class="badge">Урок 8 · Теорія</span><h2>Заголовки, абзаци та виділення тексту</h2><span class="time">⏱ 4 хв</span></div>
+  <div class="card">
+    <p>Обери тег — побачиш його призначення, код і результат у браузері. Код <b>можна редагувати</b>: результат оновлюється одразу.</p>
+    <div class="chips" id="tagChips"></div>
+    <div class="callout info" id="tagInfo"></div>
+    <div class="lab">
+      <div><p class="mini">Код HTML (редагуй!)</p><textarea class="csstxt" id="tagCode" spellcheck="false" aria-label="Код HTML" style="min-height:190px"></textarea></div>
+      <div><p class="mini">Результат у браузері</p><iframe class="frame s" id="tagFrame" title="Результат" sandbox style="height:240px"></iframe></div>
+    </div>
+    <div class="callout"><b>Пам’ятай:</b> <code>strong</code> і <code>em</code> показують <i>зміст</i> (важливість, наголос), а не лише зовнішній вигляд. Вигляд сторінки налаштовуватимемо за допомогою CSS на наступних уроках.</div>
+  </div>
+  <div class="card"><h3>Перевір себе</h3><div class="quiz" data-quiz="text"></div></div>
+</section>
+
+<!-- 3. Зображення й посилання -->
+<section class="panel" id="p1-3" data-title="Зображення й посилання" data-icon="🖼️" data-part="1" data-time="4">
+  <div class="panel-head"><span class="badge">Урок 8 · Теорія</span><h2>Зображення та гіперпосилання</h2><span class="time">⏱ 4 хв</span></div>
+  <div class="grid2">
+    <div class="card">
+      <h3>Зображення: &lt;img&gt;</h3>
+      <pre class="code" data-code="img_ex"></pre>
+      <ul class="check"><li><code>src</code> — шлях до файлу;</li><li><code>alt</code> — короткий опис зображення;</li><li>порожній елемент, без закривального тега.</li></ul>
+    </div>
+    <div class="card">
+      <h3>Посилання: &lt;a&gt;</h3>
+      <pre class="code" data-code="a_ex"></pre>
+      <ul class="check"><li><code>href</code> — адреса переходу;</li><li>на файл проєкту: <code>about.html</code>;</li><li>на розділ сторінки: <code>#contacts</code>.</li></ul>
+    </div>
+  </div>
+  <div class="card">
+    <h3>Папка проєкту</h3>
+    <pre class="code" data-code="tree_now"></pre>
+    <p style="margin-bottom:0">Усі сторінки лежать в одній папці, тому посилання між ними — просто назва файлу. Зображення зберігаємо в підпапці <code>images</code>.</p>
+  </div>
+  <div class="card"><h3>Перевір себе</h3><div class="quiz" data-quiz="paths"></div></div>
+</section>
+
+<!-- 4. Списки -->
+<section class="panel" id="p1-4" data-title="Списки" data-icon="📋" data-part="1" data-time="6">
+  <div class="panel-head"><span class="badge">Урок 8 · Теорія</span><h2>Списки: ul, ol, li</h2><span class="time">⏱ 6 хв</span></div>
+  <div class="card">
+    <div class="tablewrap"><table>
+      <tr><th>Тег</th><th>Призначення</th></tr>
+      <tr><td><code>&lt;ul&gt;</code></td><td>маркований список (порядок пунктів неважливий)</td></tr>
+      <tr><td><code>&lt;ol&gt;</code></td><td>нумерований список (порядок важливий: кроки, рейтинг)</td></tr>
+      <tr><td><code>&lt;li&gt;</code></td><td>окремий пункт списку; розміщується <b>лише всередині</b> <code>ul</code> або <code>ol</code></td></tr>
+    </table></div>
+  </div>
+  <div class="card ex" data-ex="ul_ex"></div>
+  <div class="card ex" data-ex="ol_ex"></div>
+  <div class="card ex" data-ex="nested_ex"></div>
+  <div class="card ex" data-ex="navlist_ex"></div>
+  <div class="card">
+    <h3>🔧 Конструктор списку</h3>
+    <p>Обери тип списку й впиши пункти — кожен з нового рядка.</p>
+    <div class="lab">
+      <div>
+        <div class="seg" id="lbSeg"><button type="button" data-t="ul" class="on">Маркований (ul)</button><button type="button" data-t="ol">Нумерований (ol)</button></div>
+        <textarea class="csstxt" id="lbText" spellcheck="false" aria-label="Пункти списку" style="min-height:140px"></textarea>
+      </div>
+      <div>
+        <p class="mini">Код</p><pre class="code" id="lbCode" data-copy></pre>
+        <p class="mini">Результат</p><iframe class="frame s" id="lbFrame" title="Результат списку" sandbox></iframe>
+      </div>
+    </div>
+  </div>
+  <div class="card"><h3>Який тег потрібен? Обери для кожного списку</h3><div class="quiz" data-quiz="listq"></div></div>
+</section>
+
+<!-- 5. Таблиці -->
+<section class="panel" id="p1-5" data-title="Таблиці" data-icon="📊" data-part="1" data-time="8">
+  <div class="panel-head"><span class="badge">Урок 8 · Теорія</span><h2>Створення таблиць</h2><span class="time">⏱ 8 хв</span></div>
+  <div class="card">
+    <p>Таблиця — це спосіб подати дані, які зручно порівнювати за рядками та стовпцями (розклад, характеристики, результати).</p>
+    <div class="tablewrap"><table>
+      <tr><th>Тег</th><th>Призначення</th></tr>
+      <tr><td><code>&lt;table&gt;</code></td><td>таблиця (контейнер)</td></tr>
+      <tr><td><code>&lt;caption&gt;</code></td><td>назва таблиці; розміщується одразу після <code>&lt;table&gt;</code></td></tr>
+      <tr><td><code>&lt;tr&gt;</code></td><td>рядок таблиці (table row)</td></tr>
+      <tr><td><code>&lt;th&gt;</code></td><td>заголовкова комірка (table header)</td></tr>
+      <tr><td><code>&lt;td&gt;</code></td><td>комірка з даними (table data)</td></tr>
+    </table></div>
+  </div>
+  <div class="card ex" data-ex="table_ex" data-h="230"></div>
+  <div class="card">
+    <h3>🖱 Клікабельна таблиця</h3>
+    <p>Натискай на частини таблиці — побачиш, який тег їх створює. Або обери тег нижче, щоб підсвітити всі такі елементи.</p>
+    <table class="demo-table" id="demoTable" data-tag="table">
+      <caption data-tag="caption">Мій розклад</caption>
+      <tr data-tag="tr"><th data-tag="th">День</th><th data-tag="th">Заняття</th></tr>
+      <tr data-tag="tr"><td data-tag="td">Понеділок</td><td data-tag="td">Програмування</td></tr>
+      <tr data-tag="tr"><td data-tag="td">Середа</td><td data-tag="td">Інформатика</td></tr>
+    </table>
+    <div class="chips" id="tblChips"></div>
+    <div class="callout info" id="tblInfo">Обери частину таблиці або тег.</div>
+  </div>
+  <div class="card">
+    <h3>🔧 Конструктор таблиці</h3>
+    <div class="inrow" style="margin-bottom:10px">
+      <label>Рядків з даними <select id="tbRows" aria-label="Рядків з даними"></select></label>
+      <label>Стовпців <select id="tbCols" aria-label="Стовпців"></select></label>
+      <label><input type="checkbox" id="tbHead" checked> рядок заголовків</label>
+      <input type="text" id="tbCap" value="Назва таблиці" aria-label="Назва таблиці" maxlength="60">
+    </div>
+    <div class="lab">
+      <div><p class="mini">Код</p><pre class="code" id="tbCode" data-copy style="max-height:340px"></pre></div>
+      <div><p class="mini">Результат</p><iframe class="frame" id="tbFrame" title="Результат таблиці" sandbox></iframe></div>
+    </div>
+    <div class="callout">Рамки у прикладах додано лише для наочності: без CSS браузер малює таблицю без рамок. Оформлення налаштовуватимемо за допомогою CSS на наступних уроках.</div>
+    <details class="card" style="box-shadow:none;background:var(--bg);margin:8px 0 0"><summary>Додатково: об’єднання комірок</summary>
+      <p>Атрибут <code>colspan="2"</code> розтягує комірку на два стовпці:</p>
+      <pre class="code" data-code="colspan_ex"></pre>
+    </details>
+  </div>
+  <div class="card"><h3>Який тег за що відповідає?</h3><div class="quiz" data-quiz="table"></div></div>
+</section>
+
+<!-- 6. Семантика -->
+<section class="panel" id="p1-6" data-title="Семантичні елементи" data-icon="🏛️" data-part="1" data-time="5">
+  <div class="panel-head"><span class="badge">Урок 8 · Теорія</span><h2>Семантичні елементи: структура сторінки</h2><span class="time">⏱ 5 хв</span></div>
+  <div class="card">
+    <p>Семантичні елементи пояснюють <b>роль</b> частини сторінки — і людині, яка читає код, і браузеру, і пошуковим системам. Натискай на області схеми.</p>
+    <div class="lab">
+      <div class="schema" id="schema">
+        <div class="sc" data-sem="header" tabindex="0" role="button">&lt;header&gt;</div>
+        <div class="sc" data-sem="nav" tabindex="0" role="button">&lt;nav&gt;</div>
+        <div class="sc" data-sem="main" tabindex="0" role="button">&lt;main&gt;
+          <div class="sc-row">
+            <div class="sc" data-sem="section" tabindex="0" role="button">&lt;section&gt;</div>
+            <div class="sc" data-sem="article" tabindex="0" role="button">&lt;article&gt;</div>
+          </div>
+        </div>
+        <div class="sc" data-sem="footer" tabindex="0" role="button">&lt;footer&gt;</div>
+      </div>
+      <div>
+        <div class="callout info" id="semInfo"><b>Обери область схеми</b> — тут з’явиться назва елемента та його призначення.</div>
+        <pre class="code" id="semCode"></pre>
+      </div>
+    </div>
+  </div>
+  <div class="card"><h3>Перевір себе</h3><div class="quiz" data-quiz="sem"></div></div>
+</section>
+
+<!-- 7. Сайт із кількох сторінок -->
+<section class="panel" id="p1-7" data-title="Сайт із кількох сторінок" data-icon="🌐" data-part="1" data-time="4">
+  <div class="panel-head"><span class="badge">Урок 8 · Теорія</span><h2>Сайт із кількох сторінок</h2><span class="time">⏱ 4 хв</span></div>
+  <div class="card">
+    <p>Сайт — це кілька HTML-файлів, з’єднаних посиланнями. Натискай на пункти меню у «браузері» та дивись, як змінюється сторінка, а під ним — її код.</p>
+    <div class="browser">
+      <div class="bbar"><span class="dots"><i></i><i></i><i></i></span><span class="addr" id="bAddr">index.html</span></div>
+      <div class="bview" id="bView"></div>
+    </div>
+    <p class="mini">Код цієї сторінки (без head)</p>
+    <pre class="code" id="bCode" style="max-height:300px"></pre>
+  </div>
+  <div class="grid2">
+    <div class="card">
+      <h3>Правила багатосторінкового сайту</h3>
+      <ul class="check">
+        <li>кожна сторінка — окремий файл <code>.html</code> у папці проєкту;</li>
+        <li>однакова структура: <code>header</code>, <code>nav</code>, <code>main</code>, <code>footer</code>;</li>
+        <li>меню <code>nav</code> однакове на всіх сторінках;</li>
+        <li>на кожній сторінці власні <code>&lt;title&gt;</code> і <code>&lt;h1&gt;</code>;</li>
+        <li>нову сторінку зручно створити копією <code>index.html</code>.</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h3>Наш сайт на уроці 9</h3>
+      <pre class="code" data-code="tree_goal"></pre>
+    </div>
+  </div>
+  <div class="card"><h3>Перевір себе</h3><div class="quiz" data-quiz="site"></div></div>
+</section>
+
+<!-- 8. Знайди помилку -->
+<section class="panel" id="p1-8" data-title="Знайди помилку" data-icon="🔍" data-part="1" data-time="5">
+  <div class="panel-head"><span class="badge">Урок 8 · Теорія</span><h2>Знайди помилку в коді</h2><span class="time">⏱ 5 хв</span></div>
+  <div class="card">
+    <p>Прочитай фрагмент і <b>натисни на рядок із помилкою</b>. Після відповіді з’явиться пояснення та правильний код.</p>
+    <div class="find" data-find="errors"></div>
+  </div>
+</section>
+
+<!-- 9. Підсумковий тест -->
+<section class="panel" id="p1-9" data-title="Перевір себе" data-icon="✅" data-part="1" data-time="5">
+  <div class="panel-head"><span class="badge">Урок 8 · Теорія</span><h2>Підсумковий тест до уроку 8</h2><span class="time">⏱ 5 хв</span></div>
+  <div class="card">
+    <p>10 запитань, по 4 варіанти відповіді, одна правильна. Відповідь перевіряється одразу, після неї — коротке пояснення.</p>
+    <div class="quiz" data-quiz="final"></div>
+  </div>
+</section>
+
+<!-- ====================== УРОК 9 ====================== -->
+<!-- Мета й тема -->
+<section class="panel" id="p2-1" data-title="Мета й тема" data-icon="🧭" data-part="2" data-time="5">
+  <div class="panel-head"><span class="badge p2">Урок 9 · Практична робота № 3</span><h2>Створення структурованої вебсторінки засобами HTML</h2><span class="time">⏱ 5 хв</span></div>
+  <div class="card tint">
+    <h3>Мета</h3>
+    <p style="margin-bottom:0">На основі власного проєкту «Мій сайт: від ідеї до вебсторінки» створити сайт із кількох сторінок: оновити головну, створити сторінки «Про сайт» та «Корисна інформація», додати списки й таблицю та перевірити зображення й посилання.</p>
+  </div>
+  <div class="grid2">
+    <div class="card">
+      <h3>Що потрібно мати</h3>
+      <ul class="check">
+        <li>папку <code>my-site</code> з файлом <code>index.html</code> із практичної роботи 1;</li>
+        <li>зображення, підготовлені до уроку 7 (папка <code>images</code>);</li>
+        <li>відкритий проєкт у VS Code та браузер.</li>
+      </ul>
+      <div class="callout"><b>Порада:</b> після кожної зміни зберігай файл (<code>Ctrl + S</code>) і оновлюй сторінку в браузері (<code>F5</code>).</div>
+    </div>
+    <div class="card">
+      <h3>Структура проєкту після уроку</h3>
+      <pre class="code" data-code="tree_goal"></pre>
+      <p style="margin-bottom:0">Оформлення (кольори, шрифти, відступи) додамо пізніше за допомогою CSS.</p>
+    </div>
+  </div>
+  <div class="card">
+    <h3>💡 Підказки для наповнення — обери свою тему</h3>
+    <p>Якщо не знаєш, що написати у списку чи таблиці, скористайся зразком. Замінюй його власним змістом!</p>
+    <div class="chips" id="thChips"></div>
+    <p><b>Назва сайту:</b> <span id="thName"></span></p>
+    <div class="grid2">
+      <div><p class="mini">Список для головної (index.html)</p><pre class="code" id="thList" data-copy></pre></div>
+      <div><p class="mini">Таблиця для info.html</p><pre class="code" id="thTable" data-copy style="max-height:320px"></pre></div>
+    </div>
+  </div>
+</section>
+
+<!-- Пам’ятка -->
+<section class="panel" id="p2-2" data-title="Пам’ятка" data-icon="📌" data-part="2" data-time="3">
+  <div class="panel-head"><span class="badge p2">Урок 9 · Практична робота № 3</span><h2>Пам’ятка: теги, які знадобляться</h2><span class="time">⏱ 3 хв</span></div>
+  <div class="grid2">
+    <div class="card">
+      <h3>Текст</h3>
+      <div class="tablewrap"><table>
+        <tr><td><code>&lt;h1&gt;</code>–<code>&lt;h6&gt;</code></td><td>заголовки</td></tr>
+        <tr><td><code>&lt;p&gt;</code></td><td>абзац</td></tr>
+        <tr><td><code>&lt;strong&gt;</code></td><td>важливий текст</td></tr>
+        <tr><td><code>&lt;em&gt;</code></td><td>логічний наголос</td></tr>
+      </table></div>
+    </div>
+    <div class="card">
+      <h3>Списки</h3>
+      <div class="tablewrap"><table>
+        <tr><td><code>&lt;ul&gt;</code></td><td>маркований список</td></tr>
+        <tr><td><code>&lt;ol&gt;</code></td><td>нумерований список</td></tr>
+        <tr><td><code>&lt;li&gt;</code></td><td>пункт списку</td></tr>
+      </table></div>
+    </div>
+    <div class="card">
+      <h3>Таблиці</h3>
+      <div class="tablewrap"><table>
+        <tr><td><code>&lt;table&gt;</code></td><td>таблиця</td></tr>
+        <tr><td><code>&lt;caption&gt;</code></td><td>назва таблиці</td></tr>
+        <tr><td><code>&lt;tr&gt;</code></td><td>рядок</td></tr>
+        <tr><td><code>&lt;th&gt;</code></td><td>заголовкова комірка</td></tr>
+        <tr><td><code>&lt;td&gt;</code></td><td>комірка з даними</td></tr>
+      </table></div>
+    </div>
+    <div class="card">
+      <h3>Структура та посилання</h3>
+      <div class="tablewrap"><table>
+        <tr><td><code>header</code>, <code>nav</code>, <code>main</code>, <code>footer</code></td><td>основні частини сторінки</td></tr>
+        <tr><td><code>section</code>, <code>article</code></td><td>розділ; самостійний матеріал</td></tr>
+        <tr><td><code>&lt;a href&gt;</code></td><td>посилання</td></tr>
+        <tr><td><code>&lt;img src alt&gt;</code></td><td>зображення</td></tr>
+      </table></div>
+    </div>
+  </div>
+  <div class="card teal">
+    <h3>Поради перед перевіркою</h3>
+    <ul class="check">
+      <li>кожен відкритий тег має закривальний (крім порожніх елементів);</li>
+      <li>елементи <code>li</code> розміщуються всередині <code>ul</code> або <code>ol</code>;</li>
+      <li>рядки та комірки <code>tr</code>, <code>th</code>, <code>td</code> розміщуються всередині <code>table</code>, а <code>th</code> і <code>td</code> — всередині <code>tr</code>;</li>
+      <li>перевір написання тегів і вкладеність; збережи файл і онови сторінку в браузері.</li>
+    </ul>
+  </div>
+</section>
+
+<!-- Завдання 1 -->
+<section class="panel" id="p2-3" data-title="Завдання 1: index.html" data-icon="🏠" data-part="2" data-time="7">
+  <div class="panel-head"><span class="badge p2">Урок 9 · Практична робота № 3</span><h2>Завдання 1. Оновіть головну сторінку index.html</h2><span class="time">⏱ 7 хв</span></div>
+  <div class="card">
+    <ol>
+      <li>Відкрий <code>my-site/index.html</code> у VS Code.</li>
+      <li>Перевір каркас: <code>DOCTYPE</code>, <code>&lt;html lang="uk"&gt;</code>, <code>meta</code>, <code>title</code> (назва твого сайту), блоки <code>header</code>, <code>nav</code>, <code>main</code>, <code>footer</code>.</li>
+      <li>Заміни меню <code>nav</code> на список із трьох посилань. Сторінок <code>about.html</code> та <code>info.html</code> ще немає — ми створимо їх далі:</li>
+    </ol>
+    <pre class="code" data-code="p2_nav" data-copy></pre>
+    <ol start="4">
+      <li>У <code>main</code> залиш (або створи) два розділи: вступ із 2–3 реченнями та зображенням, а також розділ зі списком щонайменше з трьох пунктів:</li>
+    </ol>
+    <pre class="code" data-code="p2_index_main" data-copy></pre>
+    <div class="callout info">Список меню матиме маркери — так і має бути. Прибирати їх і розташовувати пункти в рядок ми навчимося за допомогою CSS.</div>
+    <label class="step"><input type="checkbox" class="chk" data-k="t1"> Завдання 1 виконано</label>
+  </div>
+</section>
+
+<!-- Завдання 2 -->
+<section class="panel" id="p2-4" data-title="Завдання 2: about.html" data-icon="👤" data-part="2" data-time="8">
+  <div class="panel-head"><span class="badge p2">Урок 9 · Практична робота № 3</span><h2>Завдання 2. Створіть сторінку «Про сайт» (about.html)</h2><span class="time">⏱ 8 хв</span></div>
+  <div class="card">
+    <ol>
+      <li>У VS Code зроби копію <code>index.html</code>: у панелі файлів натисни <code>Ctrl + C</code>, потім <code>Ctrl + V</code>, перейменуй копію на <code>about.html</code>. (Або <b>File → Save As…</b>.)</li>
+      <li>Зміни <code>&lt;title&gt;</code>, наприклад: «Про сайт — Назва сайту». Шапку <code>header</code>, меню <code>nav</code> і підвал <code>footer</code> залиш без змін.</li>
+      <li>Заміни вміст <code>&lt;main&gt;</code>:</li>
+    </ol>
+    <pre class="code" data-code="p2_about_main" data-copy></pre>
+    <ol start="4">
+      <li>Заміни крапки на власний текст. Одне важливе слово виділи тегом <code>&lt;strong&gt;</code>.</li>
+    </ol>
+    <div class="callout"><b>Чому <code>article</code>?</b> Це самостійний матеріал — розповідь про сайт має сенс і без решти сторінки. А «Про автора» — тематичний розділ, тож тут <code>section</code>.</div>
+    <label class="step"><input type="checkbox" class="chk" data-k="t2"> Завдання 2 виконано</label>
+  </div>
+</section>
+
+<!-- Завдання 3 -->
+<section class="panel" id="p2-5" data-title="Завдання 3: info.html" data-icon="📊" data-part="2" data-time="10">
+  <div class="panel-head"><span class="badge p2">Урок 9 · Практична робота № 3</span><h2>Завдання 3. Створіть сторінку з таблицею (info.html)</h2><span class="time">⏱ 10 хв</span></div>
+  <div class="card">
+    <ol>
+      <li>Знову скопіюй <code>index.html</code> і назви копію <code>info.html</code>.</li>
+      <li>Зміни <code>&lt;title&gt;</code> («Корисна інформація — Назва сайту»). Шапку, меню й підвал залиш.</li>
+      <li>Заміни вміст <code>&lt;main&gt;</code> таким шаблоном:</li>
+    </ol>
+    <pre class="code" data-code="p2_info_main" data-copy style="max-height:420px"></pre>
+    <ol start="4">
+      <li>Заміни назву таблиці, заголовки стовпців і дані на свої за обраною темою (ідеї — у розділі «Мета й тема»).</li>
+      <li>У таблиці має бути <b>назва</b>, <b>заголовки</b> та <b>щонайменше три рядки з даними</b>.</li>
+    </ol>
+    <div class="callout info">Без CSS таблиця відображається без рамок — це нормально. Головне, щоб дані стояли у своїх рядках і стовпцях.</div>
+    <label class="step"><input type="checkbox" class="chk" data-k="t3"> Завдання 3 виконано</label>
+  </div>
+</section>
+
+<!-- Завдання 4 -->
+<section class="panel" id="p2-6" data-title="Завдання 4: зв’язки між сторінками" data-icon="🔗" data-part="2" data-time="4">
+  <div class="panel-head"><span class="badge p2">Урок 9 · Практична робота № 3</span><h2>Завдання 4. З’єднайте сторінки та перевірте зображення</h2><span class="time">⏱ 4 хв</span></div>
+  <div class="card">
+    <ol>
+      <li>Переконайся, що меню <code>nav</code> із трьома посиланнями однакове на <b>всіх трьох</b> сторінках.</li>
+      <li>Додай у підвал посилання на головну:</li></ol>
+    <pre class="code" data-code="p2_footer" data-copy></pre>
+    <ol start="3">
+      <li>Додай зображення з <code>alt</code> хоча б на одну сторінку, крім головної (папка <code>images</code>, шлях <code>images/назва.jpg</code>).</li>
+      <li>Відкрий <code>index.html</code> у браузері та пройди всіма посиланнями: Головна → Про сайт → Корисна інформація → Головна.</li>
+    </ol>
+    <details class="card" style="box-shadow:none;background:var(--bg)">
+      <summary>Щось не працює? Перевір це</summary>
+      <ul class="check">
+        <li><b>Посилання не відкривається:</b> назва файлу в <code>href</code> збігається з назвою файлу (з розширенням <code>.html</code>), файл лежить в тій самій папці.</li>
+        <li><b>Немає зображення:</b> шлях і розширення (<code>.jpg</code>, <code>.png</code>, <code>.webp</code>) збігаються з файлом у папці <code>images</code>.</li>
+        <li><b>Список виглядає як звичайний текст:</b> кожен пункт у <code>&lt;li&gt;</code>, а всі пункти — в <code>&lt;ul&gt;</code> або <code>&lt;ol&gt;</code>.</li>
+        <li><b>Таблиця «розсипалась»:</b> комірки <code>td</code>/<code>th</code> мають бути всередині <code>&lt;tr&gt;</code>, а рядки — всередині <code>&lt;table&gt;</code>.</li>
+        <li><b>Зміни не видно:</b> збережи файл (<code>Ctrl + S</code>) і онови сторінку (<code>F5</code>).</li>
+      </ul>
+    </details>
+    <label class="step"><input type="checkbox" class="chk" data-k="t4"> Завдання 4 виконано</label>
+  </div>
+</section>
+
+<!-- Перевірка HTML -->
+<section class="panel" id="p2-7" data-title="Перевірка HTML" data-icon="🧪" data-part="2" data-time="5">
+  <div class="panel-head"><span class="badge p2">Урок 9 · Практична робота № 3</span><h2>Перевір код своєї сторінки</h2><span class="time">⏱ 5 хв</span></div>
+  <div class="card">
+    <p>Обери, яку сторінку перевіряєш, встав її код із VS Code (<code>Ctrl + A</code>, <code>Ctrl + C</code>) та натисни «Перевірити». Перевірка знайде незакриті теги, неправильну вкладеність і відсутні елементи.</p>
+    <div class="inrow" style="margin-bottom:8px">
+      <label>Сторінка:
+        <select id="chkType" aria-label="Яку сторінку перевіряємо">
+          <option value="index">Головна (index.html)</option>
+          <option value="about">Про сайт (about.html)</option>
+          <option value="info">Корисна інформація (info.html)</option>
+        </select>
+      </label>
+    </div>
+    <div class="grid2">
+      <div>
+        <textarea class="csstxt" id="chkInput" spellcheck="false" aria-label="Код HTML-сторінки" style="min-height:300px" placeholder="Вставте сюди код сторінки"></textarea>
+        <div class="inrow" style="margin-top:8px">
+          <button class="btn primary" id="chkBtn" type="button">✔ Перевірити</button>
+          <button class="btn" id="chkSample" type="button">Вставити зразок</button>
+          <button class="btn" id="chkClear" type="button">Очистити</button>
+        </div>
+      </div>
+      <div>
+        <p class="mini">Попередній перегляд (посилання тут не активні)</p>
+        <iframe class="frame tall" id="chkFrame" title="Попередній перегляд сторінки" sandbox></iframe>
+      </div>
+    </div>
+    <div id="chkOut"></div>
+  </div>
+</section>
+
+<!-- Чекліст -->
+<section class="panel" id="p2-8" data-title="Чекліст і домашнє" data-icon="📋" data-part="2" data-time="3">
+  <div class="panel-head"><span class="badge p2">Урок 9 · Практична робота № 3</span><h2>Самоперевірка та домашнє завдання</h2><span class="time">⏱ 3 хв</span></div>
+  <div class="card">
+    <h3>Чекліст самоперевірки</h3>
+    <p>Виконано: <b id="chkCount">0 з 0</b> (разом із завданнями 1–4)</p>
+    <div class="bar" style="margin-bottom:8px"><i id="chkFill"></i></div>
+    <ul class="checklist">
+      <li><label><input type="checkbox" class="chk" data-k="c1"> На сторінках є логічні заголовки й абзаци.</label></li>
+      <li><label><input type="checkbox" class="chk" data-k="c2"> Додано список щонайменше з трьох пунктів.</label></li>
+      <li><label><input type="checkbox" class="chk" data-k="c3"> Додано таблицю з назвою, заголовками та даними.</label></li>
+      <li><label><input type="checkbox" class="chk" data-k="c4"> Сторінки відкриваються в браузері без помітних помилок.</label></li>
+      <li><label><input type="checkbox" class="chk" data-k="c5"> Зображення й гіперпосилання з попередньої роботи працюють.</label></li>
+      <li><label><input type="checkbox" class="chk" data-k="c6"> Створено три сторінки: <code>index.html</code>, <code>about.html</code>, <code>info.html</code>.</label></li>
+      <li><label><input type="checkbox" class="chk" data-k="c7"> У меню на кожній сторінці працюють усі три посилання.</label></li>
+      <li><label><input type="checkbox" class="chk" data-k="c8"> Кожна сторінка має власні <code>&lt;title&gt;</code> і <code>&lt;h1&gt;</code>.</label></li>
+      <li><label><input type="checkbox" class="chk" data-k="c9"> Усі файли збережено в одній папці <code>my-site</code>.</label></li>
+    </ul>
+  </div>
+  <div class="grid2">
+    <div class="card">
+      <h3>Додаткові завдання</h3>
+      <ul class="check">
+        <li>Додай у розділ вкладений список (список у <code>li</code>).</li>
+        <li>Розділи сторінки відокрем тегом <code>&lt;hr&gt;</code>, а в адресі чи вірші використай <code>&lt;br&gt;</code>.</li>
+        <li>Об’єднай дві комірки заголовка таблиці атрибутом <code>colspan="2"</code>.</li>
+        <li>Додай посилання на розділ сторінки: <code>&lt;a href="#contacts"&gt;</code> та <code>id="contacts"</code>.</li>
+        <li>Додай третій матеріал <code>&lt;article&gt;</code> на одну зі сторінок.</li>
+      </ul>
+    </div>
+    <div class="card teal">
+      <h3>Домашнє завдання</h3>
+      <ol>
+        <li>Заверши наповнення всіх трьох сторінок: щонайменше два абзаци на кожній.</li>
+        <li>Перевір код у розділі «Перевірка HTML» і виправ помилки.</li>
+        <li>Підготуй ще 1–2 зображення для сайту та запиши джерело, звідки вони.</li>
+        <li>Наступного разу оформлятимемо сайт за допомогою CSS — принеси проєкт у папці <code>my-site</code>.</li>
+      </ol>
+    </div>
+  </div>
+  <div class="card">
+    <h3>Запитання для самоперевірки</h3>
+    <details class="card" style="box-shadow:none;background:var(--bg);margin-bottom:8px"><summary>1. Чим відрізняються ul та ol?</summary><p style="margin:0"><code>ul</code> — маркований список (порядок неважливий), <code>ol</code> — нумерований (порядок важливий).</p></details>
+    <details class="card" style="box-shadow:none;background:var(--bg);margin-bottom:8px"><summary>2. Для чого потрібен тег li?</summary><p style="margin:0">Створює окремий пункт списку; розташовується лише всередині <code>ul</code> або <code>ol</code>.</p></details>
+    <details class="card" style="box-shadow:none;background:var(--bg);margin-bottom:8px"><summary>3. Яку роль виконують tr, th і td?</summary><p style="margin:0"><code>tr</code> — рядок таблиці, <code>th</code> — заголовкова комірка, <code>td</code> — комірка з даними.</p></details>
+    <details class="card" style="box-shadow:none;background:var(--bg);margin-bottom:0"><summary>4. Чим семантичні елементи корисні для структури сторінки?</summary><p style="margin:0">Вони показують роль частин сторінки (шапка, меню, основний вміст, підвал), роблять код зрозумілішим і допомагають браузерам та пошуковим системам.</p></details>
+  </div>
+</section>
+
+<!-- ====================== ПІДСУМОК ====================== -->
+<section class="panel" id="finish" data-title="Підсумок" data-icon="🏁" data-part="end">
+  <div class="panel-head"><span class="badge">Підсумок уроків</span><h2>Завершення</h2></div>
+  <div class="card tint">
+    <p class="final-msg">🎉 Вітаємо! Ти повторив основні HTML-елементи та навчився створювати структурований вміст вебсторінки.</p>
+    <p id="finishHint" class="callout" style="display:none">Деякі розділи ще не пройдено — повернись до них із меню, щоб урок був повним.</p>
+  </div>
+  <div class="card">
+    <h3>Твої результати</h3>
+    <ul class="sum-list" id="sumList"></ul>
+    <div style="display:flex;flex-wrap:wrap;gap:10px;margin-top:12px">
+      <button class="btn primary" id="backMenu" type="button">↩ Повернутися до меню</button>
+      <button class="btn" id="resetBtn2" type="button">↺ Почати спочатку</button>
+    </div>
+  </div>
+</section>
+
+    </main>
+
+    <footer class="navbar">
+      <button class="btn" id="prevBtn" type="button">← Назад</button>
+      <span class="info" id="navInfo"></span>
+      <button class="btn primary" id="nextBtn" type="button">Далі →</button>
+    </footer>
+  </div>
+</div>
+
+<script>
+(function(){
+'use strict';
+
+/* ================= helpers ================= */
+const $  = (s,r)=> (r||document).querySelector(s);
+const $$ = (s,r)=> Array.from((r||document).querySelectorAll(s));
+function h(tag,cls,text){const e=document.createElement(tag); if(cls) e.className=cls; if(text!=null) e.textContent=text; return e;}
+function shuffle(a){const r=a.slice(); for(let i=r.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1)); const t=r[i]; r[i]=r[j]; r[j]=t;} return r;}
+
+/* ================= state ================= */
+const KEY='lesson8-9-html-v1';
+let state={visited:{},scores:{},checks:{}};
+try{
+  const s=JSON.parse(localStorage.getItem(KEY));
+  if(s && typeof s==='object'){state.visited=s.visited||{}; state.scores=s.scores||{}; state.checks=s.checks||{};}
+}catch(e){}
+function save(){try{localStorage.setItem(KEY,JSON.stringify(state));}catch(e){}}
+
+/* ================= preview helpers ================= */
+const MINI_CSS='body{font-family:Arial,sans-serif;margin:12px;color:#23204a;line-height:1.5}table,th,td{border:1px solid #9a94c9;border-collapse:collapse}th,td{padding:6px 10px;text-align:left}th{background:#efebff}caption{font-weight:bold;margin-bottom:6px;text-align:left}img{max-width:100%;height:auto}hr{border:0;border-top:1px solid #9a94c9}';
+function buildDoc(body,css){
+  return '<!DOCTYPE html><html lang="uk"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><style>'+css+'</style></head><body>'+body+'</body></html>';
+}
+function miniDoc(body){return buildDoc(body,MINI_CSS);}
+const IMG_SVG='<svg xmlns="http://www.w3.org/2000/svg" width="800" height="320" viewBox="0 0 800 320"><rect width="800" height="320" fill="#cfe3ff"/><circle cx="660" cy="70" r="36" fill="#ffd166"/><polygon points="0,320 180,90 330,320" fill="#6d4aff"/><polygon points="200,320 420,60 640,320" fill="#4f33d6"/><polygon points="460,320 650,140 800,320" fill="#0fb5a3"/></svg>';
+const IMG='data:image/svg+xml;utf8,'+encodeURIComponent(IMG_SVG);
+function esc(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+
+/* ================= code samples ================= */
+const NAV_HTML=
+`<nav>
+  <ul>
+    <li><a href="index.html">Головна</a></li>
+    <li><a href="about.html">Про сайт</a></li>
+    <li><a href="info.html">Корисна інформація</a></li>
+  </ul>
+</nav>`;
+const FOOTER_HTML=
+`<footer>
+  <p><a href="index.html">На головну</a></p>
+  <p>Навчальний проєкт. 11 клас.</p>
+</footer>`;
+const INDEX_MAIN=
+`<main>
+  <section>
+    <h2>Вступ до теми</h2>
+    <p>Напиши 2–3 речення про обрану тему.</p>
+    <img src="images/photo.jpg" alt="Опис зображення">
+  </section>
+  <section>
+    <h2>Що ви знайдете на сайті</h2>
+    <ul>
+      <li>Перший пункт</li>
+      <li>Другий пункт</li>
+      <li>Третій пункт</li>
+    </ul>
+  </section>
+</main>`;
+const ABOUT_MAIN=
+`<main>
+  <article>
+    <h2>Про сайт</h2>
+    <p>Цей сайт створено для ... Він розповідає про ...</p>
+    <h3>Мета сайту</h3>
+    <ol>
+      <li>Розповісти про ...</li>
+      <li>Показати ...</li>
+      <li>Допомогти ...</li>
+    </ol>
+  </article>
+  <section>
+    <h2>Про автора</h2>
+    <p>Мене звати ... Я навчаюся в ... класі.</p>
+  </section>
+</main>`;
+const INFO_MAIN=
+`<main>
+  <section>
+    <h2>Корисна інформація</h2>
+    <p>У таблиці зібрано ...</p>
+    <table>
+      <caption>Назва таблиці</caption>
+      <tr>
+        <th>Назва</th>
+        <th>Категорія</th>
+        <th>Опис</th>
+      </tr>
+      <tr>
+        <td>Приклад 1</td>
+        <td>Категорія А</td>
+        <td>Короткий опис</td>
+      </tr>
+      <tr>
+        <td>Приклад 2</td>
+        <td>Категорія Б</td>
+        <td>Короткий опис</td>
+      </tr>
+      <tr>
+        <td>Приклад 3</td>
+        <td>Категорія А</td>
+        <td>Короткий опис</td>
+      </tr>
+    </table>
+  </section>
+  <section>
+    <h2>Поради</h2>
+    <ol>
+      <li>Перша порада</li>
+      <li>Друга порада</li>
+      <li>Третя порада</li>
+    </ol>
+  </section>
+</main>`;
+function fullPage(title,h1,desc,main){
+  return '<!DOCTYPE html>\n<html lang="uk">\n<head>\n  <meta charset="UTF-8">\n  <meta name="viewport" content="width=device-width, initial-scale=1.0">\n  <title>'+title+'</title>\n</head>\n<body>\n'+
+  '  <header>\n    <h1>'+h1+'</h1>\n    <p>'+desc+'</p>\n  </header>\n'+
+  indent(NAV_HTML,2)+'\n'+indent(main_(main),2)+'\n'+indent(FOOTER_HTML,2)+'\n</body>\n</html>';
+}
+function indent(s,n){const p=' '.repeat(n); return s.split('\n').map(l=>p+l).join('\n');}
+function main_(m){return m;}
+const S_INDEX_MAIN=
+`<main>
+  <section>
+    <h2>Вступ до теми</h2>
+    <p>В Україні є гори, степи, ліси та морське узбережжя. Тут багато місць, які варто побачити.</p>
+    <img src="images/photo.jpg" alt="Гірський краєвид">
+  </section>
+  <section>
+    <h2>Що ви знайдете на сайті</h2>
+    <ul>
+      <li>Розповідь про цікаві місця</li>
+      <li>Таблицю з коротким описом</li>
+      <li>Поради для мандрівників</li>
+    </ul>
+  </section>
+</main>`;
+const S_ABOUT_MAIN=
+`<main>
+  <article>
+    <h2>Про сайт</h2>
+    <p>Цей сайт створено для тих, хто любить подорожувати. Він розповідає про <strong>цікаві місця</strong> України.</p>
+    <h3>Мета сайту</h3>
+    <ol>
+      <li>Розповісти про природу та пам’ятки</li>
+      <li>Показати цікаві факти</li>
+      <li>Допомогти спланувати мандрівку</li>
+    </ol>
+  </article>
+  <section>
+    <h2>Про автора</h2>
+    <p>Мене звати Олена. Я навчаюся в 11 класі й люблю фотографувати природу.</p>
+  </section>
+</main>`;
+const S_INFO_MAIN=
+`<main>
+  <section>
+    <h2>Корисна інформація</h2>
+    <p>У таблиці зібрано кілька цікавих місць України.</p>
+    <table>
+      <caption>Цікаві місця України</caption>
+      <tr>
+        <th>Місце</th>
+        <th>Область</th>
+        <th>Чим відоме</th>
+      </tr>
+      <tr>
+        <td>Говерла</td>
+        <td>Івано-Франківська</td>
+        <td>Найвища вершина України</td>
+      </tr>
+      <tr>
+        <td>Кам’янець-Подільський</td>
+        <td>Хмельницька</td>
+        <td>Старовинна фортеця</td>
+      </tr>
+      <tr>
+        <td>Хортиця</td>
+        <td>Запорізька</td>
+        <td>Найбільший острів на Дніпрі</td>
+      </tr>
+    </table>
+  </section>
+  <section>
+    <h2>Поради мандрівникам</h2>
+    <ol>
+      <li>Заздалегідь сплануйте маршрут</li>
+      <li>Візьміть зручне взуття</li>
+      <li>Не залишайте після себе сміття</li>
+    </ol>
+  </section>
+</main>`;
+const SAMPLE_INDEX=fullPage('Мандруємо Україною','Мандруємо Україною','Сайт для тих, хто любить подорожувати рідним краєм.',S_INDEX_MAIN);
+const SAMPLE_ABOUT=fullPage('Про сайт — Мандруємо Україною','Мандруємо Україною','Сайт для тих, хто любить подорожувати рідним краєм.',S_ABOUT_MAIN);
+const SAMPLE_INFO=fullPage('Корисна інформація — Мандруємо Україною','Мандруємо Україною','Сайт для тих, хто любить подорожувати рідним краєм.',S_INFO_MAIN);
+
+const CODE={
+  recall_doc:
+`<!DOCTYPE html>
+<html lang="uk">
+<head>
+  <meta charset="UTF-8">
+  <title>Мій сайт</title>
+</head>
+<body>
+  <h1>Привіт!</h1>
+</body>
+</html>`,
+  img_ex:`<img src="images/photo.jpg" alt="Гірський краєвид">`,
+  a_ex:`<a href="about.html">Про сайт</a>`,
+  tree_now:
+`my-site/
+├── index.html
+├── about.html   (пізніше)
+└── images/
+    └── photo.jpg`,
+  tree_goal:
+`my-site/
+├── index.html   ← Головна
+├── about.html   ← Про сайт
+├── info.html    ← Корисна інформація
+└── images/
+    └── photo.jpg`,
+  ul_ex:
+`<h3>Мої інтереси</h3>
+<ul>
+  <li>Музика</li>
+  <li>Книги</li>
+  <li>Подорожі</li>
+</ul>`,
+  ol_ex:
+`<h3>Як відкрити сторінку</h3>
+<ol>
+  <li>Збережи файл index.html</li>
+  <li>Відкрий папку my-site</li>
+  <li>Відкрий файл у браузері</li>
+</ol>`,
+  nested_ex:
+`<ul>
+  <li>Карпати
+    <ul>
+      <li>Говерла</li>
+      <li>Петрос</li>
+    </ul>
+  </li>
+  <li>Львів</li>
+</ul>`,
+  navlist_ex:
+`<nav>
+  <ul>
+    <li><a href="index.html">Головна</a></li>
+    <li><a href="about.html">Про сайт</a></li>
+  </ul>
+</nav>`,
+  table_ex:
+`<table>
+  <caption>Мій розклад</caption>
+  <tr>
+    <th>День</th>
+    <th>Заняття</th>
+  </tr>
+  <tr>
+    <td>Понеділок</td>
+    <td>Програмування</td>
+  </tr>
+  <tr>
+    <td>Середа</td>
+    <td>Інформатика</td>
+  </tr>
+</table>`,
+  colspan_ex:
+`<tr>
+  <th colspan="2">Розклад на тиждень</th>
+</tr>`,
+  p2_nav: NAV_HTML,
+  p2_index_main: INDEX_MAIN,
+  p2_about_main: ABOUT_MAIN,
+  p2_info_main: INFO_MAIN,
+  p2_footer: FOOTER_HTML
+};
+// шаблони, що належать парі «пояснення + результат»
+const EX_TITLES={
+  ul_ex:['Маркований список','ul + li'],
+  ol_ex:['Нумерований список','ol + li'],
+  nested_ex:['Вкладений список','список усередині пункту li'],
+  navlist_ex:['Меню сайту як список','nav + ul + li + a'],
+  table_ex:['Приклад таблиці','table, caption, tr, th, td']
+};
+
+/* ================= code blocks ================= */
+function copyText(text,btn){
+  const done=()=>{const o=btn.dataset.o||btn.textContent; btn.dataset.o=o; btn.textContent='✓ Скопійовано'; setTimeout(()=>{btn.textContent=o;},1600);};
+  const fallback=()=>{
+    const ta=document.createElement('textarea'); ta.value=text; ta.style.position='fixed'; ta.style.opacity='0';
+    document.body.appendChild(ta); ta.select();
+    try{document.execCommand('copy');}catch(e){}
+    document.body.removeChild(ta); done();
+  };
+  if(navigator.clipboard && navigator.clipboard.writeText){navigator.clipboard.writeText(text).then(done,fallback);}
+  else fallback();
+}
+function wrapCopy(pre){
+  if(pre.parentNode.classList.contains('codewrap')) return;
+  const w=h('div','codewrap'); pre.parentNode.insertBefore(w,pre); w.appendChild(pre);
+  const b=h('button','copy','Копіювати'); b.type='button';
+  b.addEventListener('click',()=>copyText(pre.textContent,b));
+  w.appendChild(b);
+}
+$$('pre[data-code]').forEach(p=>{p.textContent=CODE[p.dataset.code]||'';});
+// приклади «код + результат»
+$$('.ex').forEach(el=>{
+  const key=el.dataset.ex, code=CODE[key], t=EX_TITLES[key]||['',''];
+  el.appendChild(h('h3','',t[0]+' — '+t[1]));
+  const g=h('div','lab'); const L=h('div'), R=h('div');
+  L.appendChild(h('p','mini','Код HTML')); const pre=h('pre','code',code); L.appendChild(pre);
+  R.appendChild(h('p','mini','Результат у браузері'));
+  const fr=document.createElement('iframe'); fr.className='frame s'; fr.setAttribute('sandbox',''); fr.title='Результат'; fr.srcdoc=miniDoc(code);
+  if(el.dataset.h) fr.style.height=el.dataset.h+'px';
+  R.appendChild(fr); g.appendChild(L); g.appendChild(R); el.appendChild(g);
+  wrapCopy(pre);
+});
+$$('pre.code[data-copy]').forEach(wrapCopy);
+
+/* ================= panels, menu, navigation ================= */
+const panels=$$('.panel');
+const groupNames={'0':'Початок','1':'Урок 8 · Теорія (45 хв)','2':'Урок 9 · Практична робота (45 хв)','end':'Підсумок'};
+const lessonPanels=panels.filter(p=>p.dataset.part==='1'||p.dataset.part==='2');
+const menuEl=$('#menu'); const menuItems=[];
+['0','1','2','end'].forEach(g=>{
+  const list=panels.filter(p=>p.dataset.part===g); if(!list.length) return;
+  menuEl.appendChild(h('div','menu-group',groupNames[g]));
+  list.forEach(p=>{
+    const b=h('button','menu-item'); b.type='button';
+    b.appendChild(h('span','ic',p.dataset.icon)); b.appendChild(h('span','',p.dataset.title)); b.appendChild(h('span','ck','✓'));
+    b.addEventListener('click',()=>{show(panels.indexOf(p)); closeDrawer();});
+    menuEl.appendChild(b); menuItems.push(b);
+  });
+});
+const homeGrid=$('#homeGrid');
+lessonPanels.forEach(p=>{
+  const b=h('button','home-item'); b.type='button';
+  b.appendChild(h('span','ic',p.dataset.icon));
+  const d=h('span','',p.dataset.title); d.appendChild(h('small','','Урок '+(p.dataset.part==='1'?'8':'9')+' · '+p.dataset.time+' хв'));
+  b.appendChild(d); b.addEventListener('click',()=>show(panels.indexOf(p))); homeGrid.appendChild(b);
+});
+
+let cur=0;
+function progressCount(){return lessonPanels.filter(p=>state.visited[p.id]).length;}
+function updateProgress(){
+  const n=progressCount(), t=lessonPanels.length, pct=Math.round(n/t*100);
+  $('#progFill').style.width=pct+'%'; $('#progPct').textContent=pct+'%';
+  $('#progBar').setAttribute('aria-valuenow',String(pct));
+  $('#homeProgFill').style.width=pct+'%';
+  $('#homeProgText').textContent='Пройдено '+n+' з '+t+' розділів';
+  $('#startBtn').textContent = n===0 ? '🚀 Розпочати урок' : (n>=t ? '🔁 Переглянути спочатку' : '▶ Продовжити урок');
+}
+function show(i){
+  if(i<0||i>=panels.length) return;
+  cur=i;
+  panels.forEach((p,k)=>p.classList.toggle('active',k===i));
+  const p=panels[i];
+  if(p.dataset.part==='1'||p.dataset.part==='2'){state.visited[p.id]=1; save();}
+  menuItems.forEach((b,k)=>{
+    b.classList.toggle('active',k===i); b.classList.toggle('visited',!!state.visited[panels[k].id]);
+    if(k===i) b.setAttribute('aria-current','page'); else b.removeAttribute('aria-current');
+  });
+  updateProgress();
+  $('#prevBtn').disabled=(i===0); $('#nextBtn').disabled=(i===panels.length-1);
+  $('#navInfo').textContent='Розділ '+(i+1)+' з '+panels.length+' · '+p.dataset.title;
+  if(p.id==='finish') renderSummary();
+  if(p.id==='p1-2') tagRender();
+  if(p.id==='p1-4') lbRender();
+  if(p.id==='p1-5') tbRender();
+  if(p.id==='p2-7') chkPreview();
+  try{history.replaceState(null,'','#'+p.id);}catch(e){}
+  try{window.scrollTo({top:0});}catch(e){}
+}
+function closeDrawer(){$('#sidebar').classList.remove('open'); $('#overlay').classList.remove('show'); const t=$('#menuToggle'); if(t&&mq.matches) t.setAttribute('aria-expanded','false');}
+const appEl=$('.app'), mq=window.matchMedia?window.matchMedia('(max-width:980px)'):{matches:false};
+let sbHidden=false;
+try{sbHidden=localStorage.getItem(KEY+'-sb')==='1';}catch(e){}
+function applySidebar(){
+  appEl.classList.toggle('collapsed',sbHidden&&!mq.matches);
+  $('#menuToggle').setAttribute('aria-expanded',String(mq.matches?$('#sidebar').classList.contains('open'):!sbHidden));
+}
+$('#menuToggle').addEventListener('click',()=>{
+  if(mq.matches){
+    const open=!$('#sidebar').classList.contains('open');
+    $('#sidebar').classList.toggle('open',open); $('#overlay').classList.toggle('show',open);
+  }else{
+    sbHidden=!sbHidden; try{localStorage.setItem(KEY+'-sb',sbHidden?'1':'0');}catch(e){}
+  }
+  applySidebar();
+});
+if(mq.addEventListener) mq.addEventListener('change',()=>{closeDrawer(); applySidebar();});
+applySidebar();
+$('#overlay').addEventListener('click',closeDrawer);
+$('#prevBtn').addEventListener('click',()=>show(cur-1));
+$('#nextBtn').addEventListener('click',()=>show(cur+1));
+$('#startBtn').addEventListener('click',()=>{
+  const first=lessonPanels.find(p=>!state.visited[p.id])||lessonPanels[0];
+  show(panels.indexOf(first));
+});
+$('#toPractice').addEventListener('click',()=>show(panels.indexOf($('#p2-1'))));
+$('#backMenu').addEventListener('click',()=>show(0));
+function resetAll(){
+  if(confirm('Скинути весь прогрес, результати тестів і позначки в чеклісті?')){state={visited:{},scores:{},checks:{}}; save(); location.reload();}
+}
+$('#resetBtn').addEventListener('click',resetAll);
+$('#resetBtn2').addEventListener('click',resetAll);
+document.addEventListener('keydown',e=>{
+  const t=e.target.tagName;
+  if(t==='INPUT'||t==='TEXTAREA'||t==='SELECT'||e.ctrlKey||e.altKey||e.metaKey) return;
+  if(e.key==='ArrowRight') show(cur+1); else if(e.key==='ArrowLeft') show(cur-1);
+});
+window.addEventListener('hashchange',()=>{
+  const id=location.hash.replace('#',''); const i=panels.findIndex(p=>p.id===id);
+  if(i>=0&&i!==cur) show(i);
+});
+const sizes=[18,21,24]; let sizeIdx=0;
+try{const s=parseInt(localStorage.getItem(KEY+'-size'),10); if(s>=0&&s<3) sizeIdx=s;}catch(e){}
+function applySize(){document.documentElement.style.fontSize=sizes[sizeIdx]+'px';}
+applySize();
+$('#fontBtn').addEventListener('click',()=>{sizeIdx=(sizeIdx+1)%sizes.length; applySize(); try{localStorage.setItem(KEY+'-size',String(sizeIdx));}catch(e){}});
+$('#fsBtn').addEventListener('click',()=>{
+  const d=document, el=d.documentElement;
+  if(!d.fullscreenElement){if(el.requestFullscreen) el.requestFullscreen().catch(()=>{});}
+  else if(d.exitFullscreen) d.exitFullscreen();
+});
+
+/* timer */
+(function(){
+  const disp=$('#tDisp'), btn=$('#tBtn'), sel=$('#tMin');
+  let total=45*60, left=total, iv=null;
+  const fmt=s=>String(Math.floor(s/60)).padStart(2,'0')+':'+String(s%60).padStart(2,'0');
+  function draw(){disp.textContent=fmt(left); disp.classList.toggle('low',left<=300&&left>0); disp.classList.toggle('end',left===0);}
+  function stop(){if(iv){clearInterval(iv); iv=null;} btn.textContent='▶ Старт';}
+  function beep(){
+    try{const C=window.AudioContext||window.webkitAudioContext; const ctx=new C(); const o=ctx.createOscillator(); const g=ctx.createGain();
+      o.connect(g); g.connect(ctx.destination); o.frequency.value=880; g.gain.value=0.1; o.start(); setTimeout(()=>{o.stop(); ctx.close();},700);}catch(e){}
+  }
+  btn.addEventListener('click',()=>{
+    if(iv){stop(); return;}
+    if(left<=0) left=total;
+    iv=setInterval(()=>{left--; draw(); if(left<=0){stop(); beep();}},1000);
+    btn.textContent='⏸ Пауза'; draw();
+  });
+  $('#tReset').addEventListener('click',()=>{stop(); left=total; draw();});
+  sel.addEventListener('change',()=>{stop(); total=parseInt(sel.value,10)*60; left=total; draw();});
+  draw();
+})();
+
+/* ================= quiz data ================= */
+const QUIZ={
+ recall:[
+  {q:'Який тег містить службову інформацію про сторінку (кодування, назву вкладки)?',o:['<head>','<body>','<header>','<main>'],a:0,mono:true,
+   w:'Службова інформація міститься в <head>. Не плутай з <header> — це видима шапка сторінки всередині <body>.'},
+  {q:'Що відображається у вкладці браузера?',o:['Вміст тега <title>','Вміст тега <h1>','Вміст тега <header>','Вміст тега <caption>'],a:0,
+   w:'Назву вкладки задає тег <title> у <head>.'},
+  {q:'Який атрибут задає мову документа?',o:['lang="uk"','src="uk"','href="uk"','alt="uk"'],a:0,mono:true,
+   w:'Мову задають атрибутом lang у тезі <html>. Значення uk — українська.'},
+  {q:'Який рядок має бути першим у HTML5-документі?',o:['<!DOCTYPE html>','<html lang="uk">','<head>','<body>'],a:0,mono:true,
+   w:'Спочатку вказують тип документа — <!DOCTYPE html>, і лише потім відкривають <html>.'}
+ ],
+ text:[
+  {q:'Який тег створює перенесення рядка без нового абзацу?',o:['<br>','<hr>','<p>','<em>'],a:0,mono:true,
+   w:'<br> — порожній елемент, який переносить текст на новий рядок. <hr> малює горизонтальну лінію.'},
+  {q:'Який тег використовують для головного заголовка сторінки?',o:['<h1>','<h6>','<strong>','<header>'],a:0,mono:true,
+   w:'<h1> — заголовок найвищого рівня; зазвичай він один на сторінці. <h2>–<h6> — заголовки нижчих рівнів.'},
+  {q:'Що позначає тег <strong>?',o:['Важливий текст','Горизонтальну лінію','Новий абзац','Назву таблиці'],a:0,
+   w:'<strong> позначає важливий текст, а <em> — текст із логічним наголосом.'}
+ ],
+ paths:[
+  {q:'Файл images/photo.jpg потрібно вставити на головну сторінку. Який запис правильний?',
+   o:['<img src="images/photo.jpg" alt="Гірський краєвид">','<img href="images/photo.jpg" alt="Гірський краєвид">','<img src="photo.jpg" alt="Гірський краєвид">','<image src="images/photo.jpg">'],a:0,mono:true,
+   w:'Шлях до файлу записують в src і вказують папку: images/photo.jpg. Назва тега — img.'},
+  {q:'Яке посилання веде з index.html на сторінку about.html?',
+   o:['<a href="about.html">Про сайт</a>','<a src="about.html">Про сайт</a>','<a>about.html</a>','<link href="about.html">Про сайт</link>'],a:0,mono:true,
+   w:'Посилання створює тег <a>, адресу задає атрибут href. Файли в одній папці, тому достатньо назви файлу.'},
+  {q:'Що найчастіше перевіряють, коли зображення не відображається?',
+   o:['Шлях і розширення файлу','Кількість абзаців','Наявність тега <hr>','Розмір заголовка'],a:0,
+   w:'Типова причина — неправильний шлях, назва чи розширення файлу (.jpg, .png, .webp).'},
+  {q:'Як записати посилання на розділ тієї ж сторінки з id="contacts"?',
+   o:['<a href="#contacts">Контакти</a>','<a href="contacts">Контакти</a>','<a id="#contacts">Контакти</a>','<a src="#contacts">Контакти</a>'],a:0,mono:true,
+   w:'Посилання на елемент сторінки починається зі знака # і містить значення id: #contacts.'}
+ ],
+ listq:[
+  {q:'Список покупок: молоко, хліб, яйця. Порядок неважливий. Який тег списку?',o:['<ul>','<ol>','<li>'],a:0,mono:true,
+   w:'Порядок неважливий — підходить маркований список <ul>.'},
+  {q:'Кроки встановлення програми: 1) завантажити, 2) запустити, 3) підтвердити. Який тег списку?',o:['<ul>','<ol>','<li>'],a:1,mono:true,
+   w:'Кроки виконують у певному порядку — потрібен нумерований список <ol>.'},
+  {q:'Топ-5 найвищих гір: перше, друге, третє місце… Який тег списку?',o:['<ul>','<ol>','<li>'],a:1,mono:true,
+   w:'Рейтинг має порядок, тому використовуємо <ol>.'},
+  {q:'Меню сайту: Головна, Про сайт, Корисна інформація. Який тег списку?',o:['<ul>','<ol>','<li>'],a:0,mono:true,
+   w:'Пункти меню рівноправні, нумерація не потрібна, тому <ul>. Кожне посилання <a> вкладаємо в <li>.'},
+  {q:'Який тег створює окремий пункт у будь-якому списку?',o:['<ul>','<ol>','<li>'],a:2,mono:true,
+   w:'Пункт списку створює <li>. Його розташовують лише всередині <ul> або <ol>.'}
+ ],
+ table:[
+  {q:'Який тег створює рядок таблиці?',o:['<tr>','<th>','<td>','<caption>'],a:0,mono:true,
+   w:'<tr> — table row, рядок таблиці.'},
+  {q:'Який тег створює заголовкову комірку?',o:['<th>','<tr>','<td>','<table>'],a:0,mono:true,
+   w:'<th> — table header, заголовкова комірка (зазвичай у першому рядку).'},
+  {q:'Який тег створює звичайну комірку з даними?',o:['<td>','<th>','<tr>','<caption>'],a:0,mono:true,
+   w:'<td> — table data, комірка з даними.'},
+  {q:'Який тег задає назву таблиці?',o:['<caption>','<title>','<h1>','<th>'],a:0,mono:true,
+   w:'Назву таблиці задає <caption>; його розміщують одразу після <table>.'},
+  {q:'Де має розташовуватися тег <td>?',o:['Усередині <tr>','Одразу в <body>','Усередині <caption>','Усередині <ul>'],a:0,mono:true,
+   w:'Комірки <th> і <td> завжди розташовуються всередині рядка <tr>, а рядки — всередині <table>.'}
+ ],
+ sem:[
+  {q:'Який елемент містить основний вміст сторінки?',o:['<main>','<header>','<footer>','<nav>'],a:0,mono:true,
+   w:'Основний вміст розміщують у <main>; на сторінці він один.'},
+  {q:'Для чого призначений елемент <nav>?',o:['Для блока навігації з посиланнями','Для нижньої частини сторінки','Для таблиці','Для самостійної статті'],a:0,
+   w:'<nav> містить основні посилання на сторінки сайту — меню.'},
+  {q:'Який елемент найкраще підходить для самостійного матеріалу — новини чи статті?',o:['<article>','<footer>','<nav>','<header>'],a:0,mono:true,
+   w:'<article> — самостійний, завершений матеріал, який має сенс окремо від решти сторінки.'},
+  {q:'Що зазвичай розміщують у <footer>?',o:['Автора, рік, контакти, посилання «На головну»','Головне меню сайту','Основний текст статті','Заголовок h1'],a:0,
+   w:'Підвал містить допоміжну інформацію про сторінку або сайт.'}
+ ],
+ site:[
+  {q:'Скільки заголовків <h1> зазвичай має сторінка?',o:['Один — головний заголовок сторінки','Стільки, скільки абзаців','Жодного','Один на кожен розділ'],a:0,
+   w:'<h1> — головна назва сторінки, тому зазвичай він один. Розділи позначаємо <h2>.'},
+  {q:'Як швидше створити нову сторінку з тією самою структурою?',o:['Скопіювати index.html, перейменувати копію й змінити вміст','Створити порожній файл і не писати теги','Видалити меню й підвал','Написати лише <body>'],a:0,
+   w:'Копія зберігає каркас, меню й підвал; змінюємо title, h1 і вміст main.'},
+  {q:'Що має відрізнятися на різних сторінках сайту?',o:['<title>, <h1> і вміст <main>','Назви тегів nav на кожній сторінці','Кількість посилань у меню','Мова документа'],a:0,
+   w:'Меню та підвал однакові, а назва вкладки, заголовок і основний вміст — власні для кожної сторінки.'}
+ ],
+ final:[
+  {q:'Який тег створює нумерований список?',o:['<ol>','<ul>','<li>','<nl>'],a:0,mono:true,
+   w:'<ol> — ordered list, нумерований список.'},
+  {q:'Який тег позначає окремий пункт списку?',o:['<li>','<ul>','<tr>','<td>'],a:0,mono:true,
+   w:'<li> — list item, пункт списку.'},
+  {q:'Чим відрізняються <ul> та <ol>?',o:['ul — маркований список, ol — нумерований','ul — таблиця, ol — список','ul — заголовок, ol — абзац','Нічим'],a:0,
+   w:'ul створює маркований список, ol — нумерований; пункти в обох записують тегом li.'},
+  {q:'Який тег задає назву таблиці?',o:['<caption>','<th>','<tr>','<header>'],a:0,mono:true,
+   w:'Назву таблиці задає <caption>.'},
+  {q:'Яку роль виконує тег <tr>?',o:['Створює рядок таблиці','Створює комірку з даними','Задає назву таблиці','Створює список'],a:0,
+   w:'<tr> — рядок таблиці; у ньому розташовують комірки <th> і <td>.'},
+  {q:'Чим <th> відрізняється від <td>?',o:['th — заголовкова комірка, td — комірка з даними','th — рядок, td — таблиця','th — назва, td — абзац','Нічим'],a:0,
+   w:'<th> — заголовок стовпця чи рядка, <td> — звичайні дані.'},
+  {q:'Який елемент містить основний вміст сторінки?',o:['<main>','<nav>','<footer>','<header>'],a:0,mono:true,
+   w:'Основний вміст сторінки розташовують у <main>.'},
+  {q:'Яка розмітка списку правильна?',o:['<ul><li>Музика</li><li>Книги</li></ul>','<ul>Музика<li>Книги</li></ul>','<li><ul>Музика</ul></li>','<ul><td>Музика</td></ul>'],a:0,mono:true,
+   w:'Кожен пункт має бути в <li>, а всі <li> — всередині <ul> або <ol>.'},
+  {q:'Який запис створює посилання на сторінку about.html?',o:['<a href="about.html">Про сайт</a>','<a src="about.html">Про сайт</a>','<img href="about.html">','<link>about.html</link>'],a:0,mono:true,
+   w:'Посилання створює <a> з атрибутом href.'},
+  {q:'Який елемент найкраще підходить для меню з посиланнями?',o:['<nav>','<footer>','<caption>','<article>'],a:0,mono:true,
+   w:'<nav> — блок навігації; у ньому зручно розмістити список <ul> із посиланнями.'}
+ ]
+};
+const FIND=[
+ {title:'Завдання 1. Неправильно закритий тег',lines:['<main>','  <h1>Моя сторінка</h2>','  <p>Вітаю на сайті!</p>','</main>'],bad:1,
+  w:'Тег <h1> відкрито, а закрито як </h2>. Парний тег закривається тим самим іменем.',
+  fix:'<main>\n  <h1>Моя сторінка</h1>\n  <p>Вітаю на сайті!</p>\n</main>'},
+ {title:'Завдання 2. Неправильна вкладеність елементів',lines:['<section>','  <h2>Новини</h2>','  <p>Це <strong>важлива новина.</p></strong>','</section>'],bad:2,
+  w:'Теги мають закриватися у зворотному порядку: що відкрили пізніше — закриваємо раніше. Спочатку </strong>, потім </p>.',
+  fix:'<section>\n  <h2>Новини</h2>\n  <p>Це <strong>важлива новина.</strong></p>\n</section>'},
+ {title:'Завдання 3. Помилка у створенні списку',lines:['<ul>','  <li>Музика</li>','  Книги','  <li>Фільми</li>','</ul>'],bad:2,
+  w:'Кожен пункт має бути в тезі <li>. Слово «Книги» стоїть у списку без <li>.',
+  fix:'<ul>\n  <li>Музика</li>\n  <li>Книги</li>\n  <li>Фільми</li>\n</ul>'},
+ {title:'Завдання 4. Помилка у структурі таблиці',lines:['<table>','  <caption>Мій розклад</caption>','  <th>День</th><th>Заняття</th>','  <tr><td>Понеділок</td><td>Інформатика</td></tr>','</table>'],bad:2,
+  w:'Комірки <th> і <td> мають розташовуватися всередині рядка <tr>. Заголовкові комірки теж потрібно вкласти в <tr>.',
+  fix:'<table>\n  <caption>Мій розклад</caption>\n  <tr><th>День</th><th>Заняття</th></tr>\n  <tr><td>Понеділок</td><td>Інформатика</td></tr>\n</table>'}
+];
+
+/* ================= quiz engine ================= */
+function initQuiz(root,id,qs){
+  let i=0,score=0;
+  function start(){i=0;score=0;draw();}
+  function draw(){
+    root.innerHTML=''; root.classList.remove('locked');
+    const q=qs[i];
+    const head=h('div','qhead');
+    head.appendChild(h('span','','Запитання '+(i+1)+' з '+qs.length));
+    const dots=h('span','dots'); qs.forEach((_,k)=>dots.appendChild(h('i',k<i?'done':(k===i?'cur':'')))); head.appendChild(dots);
+    root.appendChild(head);
+    root.appendChild(h('p','qtext',q.q));
+    if(q.code) root.appendChild(h('pre','code',q.code));
+    const opts=q.keep ? q.o.map((t,k)=>({t:t,ok:k===q.a})) : shuffle(q.o.map((t,k)=>({t:t,ok:k===q.a})));
+    const list=h('div','opts'); const fb=h('div','fb'); fb.setAttribute('aria-live','polite');
+    const next=h('button','btn primary',i<qs.length-1?'Далі →':'Показати результат'); next.type='button'; next.hidden=true;
+    const btns=[];
+    opts.forEach(o=>{
+      const b=h('button','opt'+(q.mono?' mono':''),o.t); b.type='button';
+      b.addEventListener('click',()=>{
+        if(root.classList.contains('locked')) return;
+        root.classList.add('locked');
+        if(o.ok){score++; b.classList.add('ok'); fb.className='fb ok'; fb.textContent='✅ Правильно! '+q.w;}
+        else{b.classList.add('bad'); btns.forEach((x,j)=>{if(opts[j].ok) x.classList.add('ok');}); fb.className='fb bad'; fb.textContent='❌ Неправильно. '+q.w;}
+        next.hidden=false; next.focus();
+      });
+      btns.push(b); list.appendChild(b);
+    });
+    root.appendChild(list); root.appendChild(fb); root.appendChild(next);
+    next.addEventListener('click',()=>{i++; if(i>=qs.length) finish(); else draw();});
+  }
+  function finish(){
+    root.innerHTML=''; root.classList.remove('locked');
+    state.scores[id]={s:score,t:qs.length}; save();
+    const pct=score/qs.length;
+    const msg=pct>=0.9?'Чудово! Матеріал засвоєно.':(pct>=0.7?'Добре! Перегляньте розділи, де були помилки.':'Варто повторити матеріал і спробувати ще раз.');
+    const r=h('div','result');
+    r.appendChild(h('div','big',score+' / '+qs.length));
+    r.appendChild(h('p','','Правильних відповідей: '+score+' з '+qs.length));
+    const bar=h('div','bar'); const f=h('i'); f.style.width=Math.round(pct*100)+'%'; bar.appendChild(f); r.appendChild(bar);
+    r.appendChild(h('p','',msg));
+    const again=h('button','btn primary','↻ Пройти ще раз'); again.type='button'; again.addEventListener('click',start);
+    r.appendChild(again); root.appendChild(r);
+  }
+  start();
+}
+$$('.quiz').forEach(el=>initQuiz(el,el.dataset.quiz,QUIZ[el.dataset.quiz]));
+
+/* ================= find-the-error engine ================= */
+function initFind(root,id,tasks){
+  let i=0,score=0;
+  function start(){i=0;score=0;draw();}
+  function draw(){
+    root.innerHTML=''; root.classList.remove('locked');
+    const t=tasks[i];
+    const head=h('div','qhead');
+    head.appendChild(h('span','','Завдання '+(i+1)+' з '+tasks.length));
+    const dots=h('span','dots'); tasks.forEach((_,k)=>dots.appendChild(h('i',k<i?'done':(k===i?'cur':'')))); head.appendChild(dots);
+    root.appendChild(head);
+    root.appendChild(h('p','qtext',t.title+' — натисни на рядок із помилкою'));
+    const box=h('div','lines'); const btns=[];
+    const fb=h('div','fb'); fb.setAttribute('aria-live','polite');
+    const fixWrap=h('div'); fixWrap.hidden=true;
+    const next=h('button','btn primary',i<tasks.length-1?'Далі →':'Показати результат'); next.type='button'; next.hidden=true;
+    t.lines.forEach((ln,k)=>{
+      const b=h('button','ln'); b.type='button';
+      b.appendChild(h('span','num',String(k+1))); b.appendChild(h('span','txt',ln));
+      b.addEventListener('click',()=>{
+        if(root.classList.contains('locked')) return;
+        root.classList.add('locked');
+        if(k===t.bad){score++; b.classList.add('ok'); fb.className='fb ok'; fb.textContent='✅ Так, помилка саме тут. '+t.w;}
+        else{b.classList.add('bad'); btns[t.bad].classList.add('ok'); fb.className='fb bad'; fb.textContent='❌ Не тут. Помилка в рядку '+(t.bad+1)+'. '+t.w;}
+        fixWrap.hidden=false; next.hidden=false; next.focus();
+      });
+      btns.push(b); box.appendChild(b);
+    });
+    root.appendChild(box); root.appendChild(fb);
+    fixWrap.appendChild(h('p','','Правильний код:')); fixWrap.appendChild(h('pre','code',t.fix));
+    root.appendChild(fixWrap); root.appendChild(next);
+    next.addEventListener('click',()=>{i++; if(i>=tasks.length) finish(); else draw();});
+  }
+  function finish(){
+    root.innerHTML=''; root.classList.remove('locked');
+    state.scores[id]={s:score,t:tasks.length}; save();
+    const r=h('div','result');
+    r.appendChild(h('div','big',score+' / '+tasks.length));
+    r.appendChild(h('p','','Знайдено помилок: '+score+' з '+tasks.length));
+    const bar=h('div','bar'); const f=h('i'); f.style.width=Math.round(score/tasks.length*100)+'%'; bar.appendChild(f); r.appendChild(bar);
+    r.appendChild(h('p','',score===tasks.length?'Бездоганно! Ти помічаєш типові помилки.':'Перечитай пояснення й спробуй ще раз — ці помилки трапляються найчастіше.'));
+    const again=h('button','btn primary','↻ Пройти ще раз'); again.type='button'; again.addEventListener('click',start);
+    r.appendChild(again); root.appendChild(r);
+  }
+  start();
+}
+$$('.find').forEach(el=>initFind(el,el.dataset.find,FIND));
+
+/* ================= assemble the document ================= */
+(function(){
+  const correct=['<!DOCTYPE html>','<html lang="uk">','<head>','<meta charset="UTF-8">','<title>Мій сайт</title>','</head>','<body>','<h1>Привіт!</h1>','</body>','</html>'];
+  const pool=$('#asmPool'), area=$('#asmArea'), out=$('#asmOut');
+  let order=shuffle(correct), chosen=[];
+  function render(marks){
+    pool.innerHTML=''; area.innerHTML='';
+    order.filter(t=>chosen.indexOf(t)<0).forEach(t=>{
+      const b=h('button','asm-btn',t); b.type='button'; b.addEventListener('click',()=>{chosen.push(t); out.className='fb'; out.textContent=''; render();}); pool.appendChild(b);
+    });
+    chosen.forEach((t,k)=>{
+      const b=h('button','asm-btn'+(marks?(marks[k]?' okk':' nok'):''),(k+1)+'.  '+t); b.type='button';
+      b.addEventListener('click',()=>{chosen.splice(k,1); out.className='fb'; out.textContent=''; render();}); area.appendChild(b);
+    });
+  }
+  function matches(arr,exp){return arr.map((t,k)=>t===exp[k]);}
+  $('#asmCheck').addEventListener('click',()=>{
+    if(chosen.length<correct.length){out.className='fb'; out.textContent='Спочатку додай усі рядки: зараз '+chosen.length+' з '+correct.length+'.'; return;}
+    const alt=correct.slice(); alt[3]=correct[4]; alt[4]=correct[3];
+    let m1=matches(chosen,correct), m2=matches(chosen,alt);
+    const ok1=m1.every(Boolean), ok2=m2.every(Boolean);
+    if(ok1||ok2){
+      render(chosen.map(()=>true)); out.className='fb ok';
+      out.textContent='✅ Правильно! Документ складено: <meta> і <title> усередині <head>, а видимий вміст — усередині <body>.';
+      state.scores.assemble={s:1,t:1}; save();
+    }else{
+      const m=m1.filter(Boolean).length>=m2.filter(Boolean).length?m1:m2;
+      render(m); out.className='fb bad';
+      out.textContent='❌ Правильних позицій: '+m.filter(Boolean).length+' з '+correct.length+'. Червоні рядки стоять не на своєму місці. Підказка: <meta> і <title> можуть іти в будь-якому порядку.';
+    }
+  });
+  $('#asmReset').addEventListener('click',()=>{chosen=[]; order=shuffle(correct); out.className='fb'; out.textContent=''; render();});
+  render();
+})();
+
+/* ================= tag explorer ================= */
+const TAGS=[
+  {n:'h1–h6',t:'Заголовки',d:'<h1> — головний заголовок сторінки (зазвичай один), <h2>–<h6> — заголовки нижчих рівнів.',c:'<h1>Мандруємо Україною</h1>\n<h2>Карпати</h2>\n<h3>Гора Говерла</h3>'},
+  {n:'p',t:'Абзац',d:'Створює абзац тексту. Між абзацами браузер додає відступ.',c:'<p>Це перший абзац тексту.</p>\n<p>Це другий абзац.</p>'},
+  {n:'strong',t:'Важливий текст',d:'Позначає важливий текст. Зазвичай відображається жирним.',c:'<p>Це <strong>важлива</strong> інформація.</p>'},
+  {n:'em',t:'Логічний наголос',d:'Позначає текст із логічним наголосом. Зазвичай відображається курсивом.',c:'<p>Це <em>особливий</em> наголос.</p>'},
+  {n:'br',t:'Перенесення рядка',d:'Порожній елемент: переносить текст на новий рядок усередині абзацу. Закривального тега немає.',c:'<p>Перший рядок<br>Другий рядок</p>'},
+  {n:'hr',t:'Горизонтальна лінія',d:'Порожній елемент: розділяє змістові частини сторінки.',c:'<p>Перша частина</p>\n<hr>\n<p>Друга частина</p>'}
+];
+const tagChips=$('#tagChips'), tagCode=$('#tagCode'), tagFrame=$('#tagFrame');
+let tagIdx=0;
+function tagRender(){tagFrame.srcdoc=miniDoc(tagCode.value);}
+function tagSelect(i){
+  tagIdx=i; const t=TAGS[i];
+  $$('.chip',tagChips).forEach((c,k)=>c.classList.toggle('on',k===i));
+  $('#tagInfo').textContent=t.t+' — '+t.d;
+  tagCode.value=t.c; tagRender();
+}
+TAGS.forEach((t,i)=>{const c=h('button','chip','<'+t.n+'>'); c.type='button'; c.addEventListener('click',()=>tagSelect(i)); tagChips.appendChild(c);});
+tagCode.addEventListener('input',tagRender);
+tagSelect(0);
+
+/* ================= list builder ================= */
+(function(){
+  const txt=$('#lbText'); let type='ul';
+  txt.value='Карпати\nДунайські плавні\nХортиця';
+  window.lbRender=function(){
+    const lines=txt.value.split('\n').map(s=>s.trim()).filter(Boolean);
+    const code=lines.length ? '<'+type+'>\n'+lines.map(l=>'  <li>'+l+'</li>').join('\n')+'\n</'+type+'>' : '<'+type+'>\n  \n</'+type+'>';
+    $('#lbCode').textContent=code; $('#lbFrame').srcdoc=miniDoc(code);
+  };
+  txt.addEventListener('input',window.lbRender);
+  $$('#lbSeg button').forEach(b=>b.addEventListener('click',()=>{
+    type=b.dataset.t; $$('#lbSeg button').forEach(x=>x.classList.toggle('on',x===b)); window.lbRender();
+  }));
+})();
+function lbRender(){window.lbRender();}
+
+/* ================= table: click-explorer ================= */
+(function(){
+  const INFO={
+    table:['<table>','таблиця — контейнер для всіх рядків'],
+    caption:['<caption>','назва таблиці'],
+    tr:['<tr>','рядок таблиці (table row)'],
+    th:['<th>','заголовкова комірка (table header)'],
+    td:['<td>','комірка з даними (table data)']
+  };
+  const demo=$('#demoTable'), info=$('#tblInfo'), chips=$('#tblChips');
+  function clear(){$$('.hit',demo).forEach(e=>e.classList.remove('hit')); demo.classList.remove('hit');}
+  function showTag(tag,els){
+    clear(); els.forEach(e=>e.classList.add('hit'));
+    info.textContent='Тег '+INFO[tag][0]+' — '+INFO[tag][1]+'. Підсвічено елементів: '+els.length+'.';
+    $$('.chip',chips).forEach(c=>c.classList.toggle('on',c.dataset.tag===tag));
+  }
+  demo.addEventListener('click',e=>{
+    const el=e.target.closest('[data-tag]'); if(!el) return;
+    showTag(el.dataset.tag,[el]);
+  });
+  Object.keys(INFO).forEach(tag=>{
+    const c=h('button','chip',INFO[tag][0]); c.type='button'; c.dataset.tag=tag;
+    c.addEventListener('click',()=>{
+      const els=$$('[data-tag="'+tag+'"]',demo); if(tag==='table') els.push(demo);
+      showTag(tag,tag==='table'?[demo]:els);
+    });
+    chips.appendChild(c);
+  });
+})();
+
+/* ================= table builder ================= */
+(function(){
+  const rows=$('#tbRows'), cols=$('#tbCols'), head=$('#tbHead'), cap=$('#tbCap');
+  for(let i=1;i<=6;i++){const o=h('option','',String(i)); o.value=String(i); if(i===3) o.selected=true; rows.appendChild(o);}
+  for(let i=2;i<=5;i++){const o=h('option','',String(i)); o.value=String(i); if(i===3) o.selected=true; cols.appendChild(o);}
+  window.tbRender=function(){
+    const R=+rows.value, C=+cols.value;
+    let c='<table>\n';
+    if(cap.value.trim()) c+='  <caption>'+cap.value.trim()+'</caption>\n';
+    if(head.checked){
+      c+='  <tr>\n'; for(let j=1;j<=C;j++) c+='    <th>Заголовок '+j+'</th>\n'; c+='  </tr>\n';
+    }
+    for(let i=1;i<=R;i++){
+      c+='  <tr>\n'; for(let j=1;j<=C;j++) c+='    <td>Дані '+i+'-'+j+'</td>\n'; c+='  </tr>\n';
+    }
+    c+='</table>';
+    $('#tbCode').textContent=c; $('#tbFrame').srcdoc=miniDoc(c);
+  };
+  [rows,cols,head].forEach(x=>x.addEventListener('change',window.tbRender));
+  cap.addEventListener('input',window.tbRender);
+})();
+function tbRender(){window.tbRender();}
+
+/* ================= semantic schema ================= */
+(function(){
+  const SEM={
+    header:['<header>','Верхня частина сторінки або розділу: назва сайту, головний заголовок, короткий опис.','<header>\n  <h1>Назва сайту</h1>\n  <p>Короткий опис</p>\n</header>'],
+    nav:['<nav>','Блок навігації — основні посилання на сторінки сайту. Часто містить список ul із li та a.','<nav>\n  <ul>\n    <li><a href="index.html">Головна</a></li>\n  </ul>\n</nav>'],
+    main:['<main>','Основний вміст сторінки. Унікальний для кожної сторінки; на сторінці має бути один main.','<main>\n  <section>…</section>\n  <article>…</article>\n</main>'],
+    section:['<section>','Тематичний розділ сторінки, зазвичай із власним заголовком <h2>.','<section>\n  <h2>Вступ до теми</h2>\n  <p>Текст розділу.</p>\n</section>'],
+    article:['<article>','Самостійний, завершений матеріал — новина, стаття, допис, який має сенс окремо від решти сторінки.','<article>\n  <h2>Про сайт</h2>\n  <p>Текст матеріалу.</p>\n</article>'],
+    footer:['<footer>','Нижня частина сторінки: автор, рік, контакти, посилання «На головну».','<footer>\n  <p>Навчальний проєкт. 11 клас.</p>\n</footer>']
+  };
+  const schema=$('#schema');
+  function pick(el){
+    const k=el.dataset.sem;
+    $$('.sc',schema).forEach(x=>x.classList.toggle('sel',x===el));
+    $('#semInfo').innerHTML=''; const b=h('b','',SEM[k][0]); $('#semInfo').appendChild(b); $('#semInfo').appendChild(document.createTextNode(' — '+SEM[k][1]));
+    $('#semCode').textContent=SEM[k][2];
+  }
+  schema.addEventListener('click',e=>{const el=e.target.closest('[data-sem]'); if(el) pick(el);});
+  schema.addEventListener('keydown',e=>{
+    if(e.key==='Enter'||e.key===' '){const el=e.target.closest('[data-sem]'); if(el){e.preventDefault(); e.stopPropagation(); pick(el);}}
+  });
+})();
+
+/* ================= mini browser ================= */
+(function(){
+  const NAV=
+`<nav>
+  <ul>
+    <li><a href="index.html" data-p="index">Головна</a></li>
+    <li><a href="about.html" data-p="about">Про сайт</a></li>
+    <li><a href="info.html" data-p="info">Корисна інформація</a></li>
+  </ul>
+</nav>`;
+  const HEAD=
+`<header>
+  <h1>Мандруємо Україною</h1>
+</header>
+`;
+  const FOOT=`
+<footer>
+  <p>Навчальний проєкт. 11 клас.</p>
+</footer>`;
+  const MAIN={
+    index:`<main>
+  <section>
+    <h2>Вступ до теми</h2>
+    <p>В Україні є гори, степи та ліси.</p>
+    <img src="${IMG}" alt="Гірський краєвид">
+  </section>
+  <section>
+    <h2>Що ви знайдете на сайті</h2>
+    <ul>
+      <li>Цікаві місця</li>
+      <li>Таблицю з фактами</li>
+      <li>Поради мандрівникам</li>
+    </ul>
+  </section>
+</main>`,
+    about:`<main>
+  <article>
+    <h2>Про сайт</h2>
+    <p>Сайт розповідає про цікаві місця України.</p>
+    <h3>Мета сайту</h3>
+    <ol>
+      <li>Розповісти про природу</li>
+      <li>Показати цікаві факти</li>
+      <li>Допомогти спланувати мандрівку</li>
+    </ol>
+  </article>
+</main>`,
+    info:`<main>
+  <section>
+    <h2>Корисна інформація</h2>
+    <table>
+      <caption>Найвищі вершини Карпат</caption>
+      <tr><th>Назва</th><th>Висота (м)</th></tr>
+      <tr><td>Говерла</td><td>2061</td></tr>
+      <tr><td>Бребенескул</td><td>2035</td></tr>
+      <tr><td>Петрос</td><td>2020</td></tr>
+    </table>
+  </section>
+</main>`
+  };
+  const FILES={index:'index.html',about:'about.html',info:'info.html'};
+  const view=$('#bView');
+  function go(p){
+    const body=HEAD+NAV+'\n'+MAIN[p]+FOOT;
+    view.innerHTML=body;
+    $('#bAddr').textContent=FILES[p];
+    // у вихідному коді показуємо чистий варіант
+    $('#bCode').textContent=body.replace(/ data-p="[a-z]+"/g,'').replace(/<img src="[^"]*"/,'<img src="images/photo.jpg"');
+  }
+  view.addEventListener('click',e=>{
+    const a=e.target.closest('a'); if(!a) return;
+    e.preventDefault(); if(a.dataset.p) go(a.dataset.p);
+  });
+  go('index');
+})();
+
+/* ================= theme picker (практична) ================= */
+const THEMES=[
+  {n:'Мандруємо Україною',name:'Мандруємо Україною',list:['Карпати','Кам’янець-Подільський','Дунайські плавні','Хортиця'],cap:'Цікаві місця України',head:['Місце','Область','Чим відоме'],rows:[['Говерла','Івано-Франківська','Найвища вершина України'],['Кам’янець-Подільський','Хмельницька','Старовинна фортеця'],['Хортиця','Запорізька','Найбільший острів на Дніпрі']]},
+  {n:'Світ музики',name:'Світ музики',list:['Рок','Джаз','Класична музика','Електронна музика'],cap:'Музичні інструменти',head:['Інструмент','Група','Цікавий факт'],rows:[['Скрипка','Струнні','Має чотири струни'],['Флейта','Духові','Звук створює потік повітря'],['Барабан','Ударні','Задає ритм']]},
+  {n:'Технології майбутнього',name:'Технології майбутнього',list:['Штучний інтелект','Робототехніка','Відновлювана енергетика','Віртуальна реальність'],cap:'Технології та їх застосування',head:['Технологія','Де застосовують','Приклад'],rows:[['Штучний інтелект','Переклад, помічники','Голосові помічники'],['Робототехніка','Виробництво, медицина','Промислові роботи'],['Сонячна енергетика','Енергетика','Сонячні панелі']]},
+  {n:'Моє хобі',name:'Моє хобі',list:['Що потрібно для початку','Де і коли займатися','Чого вдалося досягти'],cap:'Мій тижневий план',head:['День','Заняття','Тривалість'],rows:[['Понеділок','Тренування','1 година'],['Середа','Практика','45 хвилин'],['Субота','Зустріч з друзями','2 години']]},
+  {n:'Науковий простір',name:'Науковий простір',list:['Сонячна система','Зорі','Галактики','Космічні місії'],cap:'Планети Сонячної системи',head:['Планета','Місце від Сонця','Цікавий факт'],rows:[['Меркурій','1','Найближча до Сонця'],['Земля','3','Єдина відома планета з життям'],['Юпітер','5','Найбільша планета']]},
+  {n:'Власна тема',name:'Назва вашого сайту',list:['Основне поняття','Приклад','Порада'],cap:'Назва вашої таблиці',head:['Назва','Категорія','Опис'],rows:[['Приклад 1','Категорія А','Короткий опис'],['Приклад 2','Категорія Б','Короткий опис'],['Приклад 3','Категорія А','Короткий опис']]}
+];
+(function(){
+  const chips=$('#thChips');
+  function listCode(t){return '<ul>\n'+t.list.map(x=>'  <li>'+x+'</li>').join('\n')+'\n</ul>';}
+  function tableCode(t){
+    let c='<table>\n  <caption>'+t.cap+'</caption>\n  <tr>\n'+t.head.map(x=>'    <th>'+x+'</th>').join('\n')+'\n  </tr>\n';
+    t.rows.forEach(r=>{c+='  <tr>\n'+r.map(x=>'    <td>'+x+'</td>').join('\n')+'\n  </tr>\n';});
+    return c+'</table>';
+  }
+  function pick(i){
+    const t=THEMES[i];
+    $$('.chip',chips).forEach((c,k)=>c.classList.toggle('on',k===i));
+    $('#thName').textContent=t.name; $('#thList').textContent=listCode(t); $('#thTable').textContent=tableCode(t);
+  }
+  THEMES.forEach((t,i)=>{const c=h('button','chip txt',t.n); c.type='button'; c.addEventListener('click',()=>pick(i)); chips.appendChild(c);});
+  pick(0);
+})();
+
+/* ================= checklist ================= */
+function updChk(){
+  const all=$$('input.chk'); const n=all.filter(c=>c.checked).length;
+  $('#chkCount').textContent=n+' з '+all.length;
+  $('#chkFill').style.width=(all.length?Math.round(n/all.length*100):0)+'%';
+}
+$$('input.chk').forEach(c=>{
+  c.checked=!!state.checks[c.dataset.k];
+  c.addEventListener('change',()=>{state.checks[c.dataset.k]=c.checked; save(); updChk();});
+});
+updChk();
+
+/* ================= HTML checker ================= */
+const chkIn=$('#chkInput'), chkFrame=$('#chkFrame'), chkOut=$('#chkOut'), chkType=$('#chkType');
+let chkTimer=null;
+function previewDoc(src){
+  if(!src.trim()) return '';
+  let doc=src.replace(/(<img\b[^>]*?\bsrc\s*=\s*)(["'])[^"']*\2/gi,(m,a,q)=>a+'"'+IMG+'"');
+  const st='<style>'+MINI_CSS+'</style>';
+  return /<\/head>/i.test(doc) ? doc.replace(/<\/head>/i,()=>st+'</head>') : st+doc;
+}
+function chkPreview(){chkFrame.srcdoc=previewDoc(chkIn.value);}
+function analyze(src){
+  const clean=src.replace(/<!--[\s\S]*?-->/g,'');
+  const VOID=['meta','link','br','hr','img','input','source','area','base','col','embed','wbr'];
+  const re=/<(\/?)([a-zA-Z][a-zA-Z0-9-]*)([^<>]*)>/g;
+  const r={errors:[],count:{},lists:[],tables:[],liBad:0,trBad:0,cellBad:0,capBad:0,imgs:[],links:[]};
+  const stack=[]; let m;
+  function closeNode(n){
+    if(n.tag==='ul'||n.tag==='ol') r.lists.push({tag:n.tag,li:n.li,inNav:n.inNav});
+    if(n.tag==='table') r.tables.push(n);
+  }
+  while((m=re.exec(clean))){
+    const closing=m[1]==='/', tag=m[2].toLowerCase(), attrs=m[3]||'';
+    if(closing){
+      if(VOID.indexOf(tag)>=0) continue;
+      const top=stack[stack.length-1];
+      if(top && top.tag===tag){closeNode(stack.pop());}
+      else{
+        let idx=-1; for(let i=stack.length-1;i>=0;i--){if(stack[i].tag===tag){idx=i;break;}}
+        if(idx>=0){
+          while(stack.length-1>idx){const x=stack.pop(); r.errors.push('Тег <'+x.tag+'> не закрито перед </'+tag+'>'); closeNode(x);}
+          closeNode(stack.pop());
+        }else if(top){
+          r.errors.push('Тег <'+top.tag+'> закрито неправильно: знайдено </'+tag+'>'); closeNode(stack.pop());
+        }else r.errors.push('Зайвий закривальний тег </'+tag+'>');
+      }
+      continue;
+    }
+    r.count[tag]=(r.count[tag]||0)+1;
+    const parent=stack[stack.length-1], ptag=parent?parent.tag:'';
+    if(tag==='li'){if(ptag==='ul'||ptag==='ol') parent.li++; else r.liBad++;}
+    if(tag==='tr' && ['table','thead','tbody','tfoot'].indexOf(ptag)<0) r.trBad++;
+    if((tag==='td'||tag==='th') && ptag!=='tr') r.cellBad++;
+    if(tag==='caption' && ptag!=='table') r.capBad++;
+    let tbl=null; for(let i=stack.length-1;i>=0;i--){if(stack[i].tag==='table'){tbl=stack[i];break;}}
+    if(tbl){
+      if(tag==='caption') tbl.cap=true;
+      if(tag==='tr') tbl.tr++;
+      if(tag==='th') tbl.th++;
+      if(tag==='td') tbl.td++;
+    }
+    if(tag==='img'){const a=attrs.match(/\balt\s*=\s*(["'])(.*?)\1/i); r.imgs.push({alt:a?a[2].trim():''});}
+    if(tag==='a'){const a=attrs.match(/\bhref\s*=\s*(["'])(.*?)\1/i); r.links.push(a?a[2].trim():'');}
+    if(VOID.indexOf(tag)<0 && !/\/\s*$/.test(attrs)){
+      stack.push({tag:tag,li:0,cap:false,tr:0,th:0,td:0,inNav:stack.some(n=>n.tag==='nav')});
+    }
+  }
+  while(stack.length){const x=stack.pop(); r.errors.push('Тег <'+x.tag+'> не закрито'); closeNode(x);}
+  return r;
+}
+function runCheck(){
+  const src=chkIn.value; chkOut.innerHTML='';
+  if(!src.trim()){chkOut.appendChild(h('div','callout','Поле порожнє. Встав код сторінки з VS Code або натисни «Вставити зразок».')); return;}
+  const r=analyze(src), type=chkType.value, C=[];
+  function add(ok,t,hint){C.push({ok:!!ok,t:t,h:hint});}
+  const cnt=t=>r.count[t]||0;
+  add(/<!DOCTYPE\s+html\s*>/i.test(src),'Є <!DOCTYPE html> на початку','Першим рядком має бути <!DOCTYPE html>.');
+  add(/<html[^>]*\blang\s*=\s*["']uk["']/i.test(src),'Задано мову: <html lang="uk">','Додай атрибут lang="uk" до тега html.');
+  add(/<meta[^>]*charset/i.test(src),'Є <meta charset="UTF-8">','Додай у head рядок <meta charset="UTF-8">.');
+  add(/<title>\s*[^<\s][^<]*<\/title>/i.test(src),'Заповнено <title> (назва вкладки)','Напиши назву сторінки між <title> і </title>.');
+  add(r.errors.length===0,'Усі теги правильно відкриті й закриті',r.errors.slice(0,3).join('; ')+(r.errors.length>3?' … (усього помилок: '+r.errors.length+')':''));
+  const miss=['header','nav','main','footer'].filter(t=>!cnt(t));
+  add(miss.length===0,'Є елементи header, nav, main, footer','Бракує: '+miss.map(t=>'<'+t+'>').join(', ')+'.');
+  add(cnt('section')+cnt('article')>0,'Є розділи section або article','Додай у main розділи <section> (або <article>).');
+  add(cnt('h1')===1,'На сторінці один заголовок h1 (знайдено: '+cnt('h1')+')','Залиш на сторінці рівно один <h1>, розділи позначай <h2>.');
+  add(cnt('h2')>=1,'Є заголовки розділів h2','Додай заголовки <h2> для розділів.');
+  add(cnt('p')>=1,'Є абзаци p','Додай хоча б один абзац <p>.');
+  add(r.liBad===0,'Пункти li розташовано всередині ul або ol','Знайдено <li> поза списком: '+r.liBad+'. Усі пункти мають бути всередині <ul> або <ol>.');
+  add(r.trBad+r.cellBad+r.capBad===0,'У таблицях правильна вкладеність tr, th, td, caption','Рядки <tr> — всередині <table>, комірки <th>/<td> — всередині <tr>, <caption> — одразу в <table>.');
+  add(r.links.every(Boolean),'Усі посилання мають атрибут href','У тезі <a> бракує href або він порожній.');
+  add(r.imgs.every(i=>i.alt),'Усі зображення мають alt','Додай до кожного <img> короткий опис в атрибуті alt.');
+  const hrefs=r.links.join(' ');
+  const needLinks=['index.html','about.html','info.html'].filter(f=>hrefs.indexOf(f)<0);
+  add(needLinks.length===0,'У меню є посилання на всі три сторінки','Бракує посилань: '+needLinks.join(', ')+'.');
+  const content=r.lists.filter(l=>!l.inNav);
+  const maxList=content.reduce((m,l)=>Math.max(m,l.li),0);
+  if(type==='index'){
+    add(maxList>=3,'Є список щонайменше з трьох пунктів (поза меню)','Додай у main список <ul> із трьома пунктами <li>. Знайдено найбільший: '+maxList+'.');
+    add(r.imgs.length>=1,'Є зображення img','Додай на головну зображення: <img src="images/..." alt="...">.');
+  }else if(type==='about'){
+    add(cnt('article')>=1,'Є самостійний матеріал article','Розмісти розповідь про сайт у <article>.');
+    add(maxList>=3,'Є список щонайменше з трьох пунктів (поза меню)','Додай у article список із трьох пунктів. Знайдено найбільший: '+maxList+'.');
+  }else{
+    const t=r.tables[0];
+    add(!!t,'Є таблиця table','Додай таблицю <table>.');
+    add(t&&t.cap,'У таблиці є назва caption','Додай <caption> одразу після <table>.');
+    add(t&&t.th>=2,'У таблиці є заголовкові комірки th (щонайменше 2)','Додай рядок із заголовками стовпців: <tr><th>…</th><th>…</th></tr>.');
+    add(t&&t.tr>=3&&t.td>=4,'У таблиці є дані: не менше двох рядків із даними','Додай рядки <tr> з комірками <td> — не менше двох.');
+  }
+  const n=C.filter(c=>c.ok).length;
+  state.scores.checker={s:n,t:C.length}; save();
+  const wrap=h('div');
+  wrap.appendChild(h('h3','','Результат перевірки: '+n+' з '+C.length));
+  const bar=h('div','bar'); const f=h('i'); f.style.width=Math.round(n/C.length*100)+'%'; bar.appendChild(f); wrap.appendChild(bar);
+  const ul=h('ul','verdicts');
+  C.forEach(c=>{
+    const li=h('li',c.ok?'ok':'no'); li.appendChild(h('span','',c.ok?'✅':'❌'));
+    const d=h('div'); d.appendChild(document.createTextNode(c.t)); if(!c.ok) d.appendChild(h('small','',c.h));
+    li.appendChild(d); ul.appendChild(li);
+  });
+  wrap.appendChild(ul);
+  if(n===C.length) wrap.appendChild(h('div','callout good','Чудово! Усі перевірки пройдено. Перевір таким самим чином інші сторінки та заповни чекліст.'));
+  chkOut.appendChild(wrap);
+  chkPreview();
+}
+$('#chkBtn').addEventListener('click',runCheck);
+$('#chkSample').addEventListener('click',()=>{chkIn.value={index:SAMPLE_INDEX,about:SAMPLE_ABOUT,info:SAMPLE_INFO}[chkType.value]; chkPreview();});
+$('#chkClear').addEventListener('click',()=>{chkIn.value=''; chkOut.innerHTML=''; chkPreview();});
+chkIn.addEventListener('input',()=>{clearTimeout(chkTimer); chkTimer=setTimeout(chkPreview,400);});
+
+/* ================= summary ================= */
+function renderSummary(){
+  const ul=$('#sumList'); ul.innerHTML='';
+  function row(l,v){const li=h('li'); li.appendChild(h('span','',l)); li.appendChild(h('b','',v)); ul.appendChild(li);}
+  function sc(id){const s=state.scores[id]; return s?(s.s+' з '+s.t):'ще не пройдено';}
+  row('Пригадай — тест',sc('recall'));
+  row('Складання HTML-документа',state.scores.assemble?'виконано':'ще не виконано');
+  row('Заголовки й текст — міні-тест',sc('text'));
+  row('Зображення й посилання — міні-тест',sc('paths'));
+  row('Списки — «Який тег?»',sc('listq'));
+  row('Таблиці — міні-тест',sc('table'));
+  row('Семантичні елементи — міні-тест',sc('sem'));
+  row('Сайт із кількох сторінок — міні-тест',sc('site'));
+  row('Знайди помилку',sc('errors'));
+  row('Підсумковий тест (урок 8)',sc('final'));
+  row('Перевірка HTML (урок 9)',sc('checker'));
+  const all=$$('input.chk'); row('Практична робота — виконано пунктів',all.filter(c=>c.checked).length+' з '+all.length);
+  row('Пройдено розділів',progressCount()+' з '+lessonPanels.length);
+  $('#finishHint').style.display=progressCount()<lessonPanels.length?'block':'none';
+}
+
+/* ================= start ================= */
+(function(){
+  const id=location.hash.replace('#','');
+  const i=panels.findIndex(p=>p.id===id);
+  show(i>=0?i:0);
+})();
+
+})();
+</script>
+</body>
+</html>
+
+</body></html>
