@@ -79,6 +79,41 @@
             transform: translateY(-5px);
             box-shadow: 0 8px 20px #00000015;
         }
+        /* Активна картка класу */
+.card {
+    display: block;
+    text-decoration: none;
+    color: inherit;
+    cursor: pointer;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 25px rgba(79, 70, 229, 0.15);
+}
+
+/* Текст посилання-кнопки */
+.card .btn {
+    display: inline-block;
+    margin-top: 10px;
+    padding: 10px 20px;
+    background: #4f46e5;
+    color: white;
+    border-radius: 8px;
+    font-weight: 600;
+    transition: background 0.3s ease;
+}
+
+.card:hover .btn {
+    background: #3730a3;
+}
+
+/* Фокус для навігації клавіатурою */
+.card:focus-visible {
+    outline: 3px solid #818cf8;
+    outline-offset: 4px;
+}
 
         .grade {
             color: #2457a7;
