@@ -4,57 +4,156 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Моя бібліотека уроків інформатики</title>
+    <title>Моя бібліотека навчальних матеріалів</title>
+
     <style>
+        * {
+            box-sizing: border-box;
+        }
+
         body {
             font-family: Arial, sans-serif;
             background: #f3f6fc;
             margin: 0;
-            padding: 40px 20px;
+            padding: 50px 20px;
             color: #25324a;
         }
+
         .container {
-            max-width: 850px;
+            max-width: 950px;
             margin: auto;
         }
-        h1 { text-align: center; color: #2457a7; }
-        .lesson {
-            background: white;
-            padding: 20px;
-            margin: 15px 0;
-            border-radius: 12px;
-            box-shadow: 0 3px 10px #00000010;
+
+        header {
+            text-align: center;
+            margin-bottom: 45px;
         }
-        a {
+
+        h1 {
             color: #2457a7;
+            font-size: 32px;
+        }
+
+        header p {
+            color: #64748b;
+            font-size: 17px;
+        }
+
+        .subjects {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 25px;
+        }
+
+        .subject {
+            background: white;
+            padding: 35px 25px;
+            border-radius: 18px;
+            text-align: center;
+            box-shadow: 0 4px 15px #0000000d;
+            transition: 0.3s;
+        }
+
+        .subject:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px #00000015;
+        }
+
+        .icon {
+            font-size: 55px;
+            margin-bottom: 15px;
+        }
+
+        h2 {
+            color: #2457a7;
+            margin-bottom: 12px;
+        }
+
+        .subject p {
+            color: #64748b;
+            line-height: 1.6;
+            min-height: 50px;
+        }
+
+        .btn {
+            display: inline-block;
+            margin-top: 15px;
+            padding: 13px 28px;
+            background: #2457a7;
+            color: white;
+            border-radius: 9px;
             text-decoration: none;
             font-weight: bold;
         }
-        a:hover { text-decoration: underline; }
+
+        .btn:hover {
+            background: #173f80;
+        }
+
+        footer {
+            text-align: center;
+            margin-top: 45px;
+            color: #94a3b8;
+            font-size: 14px;
+        }
+
+        @media (max-width: 650px) {
+            .subjects {
+                grid-template-columns: 1fr;
+            }
+
+            h1 {
+                font-size: 25px;
+            }
+        }
     </style>
 </head>
-<body>
-<div class="container">
-    <h1>Моя бібліотека уроків інформатики</h1>
-    <p style="text-align:center">
-        Навчальні матеріали, інтерактивні вправи та практичні роботи
-    </p>
 
-    <div class="lesson">
-        <h2>Інформатика</h2>
-        <h3>5 клас</h3>
-        <a href="informatics/lesson-1/">Урок 1 — відкрити</a>
-    </div>
-    <div class="lesson">
-        <h2>Інформатика</h2>
-        <h3>10 клас - профільний рівень</h3>
-        <a href="informatics/grade-10-profile/lesson-1/">Урок 1 — відкрити</a>
-    </div>
-    <div class="lesson">
-        <h2>Інформатика</h2>
-        <h3>11 клас - веб</h3>
-        <a href="informatics/grade-11/html/lesson-3/">Урок 3 — відкрити</a>
-    </div>
+<body>
+
+<div class="container">
+
+    <header>
+        <h1>Моя бібліотека навчальних матеріалів</h1>
+        <p>
+            Навчальні матеріали, інтерактивні вправи
+            та практичні роботи
+        </p>
+    </header>
+
+    <main class="subjects">
+
+        <section class="subject">
+            <div class="icon">📐</div>
+            <h2>Математика</h2>
+            <p>
+                Уроки, презентації, інтерактивні вправи,
+                тести та матеріали для підготовки до НМТ.
+            </p>
+            <a href="mathematics/" class="btn">
+                Перейти до математики →
+            </a>
+        </section>
+
+        <section class="subject">
+            <div class="icon">💻</div>
+            <h2>Інформатика</h2>
+            <p>
+                Навчальні матеріали, практичні роботи,
+                програмування та інтерактивні завдання.
+            </p>
+            <a href="informatics/" class="btn">
+                Перейти до інформатики →
+            </a>
+        </section>
+
+    </main>
+
+    <footer>
+        © Моя бібліотека навчальних матеріалів
+    </footer>
+
 </div>
+
 </body>
 </html>
