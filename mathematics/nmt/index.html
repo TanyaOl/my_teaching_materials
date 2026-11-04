@@ -1,1 +1,647 @@
 
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="Навчальні матеріали для підготовки до НМТ з математики: алгебра, початки аналізу та геометрія.">
+<title>Підготовка до НМТ | Математика</title>
+
+<style>
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: "Segoe UI", Arial, sans-serif;
+    background: #f3f6fc;
+    color: #25324a;
+    line-height: 1.6;
+}
+
+header {
+    background: linear-gradient(135deg, #2457a7, #397bd1);
+    color: white;
+    text-align: center;
+    padding: 55px 20px;
+}
+
+header h1 {
+    font-size: clamp(28px, 5vw, 42px);
+    margin-bottom: 12px;
+}
+
+header p {
+    font-size: 17px;
+    opacity: 0.95;
+}
+
+.container {
+    max-width: 1150px;
+    margin: 0 auto;
+    padding: 30px 20px 60px;
+}
+
+.back-link {
+    display: inline-block;
+    margin-bottom: 28px;
+    color: #2457a7;
+    text-decoration: none;
+    font-weight: 600;
+}
+
+.back-link:hover {
+    text-decoration: underline;
+}
+
+.intro {
+    background: white;
+    padding: 25px 30px;
+    border-radius: 16px;
+    margin-bottom: 35px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+}
+
+.intro h2 {
+    color: #2457a7;
+    margin-bottom: 10px;
+}
+
+.section {
+    margin-bottom: 40px;
+}
+
+.section-heading {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 20px;
+    padding-bottom: 12px;
+    border-bottom: 2px solid #dce6f5;
+}
+
+.section-heading h2 {
+    color: #2457a7;
+    font-size: 25px;
+}
+
+.section-icon {
+    font-size: 27px;
+}
+
+.topics {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 15px;
+}
+
+.topic-card {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    padding: 17px 20px;
+    background: white;
+    border: 1px solid #e5eaf3;
+    border-radius: 13px;
+    box-shadow: 0 3px 10px rgba(0,0,0,0.04);
+    transition: 0.25s ease;
+    color: inherit;
+    text-decoration: none;
+}
+
+.topic-card.active {
+    cursor: pointer;
+}
+
+.topic-card.active:hover {
+    transform: translateY(-3px);
+    border-color: #8bb4ed;
+    box-shadow: 0 8px 20px rgba(36,87,167,0.12);
+}
+
+.topic-number {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 42px;
+    height: 42px;
+    border-radius: 10px;
+    background: #eaf1fc;
+    color: #2457a7;
+    font-weight: 700;
+    font-size: 15px;
+}
+
+.topic-info {
+    flex: 1;
+}
+
+.topic-info h3 {
+    font-size: 16px;
+    font-weight: 600;
+    margin-bottom: 3px;
+}
+
+.topic-info p {
+    font-size: 13px;
+    color: #8992a3;
+}
+
+.topic-status {
+    font-size: 12px;
+    color: #9299a8;
+    white-space: nowrap;
+}
+
+.active .topic-status {
+    color: #21865a;
+    font-weight: 600;
+}
+
+.active .topic-number {
+    background: #e2f4e9;
+    color: #21865a;
+}
+
+footer {
+    text-align: center;
+    padding: 25px 15px;
+    color: #8992a3;
+    font-size: 14px;
+}
+
+@media (max-width: 700px) {
+    .topics {
+        grid-template-columns: 1fr;
+    }
+
+    .topic-card {
+        padding: 14px;
+    }
+
+    .topic-status {
+        font-size: 11px;
+    }
+
+    .intro {
+        padding: 20px;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<header>
+    <h1>📐 Підготовка до НМТ з математики</h1>
+    <p>Теорія, приклади, інтерактивні уроки та практика</p>
+</header>
+
+<main class="container">
+
+    <a href="../index.html" class="back-link">
+        ← До розділу математики
+    </a>
+
+    <div class="intro">
+        <h2>Твоя бібліотека підготовки до НМТ</h2>
+        <p>
+            Обирай тему, опрацьовуй навчальні матеріали,
+            повторюй основні правила та закріплюй знання
+            за допомогою практичних завдань.
+        </p>
+    </div>
+
+    <!-- АЛГЕБРА ТА ПОЧАТКИ АНАЛІЗУ -->
+    <section class="section">
+
+        <div class="section-heading">
+            <span class="section-icon">📘</span>
+            <h2>Алгебра та початки аналізу</h2>
+        </div>
+
+        <div class="topics">
+
+            <div class="topic-card">
+                <div class="topic-number">01</div>
+                <div class="topic-info">
+                    <h3>Обчислення. Арифметичні задачі</h3>
+                    <p>Основні обчислення та текстові задачі</p>
+                </div>
+                <span class="topic-status">Готується</span>
+            </div>
+
+            <div class="topic-card">
+                <div class="topic-number">02</div>
+                <div class="topic-info">
+                    <h3>Відсотки</h3>
+                    <p>Основні типи задач на відсотки</p>
+                </div>
+                <span class="topic-status">Готується</span>
+            </div>
+
+            <div class="topic-card">
+                <div class="topic-number">03</div>
+                <div class="topic-info">
+                    <h3>Цілі вирази</h3>
+                    <p>Формули скороченого множення та тотожні перетворення</p>
+                </div>
+                <span class="topic-status">Готується</span>
+            </div>
+
+            <div class="topic-card">
+                <div class="topic-number">04</div>
+                <div class="topic-info">
+                    <h3>Дробово-раціональні вирази</h3>
+                    <p>Дії з раціональними дробами</p>
+                </div>
+                <span class="topic-status">Готується</span>
+            </div>
+
+            <a href="irracionalni_vurasi.html" class="topic-card active">
+                <div class="topic-number">05</div>
+                <div class="topic-info">
+                    <h3>Ірраціональні вирази</h3>
+                    <p>Корені та перетворення виразів</p>
+                </div>
+                <span class="topic-status">Відкрити →</span>
+            </a>
+
+            <div class="topic-card">
+                <div class="topic-number">06</div>
+                <div class="topic-info">
+                    <h3>Логарифмічні та показникові вирази</h3>
+                    <p>Властивості степенів і логарифмів</p>
+                </div>
+                <span class="topic-status">Готується</span>
+            </div>
+
+            <a href="trigonometria_vurazu.html" class="topic-card active">
+                <div class="topic-number">07</div>
+                <div class="topic-info">
+                    <h3>Тригонометричні вирази</h3>
+                    <p>Формули та тотожні перетворення</p>
+                </div>
+                <span class="topic-status">Відкрити →</span>
+            </a>
+
+            <div class="topic-card">
+                <div class="topic-number">08</div>
+                <div class="topic-info">
+                    <h3>Цілі рівняння</h3>
+                    <p>Методи розв'язування рівнянь</p>
+                </div>
+                <span class="topic-status">Готується</span>
+            </div>
+
+            <div class="topic-card">
+                <div class="topic-number">09</div>
+                <div class="topic-info">
+                    <h3>Цілі нерівності</h3>
+                    <p>Розв'язування нерівностей</p>
+                </div>
+                <span class="topic-status">Готується</span>
+            </div>
+
+            <div class="topic-card">
+                <div class="topic-number">10</div>
+                <div class="topic-info">
+                    <h3>Раціональні рівняння</h3>
+                    <p>Раціональні рівняння та їх розв'язування</p>
+                </div>
+                <span class="topic-status">Готується</span>
+            </div>
+
+            <div class="topic-card">
+                <div class="topic-number">11</div>
+                <div class="topic-info">
+                    <h3>Раціональні нерівності</h3>
+                    <p>Метод інтервалів</p>
+                </div>
+                <span class="topic-status">Готується</span>
+            </div>
+
+            <div class="topic-card">
+                <div class="topic-number">12</div>
+                <div class="topic-info">
+                    <h3>Ірраціональні рівняння</h3>
+                    <p>Рівняння з коренями</p>
+                </div>
+                <span class="topic-status">Готується</span>
+            </div>
+
+            <div class="topic-card">
+                <div class="topic-number">13</div>
+                <div class="topic-info">
+                    <h3>Ірраціональні нерівності</h3>
+                    <p>Нерівності з коренями</p>
+                </div>
+                <span class="topic-status">Готується</span>
+            </div>
+
+            <div class="topic-card">
+                <div class="topic-number">14</div>
+                <div class="topic-info">
+                    <h3>Показникові рівняння</h3>
+                    <p>Методи розв'язування показникових рівнянь</p>
+                </div>
+                <span class="topic-status">Готується</span>
+            </div>
+
+            <div class="topic-card">
+                <div class="topic-number">15</div>
+                <div class="topic-info">
+                    <h3>Показникові нерівності</h3>
+                    <p>Властивості та методи розв'язування</p>
+                </div>
+                <span class="topic-status">Готується</span>
+            </div>
+
+            <div class="topic-card">
+                <div class="topic-number">16</div>
+                <div class="topic-info">
+                    <h3>Логарифмічні рівняння</h3>
+                    <p>Властивості логарифмів і рівняння</p>
+                </div>
+                <span class="topic-status">Готується</span>
+            </div>
+
+            <div class="topic-card">
+                <div class="topic-number">17</div>
+                <div class="topic-info">
+                    <h3>Логарифмічні нерівності</h3>
+                    <p>Методи розв'язування нерівностей</p>
+                </div>
+                <span class="topic-status">Готується</span>
+            </div>
+
+            <div class="topic-card">
+                <div class="topic-number">18</div>
+                <div class="topic-info">
+                    <h3>Тригонометричні рівняння</h3>
+                    <p>Основні види тригонометричних рівнянь</p>
+                </div>
+                <span class="topic-status">Готується</span>
+            </div>
+
+            <div class="topic-card">
+                <div class="topic-number">19</div>
+                <div class="topic-info">
+                    <h3>Тригонометричні нерівності</h3>
+                    <p>Розв'язування тригонометричних нерівностей</p>
+                </div>
+                <span class="topic-status">Готується</span>
+            </div>
+
+            <div class="topic-card">
+                <div class="topic-number">20</div>
+                <div class="topic-info">
+                    <h3>Системи рівнянь</h3>
+                    <p>Методи розв'язування систем</p>
+                </div>
+                <span class="topic-status">Готується</span>
+            </div>
+
+            <div class="topic-card">
+                <div class="topic-number">21</div>
+                <div class="topic-info">
+                    <h3>Арифметична та геометрична прогресії</h3>
+                    <p>Формули та задачі на прогресії</p>
+                </div>
+                <span class="topic-status">Готується</span>
+            </div>
+
+            <div class="topic-card">
+                <div class="topic-number">22</div>
+                <div class="topic-info">
+                    <h3>Елементарні функції та їхні властивості</h3>
+                    <p>Область визначення, графіки та властивості</p>
+                </div>
+                <span class="topic-status">Готується</span>
+            </div>
+
+            <div class="topic-card">
+                <div class="topic-number">23</div>
+                <div class="topic-info">
+                    <h3>Побудова графіків функцій</h3>
+                    <p>Геометричні перетворення графіків</p>
+                </div>
+                <span class="topic-status">Готується</span>
+            </div>
+
+            <div class="topic-card">
+                <div class="topic-number">24</div>
+                <div class="topic-info">
+                    <h3>Похідна функції</h3>
+                    <p>Геометричний і механічний зміст похідної</p>
+                </div>
+                <span class="topic-status">Готується</span>
+            </div>
+
+            <div class="topic-card">
+                <div class="topic-number">25</div>
+                <div class="topic-info">
+                    <h3>Застосування похідної</h3>
+                    <p>Дослідження функцій</p>
+                </div>
+                <span class="topic-status">Готується</span>
+            </div>
+
+            <div class="topic-card">
+                <div class="topic-number">26</div>
+                <div class="topic-info">
+                    <h3>Первісна. Інтеграл</h3>
+                    <p>Основні правила інтегрування</p>
+                </div>
+                <span class="topic-status">Готується</span>
+            </div>
+
+            <div class="topic-card">
+                <div class="topic-number">27</div>
+                <div class="topic-info">
+                    <h3>Елементи комбінаторики</h3>
+                    <p>Правила комбінаторики та підрахунку</p>
+                </div>
+                <span class="topic-status">Готується</span>
+            </div>
+
+            <div class="topic-card">
+                <div class="topic-number">28</div>
+                <div class="topic-info">
+                    <h3>Початки теорії ймовірностей та статистики</h3>
+                    <p>Ймовірність випадкових подій і статистика</p>
+                </div>
+                <span class="topic-status">Готується</span>
+            </div>
+
+        </div>
+    </section>
+
+    <!-- ГЕОМЕТРІЯ -->
+    <section class="section">
+
+        <div class="section-heading">
+            <span class="section-icon">📏</span>
+            <h2>Геометрія</h2>
+        </div>
+
+        <div class="topics">
+
+            <div class="topic-card">
+                <div class="topic-number">29</div>
+                <div class="topic-info">
+                    <h3>Трикутник</h3>
+                    <p>Види трикутників та їхні властивості</p>
+                </div>
+                <span class="topic-status">Готується</span>
+            </div>
+
+            <div class="topic-card">
+                <div class="topic-number">30</div>
+                <div class="topic-info">
+                    <h3>Прямокутний трикутник</h3>
+                    <p>Теорема Піфагора та метричні співвідношення</p>
+                </div>
+                <span class="topic-status">Готується</span>
+            </div>
+
+            <div class="topic-card">
+                <div class="topic-number">31</div>
+                <div class="topic-info">
+                    <h3>Рівнобедрений трикутник</h3>
+                    <p>Властивості та ознаки</p>
+                </div>
+                <span class="topic-status">Готується</span>
+            </div>
+
+            <div class="topic-card">
+                <div class="topic-number">32</div>
+                <div class="topic-info">
+                    <h3>Чотирикутники</h3>
+                    <p>Паралелограм, ромб, прямокутник, квадрат, трапеція</p>
+                </div>
+                <span class="topic-status">Готується</span>
+            </div>
+
+            <div class="topic-card">
+                <div class="topic-number">33</div>
+                <div class="topic-info">
+                    <h3>Многокутники</h3>
+                    <p>Властивості та площі многокутників</p>
+                </div>
+                <span class="topic-status">Готується</span>
+            </div>
+
+            <div class="topic-card">
+                <div class="topic-number">34</div>
+                <div class="topic-info">
+                    <h3>Коло, круг та їх елементи</h3>
+                    <p>Довжина кола, площа круга, вписані кути</p>
+                </div>
+                <span class="topic-status">Готується</span>
+            </div>
+
+            <div class="topic-card">
+                <div class="topic-number">35</div>
+                <div class="topic-info">
+                    <h3>Аксіоми стереометрії. Прямі та площини в просторі</h3>
+                    <p>Основні поняття стереометрії</p>
+                </div>
+                <span class="topic-status">Готується</span>
+            </div>
+
+            <div class="topic-card">
+                <div class="topic-number">36</div>
+                <div class="topic-info">
+                    <h3>Призма</h3>
+                    <p>Елементи, площа поверхні та об'єм призми</p>
+                </div>
+                <span class="topic-status">Готується</span>
+            </div>
+
+            <div class="topic-card">
+                <div class="topic-number">37</div>
+                <div class="topic-info">
+                    <h3>Піраміда</h3>
+                    <p>Елементи, площа поверхні та об'єм піраміди</p>
+                </div>
+                <span class="topic-status">Готується</span>
+            </div>
+
+            <div class="topic-card">
+                <div class="topic-number">38</div>
+                <div class="topic-info">
+                    <h3>Циліндр</h3>
+                    <p>Площа поверхні та об'єм циліндра</p>
+                </div>
+                <span class="topic-status">Готується</span>
+            </div>
+
+            <div class="topic-card">
+                <div class="topic-number">39</div>
+                <div class="topic-info">
+                    <h3>Конус</h3>
+                    <p>Елементи, площа поверхні та об'єм конуса</p>
+                </div>
+                <span class="topic-status">Готується</span>
+            </div>
+
+            <div class="topic-card">
+                <div class="topic-number">40</div>
+                <div class="topic-info">
+                    <h3>Куля</h3>
+                    <p>Сфера, куля та їхні елементи</p>
+                </div>
+                <span class="topic-status">Готується</span>
+            </div>
+
+            <div class="topic-card">
+                <div class="topic-number">41</div>
+                <div class="topic-info">
+                    <h3>Координати</h3>
+                    <p>Координати на площині та в просторі</p>
+                </div>
+                <span class="topic-status">Готується</span>
+            </div>
+
+            <div class="topic-card">
+                <div class="topic-number">42</div>
+                <div class="topic-info">
+                    <h3>Вектори</h3>
+                    <p>Дії з векторами та їхні властивості</p>
+                </div>
+                <span class="topic-status">Готується</span>
+            </div>
+
+            <div class="topic-card">
+                <div class="topic-number">43</div>
+                <div class="topic-info">
+                    <h3>Перетворення фігур</h3>
+                    <p>Рухи та перетворення на площині</p>
+                </div>
+                <span class="topic-status">Готується</span>
+            </div>
+
+            <div class="topic-card">
+                <div class="topic-number">44</div>
+                <div class="topic-info">
+                    <h3>Найпростіші геометричні фігури на площині</h3>
+                    <p>Основні поняття та властивості фігур</p>
+                </div>
+                <span class="topic-status">Готується</span>
+            </div>
+
+        </div>
+    </section>
+
+</main>
+
+<footer>
+    © 2026 · Навчальні матеріали з математики · Підготовка до НМТ
+</footer>
+
+</body>
+</html>
+
