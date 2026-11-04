@@ -7,145 +7,124 @@
     <title>Моя бібліотека навчальних матеріалів</title>
 
   <style>
-        * {
-            box-sizing: border-box;
-        }
+        
+* {
+    box-sizing: border-box;
+}
 
-        body {
-            font-family: Arial, sans-serif;
-            background: #f3f6fc;
-            margin: 0;
-            padding: 35px 20px;
-            color: #25324a;
-        }
+body {
+    font-family: Arial, sans-serif;
+    background: #f3f6fc;
+    margin: 0;
+    padding: 45px 20px;
+    color: #25324a;
+}
 
-        .container {
-            max-width: 1050px;
-            margin: auto;
-        }
+.container {
+    max-width: 950px;
+    margin: 0 auto;
+}
 
-        header {
-            text-align: center;
-            margin-bottom: 35px;
-        }
+header {
+    text-align: center;
+    margin-bottom: 40px;
+}
 
-        .back {
-            display: inline-block;
-            margin-bottom: 20px;
-            color: #64748b;
-            text-decoration: none;
-            font-size: 14px;
-        }
+header h1 {
+    color: #2457a7;
+    font-size: 32px;
+    margin: 10px 0;
+}
 
-        .back:hover {
-            color: #2457a7;
-        }
+header p {
+    color: #64748b;
+    line-height: 1.6;
+}
 
-        .icon {
-            font-size: 48px;
-            margin-bottom: 10px;
-        }
+/* Дві картки предметів */
+.subjects {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 25px;
+}
 
-        h1 {
-            color: #2457a7;
-            font-size: 32px;
-            margin: 10px 0;
-        }
+.subject {
+    background: white;
+    padding: 30px;
+    border-radius: 16px;
+    box-shadow: 0 3px 12px #0000000d;
+    transition: 0.3s ease;
+    display: flex;
+    flex-direction: column;
+    min-height: 280px;
+}
 
-        header p {
-            color: #64748b;
-            line-height: 1.6;
-        }
+.subject:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 20px #00000015;
+}
 
-        .classes {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 20px;
-        }
+.icon {
+    font-size: 48px;
+    margin-bottom: 15px;
+}
 
-        .card {
-            background: white;
-            padding: 25px;
-            border-radius: 16px;
-            box-shadow: 0 3px 12px #0000000d;
-            transition: 0.3s;
-            display: flex;
-            flex-direction: column;
-            min-height: 220px;
-        }
+.subject h2 {
+    color: #2457a7;
+    font-size: 22px;
+    margin: 0 0 12px;
+}
 
-        .card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 8px 20px #00000015;
-        }
+.subject p {
+    color: #64748b;
+    font-size: 14px;
+    line-height: 1.7;
+    flex-grow: 1;
+}
 
-        .grade {
-            color: #2457a7;
-            font-size: 25px;
-            font-weight: bold;
-            margin-bottom: 12px;
-        }
+/* Кнопки */
+.btn {
+    display: inline-block;
+    align-self: flex-start;
+    text-align: center;
+    background: #2457a7;
+    color: white;
+    padding: 12px 20px;
+    border-radius: 8px;
+    text-decoration: none;
+    font-size: 14px;
+    font-weight: bold;
+    margin-top: 20px;
+    transition: 0.3s;
+}
 
-        .card h2 {
-            font-size: 19px;
-            margin: 0 0 10px;
-        }
+.btn:hover {
+    background: #173f80;
+}
 
-        .card p {
-            color: #64748b;
-            font-size: 14px;
-            line-height: 1.6;
-            flex-grow: 1;
-        }
+/* Підвал */
+footer {
+    text-align: center;
+    margin-top: 45px;
+    color: #94a3b8;
+    font-size: 13px;
+}
 
-        .btn {
-            display: inline-block;
-            text-align: center;
-            background: #2457a7;
-            color: white;
-            padding: 11px 18px;
-            border-radius: 8px;
-            text-decoration: none;
-            font-size: 14px;
-            font-weight: bold;
-            margin-top: 15px;
-        }
+/* Адаптація для телефону */
+@media (max-width: 650px) {
+    .subjects {
+        grid-template-columns: 1fr;
+    }
 
-        .btn:hover {
-            background: #173f80;
-        }
+    header h1 {
+        font-size: 26px;
+    }
 
-        .coming {
-            opacity: 0.7;
-        }
+    .subject {
+        min-height: 250px;
+    }
+}
 
-        .coming .btn {
-            background: #94a3b8;
-            pointer-events: none;
-        }
-
-        footer {
-            text-align: center;
-            margin-top: 45px;
-            color: #94a3b8;
-            font-size: 13px;
-        }
-
-        @media (max-width: 750px) {
-            .classes {
-                grid-template-columns: repeat(2, 1fr);
-            }
-        }
-
-        @media (max-width: 500px) {
-            .classes {
-                grid-template-columns: 1fr;
-            }
-
-            h1 {
-                font-size: 26px;
-            }
-        }
     </style>
 </head>
 
