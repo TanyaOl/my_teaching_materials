@@ -2,213 +2,147 @@
 <!DOCTYPE html>
 <html lang="uk">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="Навчальні матеріали з математики для учнів 8 класу">
-  <title>Математика — 8 клас</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Математика — 8 клас</title>
 
-  <style>
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-    }
+<style>
+* {
+    box-sizing: border-box;
+}
 
-    body {
-      font-family: "Segoe UI", Arial, sans-serif;
-      background: #f5f6fb;
-      color: #252b45;
-      line-height: 1.6;
-    }
+body {
+    margin: 0;
+    padding: 30px 20px;
+    font-family: Arial, sans-serif;
+    background: #f3f6fc;
+    color: #25324a;
+}
 
-    header {
-      background: linear-gradient(135deg, #4f46e5, #7c3aed);
-      color: white;
-      padding: 45px 20px;
-      text-align: center;
-    }
+.container {
+    max-width: 1000px;
+    margin: auto;
+}
 
-    header h1 {
-      font-size: clamp(28px, 5vw, 42px);
-      margin-bottom: 10px;
-    }
+.back {
+    display: inline-block;
+    margin-bottom: 25px;
+    color: #2457a7;
+    text-decoration: none;
+    font-weight: bold;
+}
 
-    header p {
-      font-size: 17px;
-      opacity: 0.9;
-    }
+h1 {
+    color: #2457a7;
+    text-align: center;
+    margin-bottom: 10px;
+}
 
-    .container {
-      width: min(1100px, 92%);
-      margin: 35px auto;
-    }
+.subtitle {
+    text-align: center;
+    color: #64748b;
+    margin-bottom: 35px;
+}
 
-    .back-link {
-      display: inline-block;
-      color: #4f46e5;
-      text-decoration: none;
-      margin-bottom: 25px;
-      font-weight: 600;
-    }
+.subjects {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 25px;
+}
 
-    .back-link:hover {
-      text-decoration: underline;
-    }
+.card {
+    background: white;
+    border-radius: 16px;
+    padding: 28px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.06);
+    text-decoration: none;
+    color: inherit;
+    transition: transform 0.2s, box-shadow 0.2s;
+}
 
-    .section-title {
-      font-size: 25px;
-      margin-bottom: 20px;
-    }
+.card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 22px rgba(0,0,0,0.1);
+}
 
-    .topic-card {
-      background: white;
-      border-radius: 20px;
-      padding: 28px;
-      box-shadow: 0 8px 25px rgba(45, 50, 90, 0.07);
-      border: 1px solid #ececf5;
-    }
+.icon {
+    font-size: 42px;
+    margin-bottom: 15px;
+}
 
-    .topic-label {
-      display: inline-block;
-      background: #ede9fe;
-      color: #6d28d9;
-      padding: 5px 13px;
-      border-radius: 20px;
-      font-size: 13px;
-      font-weight: 600;
-      margin-bottom: 15px;
-    }
+.card h2 {
+    color: #2457a7;
+    margin-top: 0;
+}
 
-    .topic-card h3 {
-      font-size: 24px;
-      margin-bottom: 12px;
-    }
+.card p {
+    line-height: 1.6;
+    color: #526078;
+}
 
-    .topic-card p {
-      color: #646b80;
-      margin-bottom: 20px;
-    }
+.btn {
+    display: inline-block;
+    margin-top: 12px;
+    padding: 11px 18px;
+    background: #2457a7;
+    color: white;
+    border-radius: 8px;
+    font-weight: bold;
+}
 
-    .materials {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
-      gap: 14px;
-      margin-top: 25px;
-    }
+.lesson-link {
+    display: block;
+    margin-top: 18px;
+    padding: 12px;
+    background: #eef4ff;
+    border-radius: 8px;
+    color: #2457a7;
+    text-decoration: none;
+    font-weight: bold;
+}
 
-    .material-link {
-      display: block;
-      padding: 17px;
-      border-radius: 13px;
-      background: #f7f7ff;
-      border: 1px solid #e8e7fa;
-      color: #353b60;
-      text-decoration: none;
-      transition: 0.2s;
-    }
-
-    .material-link:hover {
-      background: #ede9fe;
-      transform: translateY(-3px);
-    }
-
-    .material-link strong {
-      display: block;
-      margin-bottom: 5px;
-      color: #4f46e5;
-    }
-
-    .material-link span {
-      font-size: 13px;
-      color: #777d91;
-    }
-
-    .coming {
-      opacity: 0.65;
-      cursor: default;
-    }
-
-    footer {
-      text-align: center;
-      padding: 25px 15px;
-      color: #85899a;
-      font-size: 14px;
-    }
-
-    @media (max-width: 600px) {
-      header {
-        padding: 35px 15px;
-      }
-
-      .topic-card {
-        padding: 20px;
-      }
-    }
-  </style>
+.lesson-link:hover {
+    background: #dce9ff;
+}
+</style>
 </head>
 
 <body>
+<div class="container">
 
-  <header>
-    <h1>📐 Математика — 8 клас</h1>
-    <p>Навчайся, досліджуй, розв'язуй!</p>
-  </header>
+    <a href="../index.html" class="back">← До всіх класів</a>
 
-  <main class="container">
+    <h1>Математика — 8 клас</h1>
+    <p class="subtitle">Оберіть розділ для навчання</p>
 
-    <a class="back-link" href="../index.html">
-      ← До всіх класів
-    </a>
+    <div class="subjects">
 
-    <h2 class="section-title">Навчальні теми</h2>
+        <a href="algebra/index.html" class="card">
+            <div class="icon">📐</div>
+            <h2>Алгебра</h2>
+            <p>
+                Раціональні вирази, квадратні корені,
+                рівняння, функції та інші теми курсу алгебри.
+            </p>
+            <span class="btn">Перейти до алгебри →</span>
 
-    <article class="topic-card">
-      <span class="topic-label">Алгебра</span>
-
-      <h3>Перетворення раціональних виразів</h3>
-
-      <p>
-        Вивчай раціональні вирази, досліджуй їхні властивості,
-        опановуй правила перетворення та закріплюй знання
-        за допомогою практичних завдань.
-      </p>
-
-      <div class="materials">
-
-        <a class="material-link coming" href="#" aria-disabled="true">
-          <strong>📘 Теорія</strong>
-          <span>Правила, формули та пояснення</span>
+            <a href="interactive-lesson.html" class="lesson-link"
+               onclick="event.stopPropagation()">
+                ✨ Інтерактивний урок: Перетворення раціональних виразів
+            </a>
         </a>
 
-        <a class="material-link coming" href="#" aria-disabled="true">
-          <strong>💡 Приклади</strong>
-          <span>Покрокове розв'язування</span>
+        <a href="geometry/index.html" class="card">
+            <div class="icon">📏</div>
+            <h2>Геометрія</h2>
+            <p>
+                Чотирикутники, подібність трикутників,
+                площі фігур, теореми та практичні завдання.
+            </p>
+            <span class="btn">Перейти до геометрії →</span>
         </a>
 
-        <a class="material-link" href="interactive-lesson.html">
-          <strong>🖥️ Інтерактивний урок</strong>
-          <span>Навчання з інтерактивними завданнями</span>
-        </a>
-
-        <a class="material-link coming" href="#" aria-disabled="true">
-          <strong>✍️ Практика</strong>
-          <span>Завдання для самостійної роботи</span>
-        </a>
-
-        <a class="material-link coming" href="#" aria-disabled="true">
-          <strong>✅ Тест</strong>
-          <span>Перевір свої знання</span>
-        </a>
-
-      </div>
-    </article>
-
-  </main>
-
-  <footer>
-    © 2026 · Навчальні матеріали з математики
-  </footer>
-
+    </div>
+</div>
 </body>
 </html>
-
