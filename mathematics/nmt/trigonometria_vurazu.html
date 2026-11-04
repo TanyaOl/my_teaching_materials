@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="uk"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Тригонометричні вирази — підготовка до НМТ</title>
+<style>
+:root{--bg:#f6f7fb;--card:#fff;--tx:#1d2433;--mu:#5d667a;--ac:#4f46e5;--ok:#15803d;--bad:#c2410c;--bd:#dfe3ee;--hl:#eef0ff;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#11141c;--card:#1b2030;--tx:#e8ebf5;--mu:#9aa3b8;--ac:#8b85ff;--ok:#4ade80;--bad:#fb923c;--bd:#2c3347;--hl:#262c45}}
+:root[data-theme="dark"]{--bg:#11141c;--card:#1b2030;--tx:#e8ebf5;--mu:#9aa3b8;--ac:#8b85ff;--ok:#4ade80;--bad:#fb923c;--bd:#2c3347;--hl:#262c45}
+*{box-sizing:border-box}html{scroll-padding-top:60px}
+body{margin:0;background:var(--bg);color:var(--tx);font:17px/1.55 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;padding-bottom:90px}
+main{max-width:820px;margin:auto;padding:14px}
+h1{font-size:1.5rem;margin:.3em 0}h2{font-size:1.2rem;margin:0 0 .4em}
+.sub{color:var(--mu);margin:0 0 12px}
+.tabs{display:flex;gap:8px;margin:10px 0;position:sticky;top:env(safe-area-inset-top,0px);background:var(--bg);padding:6px 0;z-index:5}
+.tabs button{flex:1}
+button{font:inherit;border:1px solid var(--bd);background:var(--card);color:var(--tx);padding:8px 14px;border-radius:10px;cursor:pointer}
+button.on,button.pri{background:var(--ac);color:#fff;border-color:var(--ac)}
+.bar{height:8px;background:var(--bd);border-radius:6px;overflow:hidden;margin-bottom:12px}.bar i{display:block;height:100%;width:0;background:var(--ac);transition:width .3s}
+details.f{background:var(--hl);border:1px solid var(--bd);border-radius:12px;padding:8px 14px;margin-bottom:14px}
+details.f summary{cursor:pointer;font-weight:600}
+.fg{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:4px 16px;margin-top:8px}
+.step{background:var(--card);border:1px solid var(--bd);border-radius:14px;padding:14px 16px;margin-bottom:14px}
+.lesson{display:none}.lesson.on{display:block}.step.hid{display:none}
+.tm{display:inline-block;background:var(--hl);color:var(--ac);border-radius:20px;padding:1px 10px;font-size:.85rem;font-weight:600;margin-left:6px}
+.box{background:var(--hl);border-left:4px solid var(--ac);padding:8px 12px;border-radius:8px;margin:10px 0}
+.ex{border-top:1px dashed var(--bd);padding-top:10px;margin-top:10px}.ex p,.mc p{margin:0 0 6px}
+input{font:inherit;padding:7px 10px;border:1px solid var(--bd);border-radius:8px;width:150px;background:var(--bg);color:var(--tx)}
+.mc button{display:block;width:100%;text-align:left;margin:5px 0}
+.mc button.r{background:var(--ok);color:#fff;border-color:var(--ok)}.mc button.w{background:var(--bad);color:#fff;border-color:var(--bad)}
+.fb{margin-left:8px;font-weight:600}.fb.ok{color:var(--ok)}.fb.no{color:var(--bad)}
+.hint{font-size:.9rem}.ht{color:var(--mu);font-size:.95rem;margin-top:4px}
+main table{display:block;overflow-x:auto}table{border-collapse:collapse;width:100%;text-align:center}td,th{border:1px solid var(--bd);padding:6px}
+td.q{cursor:pointer;background:var(--hl);color:var(--ac);font-weight:700}td.q.s{background:transparent;color:var(--tx)}
+.nx{display:block;margin:6px auto 18px;font-size:1.05rem;padding:11px 26px}
+.fr{display:inline-flex;flex-direction:column;vertical-align:middle;text-align:center;margin:0 3px;line-height:1.2;font-size:.95em}.fr>span{padding:0 3px}.fr>span:first-child{border-bottom:1.5px solid currentColor}
+.cp{font-size:.8rem;padding:2px 8px;margin-left:6px}.hw li{margin:12px 0}details.ans{margin-top:10px;color:var(--mu)}details.ans summary{cursor:pointer;font-weight:600}
+.ucw{display:flex;flex-wrap:wrap;gap:14px;align-items:flex-start;margin:10px 0}
+#ucs{width:100%;max-width:330px;background:var(--hl);border-radius:14px;touch-action:none;cursor:grab;flex:1 1 260px}
+.ucr{flex:1 1 240px;min-width:230px}.ucr table{font-size:.95rem}
+.ucb{display:flex;flex-wrap:wrap;gap:5px;margin:8px 0}.ucb button{padding:4px 9px;font-size:.9rem}.ucb button.on{background:var(--ac);color:#fff}
+.hv{cursor:pointer;background:var(--hl);color:var(--ac);font-weight:700;padding:0 10px;border-radius:6px}
+.uck label{display:inline-block;margin:3px 12px 3px 0;font-size:.95rem}#uc ol{margin:6px 0 0;padding-left:20px}
+#ucs text{fill:var(--tx);font-size:11px}
+#uc input[type=range]{width:100%;padding:0}#uc input[type=checkbox]{width:auto;padding:0;margin-right:4px}
+#score{position:fixed;right:10px;top:calc(env(safe-area-inset-top,0px) + 6px);background:var(--card);border:1px solid var(--bd);border-radius:20px;padding:3px 12px;z-index:9;font-weight:700}
+#wb{position:fixed;left:0;right:0;bottom:0;background:var(--card);border-top:2px solid var(--ac);z-index:20;transform:translateY(calc(100% - 52px));transition:transform .25s;padding-bottom:env(safe-area-inset-bottom,0px)}
+#wb.open{transform:none}
+#tb{display:flex;gap:6px;align-items:center;padding:8px;flex-wrap:wrap;min-height:52px}
+#tb .t{font-weight:700;margin-right:auto}
+#cw{height:44vh;overflow:auto;background:#fff;border-top:1px solid var(--bd)}
+canvas{display:block;touch-action:none;background:#fff;background-image:linear-gradient(#e6e9f2 1px,transparent 1px),linear-gradient(90deg,#e6e9f2 1px,transparent 1px);background-size:28px 28px}
+.sw{width:26px;height:26px;border-radius:50%;padding:0;border:2px solid var(--bd)}.sw.on{outline:3px solid var(--ac)}
+</style></head><body>
+<div id="score">⭐ 0</div>
+<main>
+<h1>Тригонометричні вирази</h1>
+<p class="sub">Підготовка до НМТ · 2 уроки по 60 хв за матеріалами збірника «Тригонометричні вирази». Тисни «Наступний крок», але спершу спробуй відповісти сам. Пиши розв’язання на дошці внизу ✏️</p>
+<details class="f" open><summary>📌 Формули (завжди перед очима)</summary><div class="fg">
+<div>sin²α + cos²α = 1</div><div>tg α = {sin α|cos α}</div><div>ctg α = {cos α|sin α}</div><div>tg α · ctg α = 1</div>
+<div>1 + tg²α = {1|cos²α}</div><div>1 + ctg²α = {1|sin²α}</div><div>sin(−α) = −sin α</div><div>cos(−α) = cos α</div>
+<div>tg(−α) = −tg α</div><div>sin 2α = 2 sin α cos α</div><div>cos 2α = cos²α − sin²α</div><div>cos 2α = 1 − 2sin²α = 2cos²α − 1</div>
+<div>sin(α±β) = sinα cosβ ± cosα sinβ</div><div>cos(α±β) = cosα cosβ ∓ sinα sinβ</div><div>180° = π рад</div></div></details>
+<div class="bar"><i id="pb"></i></div>
+<div class="tabs"><button class="on" data-l="1">Урок 1 · Означення і співвідношення</button><button data-l="2">Урок 2 · Формули і НМТ</button></div>
+<div class="lesson on" id="L1"></div><div class="lesson" id="L2"></div>
+<button class="pri nx" id="next">Наступний крок ▶</button>
+</main>
+<div id="wb"><div id="tb"><span class="t">🖊 Дошка</span>
+<button class="sw on" data-c="#1d2433" style="background:#1d2433"></button><button class="sw" data-c="#dc2626" style="background:#dc2626"></button><button class="sw" data-c="#2563eb" style="background:#2563eb"></button><button class="sw" data-c="#16a34a" style="background:#16a34a"></button>
+<button id="pen" class="on">✏️</button><button id="er">🧽</button><button id="clr">🗑</button><button id="wbt">⬆️ Відкрити</button></div>
+<div id="cw"><canvas id="cv"></canvas></div></div>
+
+
+<script>
+(function(){
+var $=function(s,r){return (r||document).querySelector(s)},$$=function(s,r){return Array.prototype.slice.call((r||document).querySelectorAll(s))};
+function ex(q,a,h){return '<div class="ex" data-a="'+a+'" data-h="'+h+'"><p>'+q+' <button class="cp" title="Скопіювати на дошку">📋 На дошку</button></p><input> <button class="chk">Перевірити</button> <button class="hint">Підказка</button><span class="fb"></span><div class="ht"></div></div>'}
+function mc(q,o,c){return '<div class="mc" data-c="'+c+'"><p>'+q+' <button class="cp" title="Скопіювати на дошку">📋 На дошку</button></p>'+o.map(function(x){return '<button>'+x+'</button>'}).join('')+'</div>'}
+function box(t){return '<div class="box">'+t+'</div>'}
+function tbl(rows,hide){return '<table>'+rows.map(function(r,i){return '<tr>'+r.map(function(c,j){return (i==0||j==0)?'<th>'+c+'</th>':(hide&&c!='—'?'<td class="q" data-v="'+c+'">?</td>':'<td>'+c+'</td>')}).join('')+'</tr>'}).join('')+'</table>'}
+var VT0=tbl([['α','0°','30°','45°','60°','90°','180°','270°','360°'],['радіани','0','π/6','π/4','π/3','π/2','π','3π/2','2π'],
+['sin α','0','1/2','√2/2','√3/2','1','0','−1','0'],['cos α','1','√3/2','√2/2','1/2','0','−1','0','1'],['tg α','0','√3/3','1','√3','—','0','—','0'],['ctg α','—','√3','1','√3/3','0','—','0','—']],0).replace(/<tr><th>(sin|cos|tg|ctg) α<\/th>.*?<\/tr>/g,function(m){return m});
+var T1=tbl([['α','0°','30°','45°','60°','90°','180°','270°','360°'],['sin α','0','1/2','√2/2','√3/2','1','0','−1','0'],['cos α','1','√3/2','√2/2','1/2','0','−1','0','1'],['tg α','0','√3/3','1','√3','—','0','—','0'],['ctg α','—','√3','1','√3/3','0','—','0','—']],1);
+var RT=tbl([['x','π/2−α','π/2+α','π−α','π+α','3π/2−α','3π/2+α','2π−α'],['sin x','cos α','cos α','sin α','−sin α','−cos α','−cos α','−sin α'],['cos x','sin α','−sin α','−cos α','−cos α','−sin α','sin α','cos α'],['tg x','ctg α','−ctg α','−tg α','tg α','ctg α','−ctg α','−tg α'],['ctg x','tg α','−tg α','−ctg α','ctg α','tg α','−tg α','−ctg α']],0);
+var ST=tbl([['Чверть','sin','cos','tg, ctg'],['I','+','+','+'],['II','+','−','−'],['III','−','−','+'],['IV','−','+','−']],0);
+function fr(n,d){return '<span class="fr"><span>'+n+'</span><span>'+d+'</span></span>'}
+function hw(t,a){return box('📓 Виконай у зошиті. Дроби записуй так, як на екрані: чисельник над рискою, знаменник під нею.')+'<ol class="hw">'+t.map(function(x){return '<li>'+x+' <button class="cp">📋 На дошку</button></li>'}).join('')+'</ol><details class="ans"><summary>Відповіді для перевірки</summary><ol>'+a.map(function(x){return '<li>'+x+'</li>'}).join('')+'</ol></details>'}
+function conv(h){var f=function(x){return x.replace(/\{([^{}|]+)\|([^{}|]+)\}/g,function(m,a,b){return fr(f(a),f(b))})};
+return f(h).replace(/([√π\dαβxy]+(?:,\d+)?)\/([√π\dαβxy]+)/g,function(m,a,b){return fr(a,b)})}
+function stack(root){var w=document.createTreeWalker(root,NodeFilter.SHOW_TEXT),ns=[],n;while(n=w.nextNode()){if(/[√π\dαβxy]\/[√π\dαβxy]|\{[^{}]*\|[^{}]*\}/.test(n.nodeValue)&&!n.parentNode.closest('.fr,input,script'))ns.push(n)}
+ns.forEach(function(n){var h=conv(n.nodeValue.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'));var sp=document.createElement('span');sp.innerHTML=h;n.parentNode.replaceChild(sp,n)})}
+var L={1:[
+['1. Одиничне коло: що таке sin, cos, tg, ctg','10 хв',box('Кут α відкладаємо від додатного напрямку осі x. Кінець рухомого радіуса — точка B(x; y) на одиничному колі.<br><b>cos α = x</b> (абсциса), <b>sin α = y</b> (ордината)<br>tg α = y/x = {sin α|cos α} (cos α ≠ 0) · ctg α = x/y = {cos α|sin α} (sin α ≠ 0)<br>Завжди |sin α| ≤ 1, |cos α| ≤ 1.')+'<div id="uc"></div><p>Задача 7.30. Сторона кута β перетинає одиничне коло в точці (−5/13; −12/13).</p>',
+ [ex('sin β = ?','-12/13','sin — це ордината, тобто друга координата'),ex('cos β = ?','-5/13','cos — це абсциса, перша координата'),ex('tg β = {sin β|cos β} = ?','12/5','(−12/13) : (−5/13); мінус на мінус дає плюс'),ex('ctg β = ?','5/12','перевернутий тангенс')]],
+['2. Таблиця значень','10 хв','<p>Пригадай значення, потім натисни на клітинку.</p>'+T1+box('🧠 sin: √1/2, √2/2, √3/2 для 30°, 45°, 60°; cos — у зворотному порядку. tg = {sin|cos}. Радіани: 30° = π/6, 45° = π/4, 60° = π/3.'),
+ [mc('sin 270° = ?',['0','1','−1','не існує'],2),mc('tg 90° = ?',['0','1','√3','не існує'],3),ex('tg 45° · (sin 30° + cos 60°) = ?','1','1/2 + 1/2, потім помнож на 1')]],
+['3. Знаки по чвертях, парність','10 хв',ST+box('sin, tg, ctg — непарні: sin(−α) = −sin α, tg(−α) = −tg α. <b>cos — парна: cos(−α) = cos α.</b><br>Період sin і cos — 2π, період tg і ctg — π.')+'<p>Приклад: 280° — IV чверть, 30° — I, 170° — II, 190° — III.</p>',
+ [mc('Знак добутку sin 280° · cos 30° · tg 170° · ctg 190°',['+','−'],0),mc('Знак sin 2,5 (π/2 &lt; 2,5 &lt; π)',['+','−'],0),mc('Знак cos 6 (3π/2 &lt; 6 &lt; 2π)',['+','−'],0),ex('Обчисли: sin(−30°)·cos(−60°) + tg(−45°). Дробом або десятковим.','-5/4|-1.25','sin(−30°) = −1/2, cos(−60°) = 1/2, tg(−45°) = −1')]],
+['4. Співвідношення між функціями одного кута','10 хв',box('<b>sin²α + cos²α = 1</b><br>tg α · ctg α = 1<br>1 + tg²α = {1|cos²α} · 1 + ctg²α = {1|sin²α}')+'<p>Завдання з НМТ. Підказка: шукай sin² + cos² і заміни tg та ctg на {sin|cos}.</p>',
+ [mc('7.1. sin⁴α + sin²α·cos²α − sin²α = ?',['−2sin²α','1','2cos²α','2sin²α','0'],4),mc('7.2. tg²β + ctg²β + 2 − {1|cos²β} = ?',['−{1|sin²β}','sin²β','{1|sin²β}','1','{2|sin²β}'],2),mc('7.3. ctg(−α)·tg(−α) − sin²(−α) = ?',['cos α','cos²α','sin²α','1 + sin²α','−cos²α'],1),ex('7.5. tg α = 3. Обчисли {sin α − cos α|sin α + cos α}','1/2|0.5','розділи чисельник і знаменник на cos α')]],
+['5. Практика у форматі НМТ','15 хв',box('Правило: спочатку знак (чверть), потім значення. Розв’язуй на дошці ✏️')+'',
+ [mc('Приклад 8. cos α = 1/√5 і −π/2 &lt; α &lt; 0. Знайди tg α.',['0,5','2','−0,5','−2','5'],3),mc('7.4. tg α + ctg α = 2. Обчисли tg²α + ctg²α.',['2','1','4','3','−2'],0),mc('7.6. cos α = −0,1. Знайди 3sin²α − 7cos²α.',['2','2,9','3,1','3,96','2,92'],1),ex('7.41. Спрости: sin⁴α − cos⁴α − sin²α + cos²α','0','sin⁴ − cos⁴ = (sin² − cos²)(sin² + cos²)'),ex('7.42. Спрости: {tg²α|1+tg²α} · {1+ctg²α|ctg²α} − tg²α','0','перший дріб = sin²α, другий = {1|cos²α}'),ex('7.40. Обчисли {sin(α+π/2)·cos(α−π)·tg(−α)|sin(α−π)·cos(α−3π/2)·ctg(π−α)}. Відповідь десятковим дробом.','-1','чисельник = sinα·cosα, знаменник = −sinα·cosα')]],
+['6. Підсумок','5 хв',box('Запам’ятай: 1) cos α — абсциса, sin α — ордината; 2) знаки по чвертях; 3) sin²α + cos²α = 1.<br>🏠 Домашнє: вивчи таблицю значень разом з 90°, 180°, 270°, 360°.'),
+ [mc('sin(−π/6) = ?',['1/2','−1/2','√3/2','−√3/2'],1),mc('Основний період tg x дорівнює:',['π','2π','π/2','4π'],0)]],['7. Домашнє завдання','вдома',hw([
+'Сторона кута β перетинає одиничне коло в точці (−8/17; 15/17). Знайди sin β, cos β, tg β, ctg β.',
+'Без підручника заповни таблицю значень sin, cos, tg, ctg для 0°, 30°, 45°, 60°, 90°, 180°, 270°, 360°.',
+'Визнач знак: а) cos 100°·sin 200°·tg 300°; б) sin 4; в) cos 2.',
+'Обчисли: sin(−45°)·cos(−45°) + tg(−60°)·ctg(−60°).',
+'cos α = 3/5 і −π/2 &lt; α &lt; 0. Знайди sin α та tg α.',
+'tg α = 2. Обчисли '+fr('sin α + cos α','sin α − cos α')+'.',
+'Спрости: '+fr('1 − cos²α','1 − sin²α')+'.',
+'Спрости: '+fr('1','1 + tg²α')+' + '+fr('1','1 + ctg²α')+'.'],
+['cos β = −8/17, sin β = 15/17, tg β = −15/8, ctg β = −8/15','перевір за таблицею в уроці','а) «−» (мінус · мінус · мінус); б) «−» (π &lt; 4 &lt; 3π/2); в) «−» (II чверть)','−1/2 + 1 = 1/2','sin α = −4/5, tg α = −4/3','3','tg²α','1']),[]]
+],2:[
+['1. Повторення','5 хв',box('tg(90° − α) = ctg α, а tg α · ctg α = 1. Це знадобиться зараз!'),
+ [mc('sin²37° + cos²37° = ?',['0','1','37','2'],1),mc('7.8. tg7°·tg83° + tg19°·tg71° = ?',['0','1','2','3','4'],2)]],
+['2. Формули зведення','15 хв',box('<b>Два кроки:</b> 1) ставимо знак початкової функції за чвертю (як для гострого α); 2) якщо в аргументі π/2 або 3π/2 (90°, 270°) — функція змінюється (sin↔cos, tg↔ctg); якщо π або 2π — не змінюється.')+RT+'<p>Приклади: cos(90° + x) = −sin x; tg(π + 5α) = tg 5α; sin(9π/2 + α) = cos α; ctg(630° + α) = −tg α.</p>',
+ [mc('cos(90° + x) = ?',['sin x','−sin x','cos x','−cos x'],1),mc('7.33. sin 510° = ?',['−1/2','−√3/2','√3/2','√2/2','1/2'],4),mc('cos 690° = ?',['−1/2','−√3/2','√3/2','√2/2','1/2'],2),mc('cos 840° = ?',['−1/2','−√3/2','√3/2','√2/2','1/2'],0),mc('sin 960° = ?',['−1/2','−√3/2','√3/2','√2/2','1/2'],1),mc('7.11. sin(π − 2α) + 2cos(3π/2 + α)·sin(3π/2 − α) = ?',['sin 2α','1','3cos 2α','3','0'],4),mc('7.7. cos(α − β + π/2) + 2sin(α + π)cos(β − π), якщо α = 0,1π, β = 0,15π.',['0','−1/2','√2/2','√3/2','1 − √2/2'],2)]],
+['3. Формули додавання і подвійного кута','10 хв',box('sin(α±β) = sin α cos β ± cos α sin β<br>cos(α±β) = cos α cos β ∓ sin α sin β<br>sin 2α = 2 sin α cos α · cos 2α = cos²α − sin²α = 1 − 2sin²α = 2cos²α − 1'),
+ [mc('7.9. {cosα cosβ − cos(α+β)|cos(α−β) − sinα sinβ} = ?',['1','tg α tg β','sin α sin β','cos α cos β','ctg α ctg β'],1),mc('7.12. cos⁴(α/2) − sin⁴(α/2) = ?',['sin α','cos α','cos(α/4)','cos 2α','1'],1),mc('7.17. sin(x/2)·cos(x/2), якщо x = −π/6',['0,5','−0,25','−0,5','−2','0,25'],1),ex('7.36. sin α = 5/13, α — II чверть. sin 2α = ? (дробом)','-120/169','cos α = −12/13 (II чверть!), sin 2α = 2·(5/13)·(−12/13)'),ex('cos 2α = ? (та сама умова, дробом)','119/169','1 − 2sin²α = 1 − 50/169')]],
+['4. Добуток, сума і різниця функцій','10 хв',box('sin α + sin β = 2 sin({α+β|2}) cos({α−β|2}) · cos α + cos β = 2 cos({α+β|2}) cos({α−β|2})<br>cos α − cos β = −2 sin({α+β|2}) sin({α−β|2})<br>sin α cos β = {sin(α−β) + sin(α+β)|2}'),
+ [mc('7.13. {sin 40°|2cos²20°} = ?',['cos 20°','1/2','sin 20°','ctg 20°','tg 20°'],4),mc('7.14. sin 48° + sin 12° = ?',['sin 36°','√3/2','cos 18°','1/2','½cos 18°'],2),mc('7.15. cos 70° − cos 10° = ?',['−sin 40°','sin 40°','cos 30°','1/2','2sin 40°'],0),mc('7.16. cos 70° + cos 50° = ?',['−1/2','1/2','2cos 10°','sin 10°','cos 10°'],4),mc('7.18. cos 75°·cos 15° = ?',['1/2','3/4','1','1/4','√3/2'],3)]],
+['5. Обернені тригонометричні функції','10 хв',box('arcsin b = α, якщо α ∈ [−π/2; π/2] і sin α = b<br>arccos b = α, якщо α ∈ [0; π] і cos α = b<br>arctg b = α, α ∈ (−π/2; π/2) · arcctg b = α, α ∈ (0; π)<br>arcsin(−x) = −arcsin x · arccos(−x) = π − arccos x'),
+ [mc('arccos(−√3/2) = ?',['π/6','5π/6','−π/6','2π/3'],1),mc('Приклад 7. arcsin(−1/2) + (3/2)arccos(√3/2) − 3arcctg(−1/√3)',['−5π/12','−2 5/12 π','5π/6','7π/12','5π/12'],3),mc('7.21. sin(arccos(1/4)) = ?',['1/4','3/4','−√15/4','1/2','√15/4'],4),mc('7.22. cos(2·arcsin(1/6)) = ?',['17/18','1/3','3/4','2/3','15/16'],0)]],
+['6. НМТ-практика і підсумок','10 хв',box('Розв’язуй на дошці ✏️. Перевіряй знак, чверть і допустимі значення.'),
+ [mc('7.25. 16·cos(π/9)·cos(2π/9)·cos(4π/9) = ?',['0,5','−0,5','2','−2','0'],2),mc('7.35. cos 3x·cos x + sin 3x·sin x = ?',['sin 4x','−cos 4x','cos 4x','cos 2x','−sin 2x'],3),mc('7.39. tg(arcsin 4/5) = ?',['4/5','3/5','3/4','4/3','−3/5'],3),ex('cos(arcsin(−3/5)) = ? (десятковим)','0.8|4/5','sin α = −3/5, α ∈ [−π/2; π/2], тож cos α &gt; 0'),box('🎯 Підсумок: таблиця значень, знаки по чвертях, зведення (два кроки), подвійний кут, обернені функції. Зроби шпаргалку на дошці й збережи скріншот.')]],['7. Домашнє завдання','вдома',hw([
+'Обчисли за формулами зведення: sin 150°, cos 225°, tg 300°, ctg 135°, sin(−240°).',
+'Спрости: sin(π/2 + α)·cos(π − α).',
+'Обчисли: sin 75°·cos 75°.',
+'Обчисли: cos²(π/12) − sin²(π/12).',
+'Спрости: '+fr('1 − cos 2α','sin 2α')+'.',
+'Обчисли: sin 50° + sin 10°.',
+'cos α = −3/5 і π/2 &lt; α &lt; π. Знайди sin 2α і cos 2α.',
+'Обчисли: arcsin(−√3/2) + arccos(−1/2) + arctg 1.',
+'Обчисли: tg(arccos 3/5).'],
+['1/2; −√2/2; −√3; −1; √3/2','−cos²α','1/4','√3/2','tg α','cos 20°','sin 2α = −24/25; cos 2α = −7/25','−π/3 + 2π/3 + π/4 = 7π/12','4/3']),[]]
+]};
+[1,2].forEach(function(n){$('#L'+n).innerHTML=L[n].map(function(s,i){return '<div class="step'+(i?' hid':'')+'"><h2>'+s[0]+' <span class="tm">'+s[1]+'</span></h2>'+s[2]+s[3].join('')+'</div>'}).join('')});
+
+function initCircle(){var bx=$('#uc');if(!bx)return;var S=110,C=150,d=30,hide=false,snap=true;
+bx.innerHTML=`<div class="box"><b>🎯 Інтерактивне одиничне коло — як користуватися</b><ol>
+<li><b>Тягни точку B</b> по колу мишею чи пальцем, рухай повзунок або натискай кнопку з кутом.</li>
+<li><span style="color:#dc2626"><b>Червоний відрізок</b></span> — це <b>cos α</b> (абсциса, відлік по осі x). <span style="color:#2563eb"><b>Синій</b></span> — <b>sin α</b> (ордината, відлік по осі y).</li>
+<li><span style="color:#16a34a"><b>Зелений відрізок</b></span> на лінії x = 1 — це <b>tg α</b>. Увімкни <span style="color:#9333ea"><b>лінію котангенсів</b></span> y = 1 — там видно <b>ctg α</b>.</li>
+<li>Дивись на <b>знак</b>: праворуч від осі y cos додатний, вище від осі x sin додатний.</li>
+<li>Режим <b>«Тренування»</b>: значення сховані знаком «?». Спершу відгадай, потім натисни й перевір.</li></ol></div>
+<div class="ucw"><svg id="ucs" viewBox="0 0 300 300">
+<line x1="260" y1="8" x2="260" y2="292" stroke="#16a34a" stroke-width="1" stroke-dasharray="4 3" id="tgl"/>
+<line x1="8" y1="40" x2="292" y2="40" stroke="#9333ea" stroke-width="1" stroke-dasharray="4 3" id="ctl" style="display:none"/>
+<line x1="8" y1="150" x2="292" y2="150" stroke="currentColor" stroke-opacity=".5"/><line x1="150" y1="8" x2="150" y2="292" stroke="currentColor" stroke-opacity=".5"/>
+<circle cx="150" cy="150" r="110" fill="none" stroke="currentColor" stroke-opacity=".7" stroke-width="1.5"/>
+<line id="ray" stroke="#888" stroke-dasharray="3 3"/>
+<line id="sg" stroke="#2563eb" stroke-width="4"/><line id="cg" stroke="#dc2626" stroke-width="4"/>
+<line id="tgs" stroke="#16a34a" stroke-width="4"/><line id="cc" stroke="#9333ea" stroke-width="4" style="display:none"/>
+<path id="arc" fill="none" stroke="#f59e0b" stroke-width="2"/>
+<circle id="pt" r="8" fill="#4f46e5" stroke="#fff" stroke-width="2" style="cursor:grab"/><text id="bl">B</text>
+<text x="264" y="146">1</text><text x="132" y="36">1</text><text x="274" y="165">x</text><text x="156" y="16">y</text><text x="154" y="164">0</text><text x="82" y="164">−1</text><text x="156" y="270">−1</text>
+</svg><div class="ucr"><table><tr><th>α</th><td id="v0"></td></tr><tr><th style="color:#2563eb">sin α = y</th><td id="v1"></td></tr><tr><th style="color:#dc2626">cos α = x</th><td id="v2"></td></tr><tr><th style="color:#16a34a">tg α</th><td id="v3"></td></tr><tr><th style="color:#9333ea">ctg α</th><td id="v4"></td></tr></table>
+<p id="qi" class="ht"></p></div></div>
+<input type="range" id="sl" min="0" max="360" value="30"><div class="ucb" id="ub"></div>
+<div class="uck"><label><input type="checkbox" id="ctg"> лінія котангенсів</label><label><input type="checkbox" id="sn" checked> прилипати до табличних кутів</label><label><input type="checkbox" id="hd"> 🙈 Тренування</label></div>`;
+var sm={0:'0',30:'1/2',45:'√2/2',60:'√3/2',90:'1'},tm={0:'0',30:'√3/3',45:'1',60:'√3'},cm={30:'√3',45:'1',60:'√3/3',90:'0'};
+function g(a,b){return b?g(b,a%b):a}
+function ref(x){x=((x%180)+180)%180;return x>90?180-x:x}
+function sp(x){return [0,30,45,60,90].indexOf(ref(x))>=0}
+function neg(v,n){return n&&v!='0'?'−'+v:v}
+function ex(k){var x=d%360,sd=x>180?1:0,cd=((x+90)%360)>180?1:0,r=ref(x),t=(x%180)>90?1:0;
+ if(k==1)return neg(sm[ref(x)],sd&&x%180!=0);if(k==2){var y=(x+90)%360;return neg(sm[ref(y)],((y%360)>180)&&(y%180!=0))}
+ if(k==3)return x%180==90?'не існує':neg(tm[r],t&&r!=0);return x%180==0?'не існує':neg(cm[r],t&&r!=90)}
+function dec(v){return '≈ '+(Math.round(v*1000)/1000).toString().replace('.',',')}
+function rad(x){if(x==0)return '0';var q=g(x,180),n=x/q,m=180/q,t=(n==1?'π':n+'π');return m==1?t:t+'/'+m}
+function cell(id,val){var e=$('#'+id);if(hide&&id!='v0'){e.innerHTML='<span class="hv" data-v="'+val+'">?</span>'}else e.textContent=val;stack(e)}
+function up(){var r=d*Math.PI/180,c=Math.cos(r),s=Math.sin(r),X=C+S*c,Y=C-S*s,ok=sp(d%360),eps=1e-9,L=function(id,a,b,cc,dd){var e=$('#'+id);e.setAttribute('x1',a);e.setAttribute('y1',b);e.setAttribute('x2',cc);e.setAttribute('y2',dd)};
+ var cl=function(v){return Math.max(-1.3,Math.min(1.3,v))},tg=Math.abs(c)<eps?null:s/c,ct=Math.abs(s)<eps?null:c/s;
+ L('ray',C-1.3*S*c,C+1.3*S*s,C+1.3*S*c,C-1.3*S*s);L('cg',C,C,X,C);L('sg',X,C,X,Y);
+ L('tgs',C+S,C,C+S,tg===null?C:C-S*cl(tg));L('cc',C,C-S,ct===null?C:C+S*cl(ct),C-S);
+ $('#pt').setAttribute('cx',X);$('#pt').setAttribute('cy',Y);$('#bl').setAttribute('x',X+(c>=0?10:-20));$('#bl').setAttribute('y',Y+(s>=0?-8:16));
+ var e=r%(2*Math.PI),dd=d%360||(d==360?359.99:0),ar=dd*Math.PI/180;$('#arc').setAttribute('d',dd?'M '+(C+24)+' '+C+' A 24 24 0 '+(dd>180?1:0)+' 0 '+(C+24*Math.cos(ar))+' '+(C-24*Math.sin(ar)):'');
+ var tx=ok?[ex(1),ex(2),ex(3),ex(4)]:[dec(s),dec(c),tg===null?'не існує':dec(tg),ct===null?'не існує':dec(ct)];
+ cell('v0',d+'° = '+(ok?rad(d):dec(r)+' рад'));cell('v1',tx[0]);cell('v2',tx[1]);cell('v3',tx[2]);cell('v4',tx[3]);
+ var x=d%360,q=x%90==0?0:Math.floor(x/90)+1,sg=function(v){return v?'+':'−'};
+ $('#qi').textContent=q?'Чверть '+['','I','II','III','IV'][q]+': sin '+sg(q<3)+', cos '+sg(q==1||q==4)+', tg і ctg '+sg(q==1||q==3):'Кут лежить на осі: одна з функцій дорівнює 0 або не існує.';
+ $('#sl').value=d;$$('#ub button').forEach(function(b){b.classList.toggle('on',+b.dataset.a==d)})}
+$('#ub').innerHTML=[0,30,45,60,90,120,135,150,180,210,225,240,270,300,315,330,360].map(function(a){return '<button data-a="'+a+'">'+a+'°</button>'}).join('');
+bx.addEventListener('click',function(e){var t=e.target;if(t.dataset.a!==undefined&&t.tagName=='BUTTON'){d=+t.dataset.a;up()}if(t.classList.contains('hv')){t.textContent=t.dataset.v;t.classList.remove('hv');stack(t.parentNode)}});
+$('#sl').oninput=function(){d=+this.value;up()};
+$('#ctg').onchange=function(){var o=this.checked?'':'none';$('#ctl').style.display=o;$('#cc').style.display=o};
+$('#sn').onchange=function(){snap=this.checked};$('#hd').onchange=function(){hide=this.checked;up()};
+var dr=false;function mv(e){var b=$('#ucs').getBoundingClientRect(),x=(e.clientX-b.left)/b.width*300-C,y=C-(e.clientY-b.top)/b.height*300,a=Math.atan2(y,x)*180/Math.PI;a=Math.round((a+360)%360);if(snap){var n=Math.round(a/15)*15;if(Math.abs(n-a)<=5)a=n}d=a%360;up()}
+$('#ucs').addEventListener('pointerdown',function(e){dr=true;this.setPointerCapture(e.pointerId);mv(e)});$('#ucs').addEventListener('pointermove',function(e){if(dr)mv(e)});$('#ucs').addEventListener('pointerup',function(){dr=false});
+up()}
+initCircle();stack($('#L1'));stack($('#L2'));stack($('details.f'));
+var score=0,done=new WeakSet();
+function addScore(){score++;$('#score').textContent='⭐ '+score}
+function norm(s){return s.toLowerCase().replace(/\s+/g,'').replace(/,/g,'.').replace(/[−–]/g,'-').replace(/[()]/g,'')}
+function upd(){var Lc=$('.lesson.on'),all=$$('.step',Lc).length,hid=$$('.step.hid',Lc).length;$('#pb').style.width=((all-hid)/all*100)+'%';var b=$('#next');if(hid){b.textContent='Наступний крок ▶';b.disabled=false}else{b.textContent='🎉 Урок завершено!';b.disabled=true}}
+$$('.tabs button').forEach(function(b){b.onclick=function(){$$('.tabs button').forEach(function(x){x.classList.remove('on')});b.classList.add('on');$$('.lesson').forEach(function(l){l.classList.remove('on')});$('#L'+b.dataset.l).classList.add('on');upd();window.scrollTo(0,0)}});
+$('#next').onclick=function(){var h=$('.lesson.on .step.hid');if(h){h.classList.remove('hid');upd();h.scrollIntoView({behavior:'smooth',block:'start'})}};
+document.addEventListener('click',function(e){var t=e.target;
+if(t.classList.contains('chk')){var ex=t.closest('.ex'),v=norm($('input',ex).value),ok=ex.dataset.a.split('|').some(function(a){return norm(a)===v}),fb=$('.fb',ex);
+ if(ok){fb.textContent='✅ Правильно!';fb.className='fb ok';if(!done.has(ex)){done.add(ex);addScore()}}else{fb.textContent='❌ Спробуй ще';fb.className='fb no'}}
+if(t.classList.contains('hint')){var e2=t.closest('.ex');$('.ht',e2).textContent='💡 '+e2.dataset.h;stack($('.ht',e2))}
+if(t.tagName=='BUTTON'&&t.parentNode.classList.contains('mc')){var m=t.parentNode;if(done.has(m))return;var bs=$$('button:not(.cp)',m),i=bs.indexOf(t);
+ if(i==+m.dataset.c){t.classList.add('r');done.add(m);addScore()}else{t.classList.add('w');t.disabled=true}}
+if(t.classList.contains('q')){t.textContent=t.dataset.v;t.classList.add('s');stack(t)}
+});
+upd();
+// Whiteboard
+var cv=$('#cv'),ctx=cv.getContext('2d'),W=Math.max(screen.width,1000),H=900,r=Math.min(window.devicePixelRatio||1,2);
+cv.width=W*r;cv.height=H*r;cv.style.width=W+'px';cv.style.height=H+'px';ctx.scale(r,r);ctx.lineCap='round';ctx.lineJoin='round';
+var ny=16,col='#1d2433',erase=false,draw=false,lx=0,ly=0;
+function pos(e){var b=cv.getBoundingClientRect();return [e.clientX-b.left,e.clientY-b.top]}
+cv.addEventListener('pointerdown',function(e){draw=true;var p=pos(e);lx=p[0];ly=p[1];cv.setPointerCapture(e.pointerId)});
+cv.addEventListener('pointermove',function(e){if(!draw)return;var p=pos(e);ctx.globalCompositeOperation=erase?'destination-out':'source-over';ctx.strokeStyle=col;ctx.lineWidth=erase?28:(e.pressure&&e.pointerType=='pen'?1+e.pressure*4:3);ctx.beginPath();ctx.moveTo(lx,ly);ctx.lineTo(p[0],p[1]);ctx.stroke();lx=p[0];ly=p[1]});
+['pointerup','pointercancel'].forEach(function(n){cv.addEventListener(n,function(){draw=false})});
+$$('.sw').forEach(function(s){s.onclick=function(){$$('.sw').forEach(function(x){x.classList.remove('on')});s.classList.add('on');col=s.dataset.c;erase=false;$('#pen').classList.add('on');$('#er').classList.remove('on')}});
+$('#pen').onclick=function(){erase=false;this.classList.add('on');$('#er').classList.remove('on')};
+$('#er').onclick=function(){erase=true;this.classList.add('on');$('#pen').classList.remove('on')};
+$('#clr').onclick=function(){if(confirm('Очистити дошку?'))ctx.clearRect(0,0,W,H);ny=16};
+$('#wbt').onclick=function(){var o=$('#wb').classList.toggle('open');$('#wbt').textContent=o?'⬇️ Згорнути':'⬆️ Відкрити'};
+$('.t').onclick=$('#wbt').onclick;
+
+function need(h){if(h<=H)return;var t=document.createElement('canvas');t.width=cv.width;t.height=cv.height;t.getContext('2d').drawImage(cv,0,0);var oh=t.height/r;H=Math.min(h+400,6000);cv.height=H*r;cv.style.height=H+'px';ctx.setTransform(r,0,0,r,0,0);ctx.lineCap='round';ctx.lineJoin='round';ctx.globalCompositeOperation='source-over';ctx.drawImage(t,0,0,W,oh)}
+function toBoard(el){var w=document.createElement('div'),LT=['А','Б','В','Г','Д'];
+ var p=el.matches('li')?el:$('p',el),c=p.cloneNode(true);$$('.cp',c).forEach(function(b){b.remove()});
+ if(el.matches('li')){var o=document.createElement('div');o.innerHTML='<p style="margin:0">'+c.innerHTML+'</p>';c=o}
+ w.appendChild(c);
+ if(el.classList.contains('mc')){$$('button:not(.cp)',el).forEach(function(b,i){var d=document.createElement('div');d.innerHTML=LT[i]+') '+b.innerHTML;w.appendChild(d)})}
+ var wd=Math.min(W-60,640),st=document.createElement('style');st.textContent='.fr{display:inline-flex;flex-direction:column;vertical-align:middle;text-align:center;margin:0 3px;line-height:1.2;font-size:.95em}.fr>span{padding:0 3px}.fr>span:first-child{border-bottom:1.5px solid #1d2433}p{margin:0 0 6px}div{margin:2px 0}';w.insertBefore(st,w.firstChild);
+ w.style.cssText='font:19px/1.5 system-ui,Arial,sans-serif;color:#1d2433;width:'+wd+'px;padding:4px';
+ var m=w.cloneNode(true);m.style.cssText+=';position:absolute;left:-9999px;top:0';document.body.appendChild(m);var h=Math.ceil(m.offsetHeight)+8;m.remove();
+ var x=new XMLSerializer().serializeToString(w),img=new Image(),y=ny;ny+=h+22;need(y+h+30);
+ img.onload=function(){ctx.globalCompositeOperation='source-over';ctx.drawImage(img,24,y,wd+8,h);$('#cw').scrollTop=Math.max(0,y-10)};
+ img.src='data:image/svg+xml;charset=utf-8,'+encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" width="'+(wd+8)+'" height="'+h+'"><foreignObject x="0" y="0" width="'+(wd+8)+'" height="'+h+'">'+x+'</foreignObject></svg>');
+ $('#wb').classList.add('open');$('#wbt').textContent='⬇️ Згорнути'}
+document.addEventListener('click',function(e){var b=e.target.closest&&e.target.closest('.cp');if(b)toBoard(b.closest('.mc,.ex,li'))});
+})();
+</script></body></html>

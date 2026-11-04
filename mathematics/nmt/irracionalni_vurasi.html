@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="uk"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Ірраціональні вирази — заняття 2 (НМТ)</title>
+<style>
+:root{--bg:#f7f8fb;--card:#fff;--tx:#1d2433;--mu:#5b6578;--ac:#3b5bdb;--ok:#2b8a3e;--okb:#e6f6ea;--er:#c92a2a;--erb:#fdeaea;--bd:#dde1ea;--hl:#fff7d6;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media(prefers-color-scheme:dark){:root:not([data-theme=light]){--bg:#141821;--card:#1d2330;--tx:#e8ebf2;--mu:#9aa5ba;--ac:#8ea4ff;--ok:#69db7c;--okb:#17301f;--er:#ff8787;--erb:#3a1d1d;--bd:#2e3648;--hl:#3a3418}}
+:root[data-theme=dark]{--bg:#141821;--card:#1d2330;--tx:#e8ebf2;--mu:#9aa5ba;--ac:#8ea4ff;--ok:#69db7c;--okb:#17301f;--er:#ff8787;--erb:#3a1d1d;--bd:#2e3648;--hl:#3a3418}
+html,body{margin:0}body{background:var(--bg);color:var(--tx);font:17px/1.55 system-ui,"Segoe UI",Arial,sans-serif;padding-bottom:70px}
+main{max-width:860px;margin:0 auto;padding:12px 14px}
+h1{font-size:1.5rem;margin:.4em 0 .1em}h2{font-size:1.25rem;margin:1.4em 0 .4em}
+.sub{color:var(--mu);margin:0 0 10px}sup{font-size:.72em;line-height:0}.fr{display:inline-flex;flex-direction:column;vertical-align:middle;text-align:center;margin:0 .2em;line-height:1.25;font-size:.95em}.fr .n{border-bottom:1.5px solid currentColor;padding:0 .25em}.fr .d{padding:0 .25em}
+nav{position:sticky;top:env(safe-area-inset-top,0px);background:var(--bg);display:flex;gap:6px;padding:8px 0;z-index:5;flex-wrap:wrap}
+nav a{padding:6px 12px;border:1px solid var(--bd);border-radius:20px;color:var(--tx);text-decoration:none;font-size:.9rem;background:var(--card)}
+.card{background:var(--card);border:1px solid var(--bd);border-radius:12px;padding:12px 14px;margin:10px 0}
+.cheat{background:var(--hl)}.cheat p{margin:.25em 0;font-size:1rem}
+.q{font-size:1.1rem;margin:.2em 0 .5em}.num{font-weight:700;color:var(--ac)}
+button{font:inherit;cursor:pointer;border:1px solid var(--bd);background:var(--card);color:var(--tx);border-radius:8px;padding:6px 12px}
+button:hover{border-color:var(--ac)}.pri{background:var(--ac);color:#fff;border-color:var(--ac)}
+.opts{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:6px;margin:8px 0}
+.opts button{text-align:left}.ok{background:var(--okb)!important;border-color:var(--ok)!important}.bad{background:var(--erb)!important;border-color:var(--er)!important}
+.steps{margin:6px 0;padding-left:0;list-style:none}.steps li{background:var(--okb);border-left:4px solid var(--ok);padding:5px 10px;margin:4px 0;border-radius:6px}
+.fb{font-weight:600;margin:4px 0}.row{display:flex;gap:8px;align-items:center;margin:5px 0;flex-wrap:wrap}.row span.e{flex:1;min-width:170px}
+.in{font:inherit;padding:5px 8px;border-radius:8px;border:1px solid var(--bd);background:var(--card);color:var(--tx);width:9em}h3{font-size:1.05rem;margin:1em 0 .2em}select{font:inherit;padding:4px;border-radius:6px;border:1px solid var(--bd);background:var(--card);color:var(--tx)}
+.ml{columns:2;font-size:.95rem;color:var(--mu)}
+.tf{display:flex;gap:8px;align-items:center;flex-wrap:wrap}.tf .t{flex:1;min-width:200px}
+.score{position:fixed;right:10px;top:calc(env(safe-area-inset-top,0px) + 8px);background:var(--ac);color:#fff;border-radius:16px;padding:2px 10px;font-size:.85rem;z-index:6}
+#board{position:fixed;left:0;right:0;bottom:0;background:var(--card);border-top:2px solid var(--ac);z-index:9;padding-bottom:env(safe-area-inset-bottom,0px)}
+#bar{display:flex;gap:6px;padding:6px 10px;align-items:center;flex-wrap:wrap}
+#bar b{margin-right:4px}.sw{width:24px;height:24px;border-radius:50%;padding:0;border:2px solid var(--bd)}
+#wrap{display:none;height:42vh;touch-action:none}#board.open #wrap{display:block}
+#board.full{top:0;display:flex;flex-direction:column;padding-top:env(safe-area-inset-top,0px)}#board.full #wrap{display:block;flex:1;height:auto;min-height:0}#board.full #tg{display:none}#board.full #bar{padding:8px 12px}
+canvas{width:100%;height:100%;display:block;background:#fff;touch-action:none;cursor:crosshair;background-image:linear-gradient(#e6ecf5 1px,transparent 1px),linear-gradient(90deg,#e6ecf5 1px,transparent 1px);background-size:28px 28px}
+</style></head><body>
+<div class="score" id="score">⭐ 0</div>
+<main>
+<h1>Ірраціональні вирази — заняття 2</h1>
+<p class="sub">Підготовка до НМТ · Тема 5. Спочатку вгадай сам, потім тисни «Наступний крок». Внизу є ✏️ дошка — пиши розв’язання там.</p>
+<nav><a href="#s1">1. Властивості</a><a href="#s2">2. Домашня</a><a href="#s3">3. Нові вправи</a><a href="#s4">4. Раціоналізація</a><a href="#s5">5. Перевірка НМТ</a></nav>
+
+<div class="card cheat"><b>📌 Шпаргалка (завжди перед очима)</b>
+<p>√(a²) = |a| &nbsp;·&nbsp; (√a)² = a, лише при a ≥ 0</p>
+<p>Парний корінь: ²ᵏ√(a²ᵏ) = |a|, існує лише при a ≥ 0</p>
+<p>Непарний корінь: ²ᵏ⁺¹√(a²ᵏ⁺¹) = a, існує для будь-якого a, ∛(−27) = −3</p>
+<p>√(ab) = √a·√b (a, b ≥ 0) &nbsp;·&nbsp; √(a/b) = √a/√b (a ≥ 0, b > 0)</p>
+<p>Винесення: √(b²a) = |b|√a &nbsp;·&nbsp; Внесення: b√a = √(b²a) при b ≥ 0, = −√(b²a) при b < 0</p>
+<p>a<sup>m/n</sup> = ⁿ√(aᵐ) &nbsp;·&nbsp; ⁿ√(ᵏ√a) = ⁿᵏ√a</p>
+<p>Різниця квадратів: (√a − √b)(√a + √b) = a − b &nbsp;·&nbsp; (a ± b)² = a² ± 2ab + b²</p></div>
+
+<h2 id="s1">1. Перевірка властивостей коренів: правда чи хиба?</h2>
+<div id="tf"></div>
+
+<h2 id="s2">2. Перевірка домашніх вправ</h2>
+<p class="sub">Спочатку обери відповідь, потім дивись розв’язання по кроках.</p>
+<div id="hw"></div>
+
+<h2 id="s3">3. Нові вправи</h2>
+<div id="nw"></div>
+<h2 id="s4">4. Як позбутися ірраціональності в знаменнику</h2>
+<div class="card cheat"><p><b>Мета:</b> щоб у знаменнику не лишилося знака кореня. Чисельник і знаменник множимо на один і той самий вираз.</p>
+<p><b>Тип 1.</b> a/√b = a√b/(√b·√b) = a√b/b. Приклад: 5/√3 = 5√3/3.</p>
+<p><b>Тип 2.</b> a/(√b − √c): множимо на спряжений (√b + √c), бо (√b−√c)(√b+√c) = b − c. Приклад: 1/(√3−1) = (√3+1)/(3−1) = (√3+1)/2. Для a/(√b+√c) множимо на (√b−√c).</p>
+<p><b>Тип 3.</b> a/ⁿ√(b<sup>k</sup>): множимо на ⁿ√(b<sup>n−k</sup>), щоб під коренем вийшов повний степінь. Приклад: 6/∛2 = 6∛4/(∛2·∛4) = 6∛4/2 = 3∛4.</p>
+<p><b>Тип 4.</b> a/(∛b − ∛c): множимо на (∛b² + ∛(bc) + ∛c²), знаменник стає b − c. a/(∛b + ∛c): множимо на (∛b² − ∛(bc) + ∛c²), знаменник стає b + c.</p>
+<p>⚠️ Після множення перевір: у знаменнику раціональне число, а дріб можна скоротити.</p></div>
+<div id="rt"></div>
+<h2 id="s5">5. Перевірочна робота (формат НМТ)</h2>
+<p class="sub">Розв’язуй на дошці. Спочатку все сам, а підказки лише наприкінці. Частина 1: одна правильна відповідь. Частина 2: відповідність. Частина 3: коротка відповідь (записуй у вигляді числа, десятковий дріб через кому).</p>
+<h3>Частина 1</h3><div id="t1"></div><h3>Частина 2</h3><div id="t2"></div><h3>Частина 3</h3><div id="t3"></div>
+<p class="sub">Домашнє на наступне заняття: 5.31, 5.32, 5.33–5.42 (особливо уважно 5.35, 5.40–5.42).</p>
+</main>
+
+<div id="board"><div id="bar"><b>🖊 Дошка</b>
+<button id="tg" class="pri">Відкрити ▲</button><button id="fs">⛶ На весь екран</button>
+<span id="tools" style="display:contents">
+<button data-c="#1d2433" class="sw" style="background:#1d2433" title="чорний"></button>
+<button data-c="#3b5bdb" class="sw" style="background:#3b5bdb" title="синій"></button>
+<button data-c="#e03131" class="sw" style="background:#e03131" title="червоний"></button>
+<button data-c="#2b8a3e" class="sw" style="background:#2b8a3e" title="зелений"></button>
+<button id="pen">✏️ Олівець</button><button id="era">🧽 Стирачка</button><button id="clr">🗑 Очистити</button></span></div>
+<div id="wrap"><canvas id="cv"></canvas></div></div>
+
+<script>
+const L=["А","Б","В","Г","Д"];let stars=0;
+const sc=()=>document.getElementById("score").textContent="⭐ "+stars;
+function outer(t){if(t[0]!="("||t.slice(-1)!=")")return false;let d=0;for(let q=0;q<t.length;q++){if(t[q]=="(")d++;else if(t[q]==")"){d--;if(d==0&&q<t.length-1)return false}}return true}
+function toFr(s){s=s.replace(/<sup>(.*?)<\/sup>/g,(m,a)=>"\u0002"+a.replace(/\//g,"\u0004")+"\u0003");
+const isA=c=>/[A-Za-z0-9√∛⁰¹²³⁴⁵⁶⁷⁸⁹ⁿᵏᵐ]/.test(c),dg=c=>/\d/.test(c||""),st=t=>outer(t)?t.slice(1,-1):t;
+while(true){let i=-1;for(let k=0;k<s.length;k++)if(s[k]=="/"&&s[k-1]!="<"){i=k;break}if(i<0)break;
+let j=i;while(j>0){const c=s[j-1];if(c==")"){let d=1,p=j-2;while(p>=0&&d){if(s[p]==")")d++;else if(s[p]=="(")d--;p--}j=p+1}else if(c=="\u0003")j=s.lastIndexOf("\u0002",j-1);else if(isA(c)||((c==","||c==".")&&dg(s[j-2])&&dg(s[j])))j--;else break}
+let k=i+1;while(k<s.length){const c=s[k];if(c=="("){let d=1,p=k+1;while(p<s.length&&d){if(s[p]=="(")d++;else if(s[p]==")")d--;p++}k=p}else if(c=="\u0002")k=s.indexOf("\u0003",k)+1;else if(isA(c)||((c==","||c==".")&&dg(s[k-1])&&dg(s[k+1])))k++;else break}
+s=s.slice(0,j)+"⟦"+st(s.slice(j,i))+"‖"+st(s.slice(i+1,k))+"⟧"+s.slice(k)}return s}
+function F(s){return toFr(s).replace(/⟦/g,'<span class="fr"><span class="n">').replace(/‖/g,'</span><span class="d">').replace(/⟧/g,'</span></span>').replace(/\u0002/g,"<sup>").replace(/\u0003/g,"</sup>").replace(/\u0004/g,"/")}
+// ---- 1. true/false
+const TF=[
+["√(a²) = a для будь-якого a","f","√(a²) = |a|. Наприклад, √((−7)²) = 7, а не −7."],
+["(√a)² = a для будь-якого a","f","Вираз √a існує лише при a ≥ 0, тож рівність тільки для a ≥ 0."],
+["∛(−27) = −3","t","Корінь непарного степеня існує для від’ємних чисел: (−3)³ = −27."],
+["⁴√(−16) = −2","f","Корінь парного степеня з від’ємного числа не існує."],
+["⁴√(a⁴) = |a|","t","Парний корінь дає невід’ємне число, тому модуль."],
+["⁵√(a⁵) = |a|","f","Для непарного степеня: ⁵√(a⁵) = a, без модуля."],
+["√(ab) = √a·√b для всіх a, b","f","Тільки при a ≥ 0, b ≥ 0. Загалом √(ab) = √|a|·√|b| при ab ≥ 0."],
+["∛(ab) = ∛a·∛b для будь-яких a, b","t","Для непарного кореня обмежень немає."],
+["√(∛a) = ⁶√a (a ≥ 0)","t","Показники перемножуються: 2·3 = 6."],
+["16<sup>3/4</sup> = ⁴√(16³) = 8","t","⁴√16 = 2, далі 2³ = 8."],
+["(−8)<sup>1/3</sup> = −2 за означенням степеня з раціональним показником","f","За означенням степінь з раціональним показником визначений лише для a > 0 (а ∛(−8) = −2 — це корінь)."]];
+document.getElementById("tf").innerHTML=TF.map((t,i)=>`<div class="card tf"><div class="t"><span class="num">${i+1}.</span> ${F(t[0])}</div><button data-i="${i}" data-v="t">Правда</button><button data-i="${i}" data-v="f">Хиба</button><div class="fb" style="flex-basis:100%"></div></div>`).join("");
+document.getElementById("tf").onclick=e=>{const b=e.target.closest("button");if(!b||b.parentNode.dataset.d)return;
+const c=b.parentNode,t=TF[b.dataset.i],ok=b.dataset.v==t[1];c.dataset.d=1;
+b.classList.add(ok?"ok":"bad");if(ok)stars++;sc();
+c.querySelector(".fb").innerHTML=(ok?"✅ Так! ":"❌ Ні. ")+F(t[2])};
+// ---- exercises
+const HW=[
+{n:"5.15",q:"Спростити: ∛( x⁹y⁶z³ / (4·(−2)⁴) )",o:["x³y²z/2","x⁶y³/4","x³y²z/4","x⁶y³/2","x³y²/(4z)"],a:2,s:["(−2)⁴ = 16, отже 4·16 = 64","∛64 = 4","∛x⁹ = x³, ∛y⁶ = y², ∛z³ = z → x³y²z/4"]},
+{n:"5.26",q:"Встановіть відповідність: вираз → тотожний йому вираз",m:["√((√2−2)²)","∛((√2−2)³)","−(⁴√(2+√2))⁴","√(6+4√2)"],o:["2+√2","−2−√2","2−√2","6−4√2","√2−2"],a:[2,4,1,0],s:["1) √(x²) = |x|; √2−2 < 0, тому |√2−2| = 2−√2 → В","2) Непарний корінь: ∛(x³) = x → √2−2 → Д","3) (⁴√t)⁴ = t, мінус лишається → −(2+√2) → Б","4) 6+4√2 = (2+√2)² (бо 4+4√2+2), корінь = 2+√2 → А"]},
+{n:"5.27",q:"Встановіть відповідність (у першому a < 0)",m:["⁴√(16a⁴b⁸), a<0","∛(16a³b⁶)","√(4a⁴b⁴)","√(4a²b⁴)"],o:["2|a|b²","2a²b²","−2ab²","2ab²","2∛2·ab²"],a:[2,4,1,0],s:["1) ⁴√(2⁴a⁴b⁸) = 2|a|b², при a<0: |a| = −a → −2ab² → В","2) ∛16 = 2∛2, ∛(a³) = a, ∛(b⁶) = b² → 2∛2·ab² → Д","3) √(4a⁴b⁴) = 2a²b² → Б","4) √(4a²b⁴) = 2|a|b² → А"]},
+{n:"5.28",q:"Встановіть відповідність: вираз → значення",m:["(−27)<sup>1/3</sup>","(−27)<sup>−1/3</sup>","27<sup>−1/3</sup>","27<sup>1/3</sup>·8<sup>1/3</sup>"],o:["−1/3","1/3","−3","3","6"],a:[2,0,1,4],s:["1) ∛(−27) = −3 → В (у відповідях збірника береться як корінь)","2) 1/∛(−27) = −1/3 → А","3) 1/∛27 = 1/3 → Б","4) 3·2 = 6 → Д"]},
+{n:"5.29",q:"Встановіть відповідність: вираз → значення",m:["√18 − √32 + √72","√72 + √50 − √162","√200 − √8 − √50","√128 + √18 − √98"],o:["2√2","3√2","4√2","5√2","6√2"],a:[3,0,1,2],s:["1) 3√2 − 4√2 + 6√2 = 5√2 → Г","2) 6√2 + 5√2 − 9√2 = 2√2 → А","3) 10√2 − 2√2 − 5√2 = 3√2 → Б","4) 8√2 + 3√2 − 7√2 = 4√2 → В"]},
+{n:"5.30",q:"Встановіть відповідність: вираз → значення",m:["√((−1−√5)²) + √((4−√5)²)","√((1−√5)²) + √((−1−√5)²)","√((√5−2)²) + √((√5−3)²)","√((−√5)²) + √((√5−4)²)"],o:["1","√5","4","2√5","5"],a:[4,3,0,2],s:["√(x²) = |x|. √5 ≈ 2,24","1) (1+√5) + (4−√5) = 5 → Д","2) (√5−1) + (√5+1) = 2√5 → Г","3) (√5−2) + (3−√5) = 1 → А","4) √5 + (4−√5) = 4 → В"]}];
+const NW=[
+{n:"5.12",q:"Внести множники під знаки коренів: a√(−a) + b√b",o:["√(a³)+√(b³)","√(−a³)+√(−b³)","−√(−a³)−√(b³)","√(−a³)+√(b³)","−√(−a³)+√(b³)"],a:4,s:["Умова існування: −a ≥ 0 → a < 0 (a ≠ 0), і b ≥ 0","a < 0, тому множник виходить з мінусом: a√(−a) = −√(a²·(−a)) = −√(−a³)","b ≥ 0: b√b = √(b²·b) = √(b³)","Разом: −√(−a³) + √(b³)"]},
+{n:"5.13",q:"Спростити: ⁴√( a·∛(a·√a) )",o:["∛a","⁹√(a⁸)","⁸√a","⁸√(a³)","∛(a²)"],a:3,s:["Переводимо у степені: √a = a<sup>1/2</sup>","a·a<sup>1/2</sup> = a<sup>3/2</sup>; ∛ → (a<sup>3/2</sup>)<sup>1/3</sup> = a<sup>1/2</sup>","a·a<sup>1/2</sup> = a<sup>3/2</sup>; ⁴√ → (a<sup>3/2</sup>)<sup>1/4</sup> = a<sup>3/8</sup> = ⁸√(a³)"]},
+{n:"5.17",q:"√((−2−√5)²) + √((2−√5)²) = …",o:["0","4","−4","4+2√5","2√5"],a:4,s:["√(x²) = |x|","|−2−√5| = 2+√5 (число під модулем від’ємне)","|2−√5| = √5−2 (бо √5 > 2)","(2+√5) + (√5−2) = 2√5"]},
+{n:"5.19",q:"√(7 + 2√10) = …",o:["√10","3,5+√10","√3+2","√2+√5","1+√6"],a:3,s:["Шукаємо повний квадрат: 7 + 2√10 = 2 + 5 + 2·√2·√5","Це (√2+√5)² = 2 + 2√10 + 5","√((√2+√5)²) = √2 + √5"]},
+{n:"5.16",q:"Знайти x, якщо √(1/2·√(1/2·√(1/2))) = 2<sup>x</sup>",o:["−1,125","−0,875","−0,625","−0,375","−0,125"],a:1,s:["1/2 = 2<sup>−1</sup>. Йдемо зсередини: √(1/2) = 2<sup>−1/2</sup>","√(2<sup>−1</sup>·2<sup>−1/2</sup>) = (2<sup>−3/2</sup>)<sup>1/2</sup> = 2<sup>−3/4</sup>","√(2<sup>−1</sup>·2<sup>−3/4</sup>) = (2<sup>−7/4</sup>)<sup>1/2</sup> = 2<sup>−7/8</sup>","x = −7/8 = −0,875"]},
+{n:"5.18",q:"x = √10. Знайти ⁴√((x−3)⁴) + ⁴√((x−7,5)⁴)",o:["−4,5","2√10−10,5","2x−10,5","4,5","3,5"],a:3,s:["⁴√(t⁴) = |t|","√10 ≈ 3,16 > 3, тому |√10−3| = √10−3","√10 < 7,5, тому |√10−7,5| = 7,5−√10","(√10−3) + (7,5−√10) = 4,5"]},
+{n:"5.21",q:"Обчислити: (3+√5)/(3−√5) − 3√5/2",o:["7","3√5","(13+3√5)/4","3,5","−1−1,5√5"],a:3,s:["Домножимо перший дріб на (3+√5): (3+√5)²/(9−5) = (14+6√5)/4","3√5/2 = 6√5/4","(14+6√5−6√5)/4 = 14/4 = 3,5"]},
+{n:"5.23",q:"Обчислити: √(2+√3)·√(2+√(2+√3))·√(2+√(2+√(2+√3)))·√(2−√(2+√(2+√3)))",o:["1","2","3","4","5"],a:0,s:["Нехай X = √(2+√(2+√3)). Останні два множники: √(2+X)·√(2−X) = √(4−X²) = √(2−√(2+√3))","X·√(2−√(2+√3)) = √((2+√(2+√3))(2−√(2+√3))) = √(4−2−√3) = √(2−√3)","√(2+√3)·√(2−√3) = √(4−3) = 1"]},
+{n:"5.24",q:"Обчислити: (√2−1)·√(4+√(9−4√2))",o:["1","2","3","4","2√2"],a:0,s:["9 − 4√2 = 8 − 4√2 + 1 = (2√2−1)², отже √(9−4√2) = 2√2−1","4 + 2√2 − 1 = 3 + 2√2 = (√2+1)², корінь дорівнює √2+1","(√2−1)(√2+1) = 2 − 1 = 1"]},
+{n:"5.25",q:"Обчислити: 1/(1+√2) + 1/(√2+√3) + 1/(√3+√4) + … + 1/(√80+√81)",o:["1","3","5","8","9"],a:3,s:["Раціоналізуємо кожен доданок: 1/(√k+√(k+1)) = √(k+1) − √k","Сума скорочується: (√2−√1) + (√3−√2) + … + (√81−√80)","Лишається √81 − √1 = 9 − 1 = 8"]},
+{n:"5.22 ⭐",q:"Виклик: √(71−16√7) + √(11−4√7)",o:["10−2√7","−10","−6","10","6"],a:4,s:["71 − 16√7 = 64 − 16√7 + 7 = (8−√7)²","11 − 4√7 = 4 − 4√7 + 7 = (2−√7)²","√((8−√7)²) = 8−√7; √((2−√7)²) = |2−√7| = √7−2","(8−√7) + (√7−2) = 6"]}];
+function render(id,arr){document.getElementById(id).innerHTML=arr.map((x,i)=>{
+let h=`<div class="card" data-id="${id}" data-i="${i}"><div class="q"><span class="num">${x.n}</span> ${F(x.q)}</div>`;
+if(x.m){h+=`<div class="ml">${x.o.map((t,k)=>`<div>${L[k]}) ${F(t)}</div>`).join("")}</div>`+x.m.map((t,k)=>`<div class="row"><span class="e">${k+1}. ${F(t)}</span><select>${["—"].concat(L).map(l=>`<option>${l}</option>`).join("")}</select><span class="mk"></span></div>`).join("")+`<button class="pri chk">Перевірити</button> `}
+else if(x.d!==undefined)h+=`<div class="row"><input class="in" placeholder="відповідь" inputmode="decimal" size="10"><button class="pri chd">Перевірити</button></div>`;else h+=`<div class="opts">${x.o.map((t,k)=>`<button data-k="${k}"><b>${L[k]}</b> ${F(t)}</button>`).join("")}</div>`;
+return h+`<button class="tb">📋 На дошку</button> <button class="nx">👣 Наступний крок</button><div class="fb"></div><ul class="steps"></ul></div>`}).join("")}
+const RT=[
+{n:"R1",q:"Звільнитися від ірраціональності: 6/√3",o:["2√3","6√3","√3/2","2/√3","3√3"],a:0,s:["Домножимо чисельник і знаменник на √3","6√3/(√3·√3) = 6√3/3","= 2√3"]},
+{n:"R2",q:"3/(√5−2)",o:["3√5−6","3√5+6","√5+2","3(√5−2)","3/(√5+2)"],a:1,s:["Спряжений до (√5−2) — це (√5+2)","Знаменник: (√5−2)(√5+2) = 5 − 4 = 1","3(√5+2)/1 = 3√5 + 6"]},
+{n:"R3",q:"10/(√7−√2)",o:["2(√7+√2)","10(√7+√2)","2(√7−√2)","√7+√2","5(√7+√2)"],a:0,s:["Множимо на спряжений (√7+√2)","Знаменник: 7 − 2 = 5","10(√7+√2)/5 = 2(√7+√2)"]},
+{n:"R4",q:"12/(√7+√3)",o:["3(√7+√3)","12(√7−√3)","3(√7−√3)","4(√7−√3)","√7−√3"],a:2,s:["Множимо на (√7−√3)","Знаменник: 7 − 3 = 4","12(√7−√3)/4 = 3(√7−√3)"]},
+{n:"R5",q:"4/∛2",o:["2∛2","2∛4","4∛4","∛4","∛2"],a:1,s:["Множимо на ∛4: ∛2·∛4 = ∛8 = 2","4∛4/2 = 2∛4"]},
+{n:"R6",q:"2/(∛3+1)",o:["(∛9−∛3+1)/2","(∛9+∛3+1)/2","2(∛9−∛3+1)","(∛9−∛3+1)/4","∛3−1"],a:0,s:["Сума кубів: (a+b)(a²−ab+b²) = a³+b³, де a = ∛3, b = 1","Множимо на (∛9 − ∛3 + 1). Знаменник: 3 + 1 = 4","2(∛9−∛3+1)/4 = (∛9−∛3+1)/2"]},
+{n:"5.11",q:"Звільнитися від ірраціональності: 3/(√7−1)",o:["(√7+1)/2","(√7−2)/2","2(√7+1)","3(√7+1)","(√7−1)/2"],a:0,s:["Множимо на спряжений (√7+1)","Знаменник: 7 − 1 = 6","3(√7+1)/6 = (√7+1)/2"]},
+{n:"5.20",q:"Звільнитись від ірраціональності: 2/(∛7−∛2)",o:["2(∛7+∛2)/5","2(∛49−∛14+∛4)/5","2(∛49+∛14+∛4)/5","2(∛7−∛2)/5","2(∛49+2∛14+∛4)/5"],a:2,s:["Різниця кубів: (a−b)(a²+ab+b²) = a³−b³, де a = ∛7, b = ∛2","Другий множник: ∛49 + ∛14 + ∛4. Знаменник: 7 − 2 = 5","2(∛49+∛14+∛4)/5"]}];
+const T1=[
+{n:"Т1",q:"Обчислити: √0,25 + ∛(−27) + ⁴√81",o:["0,5","−2,5","5,5","6,5","−0,5"],a:0,s:["√0,25 = 0,5; ∛(−27) = −3; ⁴√81 = 3","0,5 − 3 + 3 = 0,5"]},
+{n:"Т2",q:"Спростити: 3√12 − √27 + √48",o:["7√3","5√3","13√3","4√3","9√3"],a:0,s:["√12 = 2√3, √27 = 3√3, √48 = 4√3","6√3 − 3√3 + 4√3 = 7√3"]},
+{n:"Т3",q:"Звільнитися від ірраціональності в знаменнику: 8/(√5+1)",o:["2(√5+1)","2(√5−1)","8(√5−1)","√5−1","4(√5−1)"],a:1,s:["Множимо на спряжений (√5−1)","Знаменник: 5 − 1 = 4","8(√5−1)/4 = 2(√5−1)"]},
+{n:"Т4",q:"Спростити: √((√3−2)²) + √((√3−1)²)",o:["1","2√3−3","3","2√3","−1"],a:0,s:["√(t²) = |t|; √3 ≈ 1,73","|√3−2| = 2−√3; |√3−1| = √3−1","(2−√3) + (√3−1) = 1"]},
+{n:"Т5",q:"Спростити (a > 0): √(a·∛a)",o:["∛a","∛(a²)","⁶√a","a","⁶√(a⁵)"],a:1,s:["a·∛a = a·a<sup>1/3</sup> = a<sup>4/3</sup>","√ → (a<sup>4/3</sup>)<sup>1/2</sup> = a<sup>2/3</sup> = ∛(a²)"]},
+{n:"Т6",q:"√(11+6√2) = …",o:["3+√2","√3+√8","1+3√2","3−√2","11+√2"],a:0,s:["Шукаємо повний квадрат: 11 + 6√2 = 9 + 2·3·√2 + 2","Це (3+√2)²","√((3+√2)²) = 3+√2"]}];
+const T2=[
+{n:"Т7",q:"Встановіть відповідність: вираз → тотожний йому вираз",m:["√((2−√3)²)","∛((1−√2)³)","√(7+4√3)","−(⁴√(3+√2))⁴"],o:["2+√3","2−√3","1−√2","−3−√2","√2−1"],a:[1,2,0,3],s:["1) |2−√3| = 2−√3, бо 2 > √3 → Б","2) ∛(t³) = t → 1−√2 → В","3) 7+4√3 = (2+√3)² → А","4) (⁴√t)⁴ = t, мінус лишається → −3−√2 → Г"]},
+{n:"Т8",q:"Встановіть відповідність: вираз → значення",m:["8<sup>2/3</sup>","16<sup>−1/4</sup>","√2·√18","27<sup>−2/3</sup>"],o:["1/2","4","6","1/9","9"],a:[1,0,2,3],s:["1) (∛8)² = 4 → Б","2) 1/⁴√16 = 1/2 → А","3) √36 = 6 → В","4) 1/(∛27)² = 1/9 → Г"]}];
+const T3=[
+{n:"Т9",q:"Обчисліть: (√(11+2√30) − √5)²",d:"6",s:["11 + 2√30 = (√6+√5)², бо 6 + 5 = 11 і 2√(6·5) = 2√30","√(11+2√30) = √6 + √5","(√6 + √5 − √5)² = (√6)² = 6"]},
+{n:"Т10",q:"Обчисліть: 1/(1+√2) + 1/(√2+√3) + … + 1/(√63+√64)",d:"7",s:["Кожен доданок: 1/(√k+√(k+1)) = √(k+1) − √k","Сума телескопічна: √64 − √1","8 − 1 = 7"]},
+{n:"Т11",q:"Обчисліть: 9<sup>3/2</sup> − 16<sup>3/4</sup> + 8<sup>−1/3</sup>·4",d:"21",s:["9<sup>3/2</sup> = 27; 16<sup>3/4</sup> = 8","8<sup>−1/3</sup> = 1/2, тому 1/2·4 = 2","27 − 8 + 2 = 21"]},
+{n:"Т12",q:"Обчисліть: √2,25 + ∛0,027",d:"1,8",s:["√2,25 = 1,5, бо 1,5² = 2,25","∛0,027 = 0,3, бо 0,3³ = 0,027","1,5 + 0,3 = 1,8"]}];
+render("hw",HW);render("nw",NW);render("rt",RT);render("t1",T1);render("t2",T2);render("t3",T3);
+const data={hw:HW,nw:NW,rt:RT,t1:T1,t2:T2,t3:T3};
+document.addEventListener("click",e=>{const c=e.target.closest(".card[data-id]");if(!c)return;const x=data[c.dataset.id][c.dataset.i];
+if(e.target.closest(".chd")){const v=c.querySelector(".in").value.trim().replace(".",",").replace(/\s/g,""),f=c.querySelector(".fb");if(v==x.d){f.textContent="✅ Правильно! Відповідь: "+x.d;if(!c.dataset.d){c.dataset.d=1;stars+=2;sc()}}else f.textContent="❌ Не збігається. Перевір обчислення ще раз.";return}if(e.target.closest(".tb")){toBoard2(x);return}if(e.target.closest(".nx")){const u=c.querySelector(".steps"),n=u.children.length;if(n<x.s.length){const li=document.createElement("li");li.innerHTML=F(x.s[n]);u.appendChild(li)}if(u.children.length==x.s.length)e.target.closest(".nx").textContent="✔ Усі кроки показано";return}
+const fb=c.querySelector(".fb");
+if(e.target.closest(".chk")){let g=0;c.querySelectorAll(".row").forEach((r,k)=>{const v=r.querySelector("select").selectedIndex-1,ok=v==x.a[k];if(ok)g++;r.querySelector(".mk").textContent=ok?"✅":"❌"});
+fb.textContent=g==4?"🎉 Усе правильно!":`Правильно ${g} з 4. Спробуй виправити або глянь кроки.`;if(g==4&&!c.dataset.d){c.dataset.d=1;stars+=2;sc()}return}
+const b=e.target.closest(".opts button");if(b&&!c.dataset.d){const k=+b.dataset.k;if(k==x.a){b.classList.add("ok");c.dataset.d=1;stars++;sc();fb.textContent="✅ Правильно! Відповідь "+L[k]+"."}else{b.classList.add("bad");fb.textContent="❌ Ще раз подумай. Можна взяти підказку."}}});
+// ---- board
+const cv=document.getElementById("cv"),ctx=cv.getContext("2d"),bd=document.getElementById("board");
+let col="#1d2433",w=2.5,drawing=false,last=null,er=false;
+function fit(){const img=cv.width?cv.toDataURL():null,r=cv.getBoundingClientRect();if(!r.width)return;cv.width=r.width;cv.height=r.height;if(img){const i=new Image();i.onload=()=>ctx.drawImage(i,0,0);i.src=img}}
+document.getElementById("tg").onclick=function(){bd.classList.toggle("open");const o=bd.classList.contains("open");this.textContent=o?"Сховати ▼":"Відкрити ▲";document.body.style.paddingBottom=o?"46vh":"70px";if(o)fit()};
+addEventListener("resize",()=>bd.classList.contains("open")&&fit());
+document.querySelectorAll(".sw").forEach(b=>b.onclick=()=>{col=b.dataset.c;w=2.5;er=false});
+document.getElementById("pen").onclick=()=>{w=2.5;er=false};document.getElementById("era").onclick=()=>{er=true;w=22};
+document.getElementById("clr").onclick=()=>ctx.clearRect(0,0,cv.width,cv.height);
+const pt=e=>{const r=cv.getBoundingClientRect();return[e.clientX-r.left,e.clientY-r.top]};
+cv.onpointerdown=e=>{drawing=true;last=pt(e);cv.setPointerCapture(e.pointerId)};
+cv.onpointermove=e=>{if(!drawing)return;const p=pt(e);ctx.globalCompositeOperation=er?"destination-out":"source-over";ctx.strokeStyle=col;ctx.lineWidth=w;ctx.lineCap="round";ctx.beginPath();ctx.moveTo(...last);ctx.lineTo(...p);ctx.stroke();last=p};
+cv.onpointerup=cv.onpointercancel=()=>{drawing=false;ctx.globalCompositeOperation="source-over"};
+function toBoard(x){if(!bd.classList.contains("open"))document.getElementById("tg").click();
+const ls=[x.n+". "+x.q];if(x.m)x.m.forEach((m,k)=>ls.push((k+1)+") "+m));if(x.o)ls.push(x.o.map((o,k)=>L[k]+") "+o).join("    "));
+ctx.clearRect(0,0,cv.width,cv.height);ctx.fillStyle="#1d2433";let y=30;const W=cv.width-20;
+ls.forEach(s=>{let cx=10;const at=s.split(/(<sup>.*?<\/sup>)/).flatMap(p=>p.startsWith("<sup>")?[[p.slice(5,-6),1]]:p.split(/(\s+)/).filter(Boolean).map(q=>[q,0]));
+at.forEach(([q,u])=>{ctx.font=(u?14:20)+"px system-ui,sans-serif";const w=ctx.measureText(q).width;if(cx+w>W&&q.trim()){cx=10;y+=28}if(!q.trim()&&cx==10)return;ctx.fillText(q,cx,u?y-9:y);cx+=w});y+=32})}
+function parseM(s){const out=[];let i=0,buf="";const push=()=>{if(buf){out.push({t:"x",v:buf});buf=""}};
+while(i<s.length){const c=s[i];if(c=="\u0002"){push();const e=s.indexOf("\u0003",i);out.push({t:"s",v:s.slice(i+1,e).replace(/\u0004/g,"/")});i=e+1}
+else if(c=="⟦"){push();let d=1,p=i+1,m=-1;while(p<s.length&&d){if(s[p]=="⟦")d++;else if(s[p]=="⟧")d--;else if(s[p]=="‖"&&d==1)m=p;p++}out.push({t:"f",n:parseM(s.slice(i+1,m)),d:parseM(s.slice(m+1,p-1))});i=p}
+else{buf+=c;i++}}push();return out}
+const FS=20,fnt=z=>z+"px system-ui,sans-serif";
+function mw(ns,z){let w=0;for(const n of ns)w+=nw(n,z);return w}
+function nw(n,z){if(n.t=="x"){ctx.font=fnt(z);return ctx.measureText(n.v).width}if(n.t=="s"){ctx.font=fnt(z*.7);return ctx.measureText(n.v).width}return Math.max(mw(n.n,z),mw(n.d,z))+8}
+function dn(ns,x,y,z){for(const n of ns){const w=nw(n,z);if(n.t=="x"){ctx.font=fnt(z);ctx.fillText(n.v,x,y)}else if(n.t=="s"){ctx.font=fnt(z*.7);ctx.fillText(n.v,x,y-z*.45)}
+else{const ly=y-z*.3,a=mw(n.n,z),b=mw(n.d,z);dn(n.n,x+(w-a)/2,ly-5,z);dn(n.d,x+(w-b)/2,ly+z*.85,z);ctx.beginPath();ctx.lineWidth=1.5;ctx.strokeStyle="#1d2433";ctx.moveTo(x+2,ly);ctx.lineTo(x+w-2,ly);ctx.stroke()}x+=w}}
+function toBoard2(x){if(!bd.classList.contains("open"))document.getElementById("tg").click();
+const ls=[x.n+". "+x.q];if(x.m)x.m.forEach((m,k)=>ls.push((k+1)+") "+m));if(x.o)ls.push(x.o.map((o,k)=>L[k]+") "+o).join("    "));
+ctx.clearRect(0,0,cv.width,cv.height);ctx.fillStyle="#1d2433";let y=30;const W=cv.width-20;
+ls.forEach(s=>{const nodes=parseM(toFr(s)),hf=JSON.stringify(nodes).includes('"f"'),lh=hf?52:30;let cx=10;if(hf)y+=16;
+nodes.flatMap(n=>n.t=="x"?n.v.split(/(\s+)/).filter(Boolean).map(v=>({t:"x",v})):[n]).forEach(a=>{const w=nw(a,FS),sp=a.t=="x"&&!a.v.trim();if(sp&&cx==10)return;if(cx+w>W&&!sp){cx=10;y+=lh}dn([a],cx,y,FS);cx+=w});y+=lh+6})}
+const fsb=document.getElementById("fs");
+function setFull(on){if(on&&!bd.classList.contains("open"))document.getElementById("tg").click();bd.classList.toggle("full",on);fsb.textContent=on?"✕ Закрити весь екран":"⛶ На весь екран";
+if(on){try{bd.requestFullscreen&&bd.requestFullscreen().catch(()=>{})}catch(e){}}else{try{document.fullscreenElement&&document.exitFullscreen().catch(()=>{})}catch(e){}}setTimeout(fit,150)}
+fsb.onclick=()=>setFull(!bd.classList.contains("full"));
+document.addEventListener("fullscreenchange",()=>{if(!document.fullscreenElement&&bd.classList.contains("full"))setFull(false)});
+addEventListener("keydown",e=>{if(e.key=="Escape"&&bd.classList.contains("full"))setFull(false)});
+document.querySelectorAll(".cheat p").forEach(p=>p.innerHTML=F(p.innerHTML));
+</script></body></html>
