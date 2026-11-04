@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="uk"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Тотожні перетворення раціональних виразів — 8 клас</title>
+<style>
+:root{--bg:#f6f7fb;--card:#fff;--tx:#1d2333;--mut:#5b6478;--ac:#4f46e5;--ok:#15803d;--bad:#b91c1c;--hl:#fde68a;--bd:#d9dcea;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#12141c;--card:#1c2030;--tx:#e8eaf3;--mut:#9aa3b8;--ac:#8b86ff;--ok:#4ade80;--bad:#f87171;--hl:#5b4a0f;--bd:#32384f}}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;background:var(--bg);color:var(--tx);font:17px/1.5 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);background:var(--card);z-index:10}
+.w{max-width:860px;margin:0 auto;padding:0 12px 40px}
+h1{font-size:1.35rem;margin:14px 0 4px}
+.sub{color:var(--mut);margin:0 0 10px}
+#ff{position:sticky;top:env(safe-area-inset-top,0px);z-index:9;background:var(--card);border:2px solid var(--ac);border-radius:12px;padding:8px 10px;margin:8px 0}
+#ff summary{cursor:pointer;font-weight:700;color:var(--ac)}
+.g{display:grid;grid-template-columns:repeat(auto-fit,minmax(215px,1fr));gap:4px 14px;margin-top:6px;font-size:.95rem}
+.g div{white-space:nowrap}
+nav{display:flex;flex-wrap:wrap;gap:6px;margin:10px 0}
+nav button,.b{font:inherit;border:1px solid var(--bd);background:var(--card);color:var(--tx);border-radius:999px;padding:7px 13px;cursor:pointer}
+nav button.on,.b.p{background:var(--ac);color:#fff;border-color:var(--ac)}
+.card{background:var(--card);border:1px solid var(--bd);border-radius:14px;padding:14px;margin:8px 0}
+.fr{display:inline-flex;flex-direction:column;vertical-align:middle;text-align:center;margin:0 3px;font-size:1.02em}
+.fr>span:first-child{border-bottom:2px solid currentColor;padding:0 4px 1px}
+.fr>span:last-child{padding:1px 4px 0}
+.m{font-size:1.15rem;margin:6px 0;overflow-x:auto;padding:2px 0}
+.note{color:var(--mut);margin:2px 0}
+.st{border-left:4px solid var(--ac);padding:2px 0 2px 10px;margin:10px 0}
+.h{background:var(--hl);padding:0 3px;border-radius:4px}
+.ok{color:var(--ok);font-weight:700}.no{color:var(--bad);font-weight:700}
+.op{display:block;width:100%;text-align:left;margin:6px 0}
+.sub2{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:8px}
+.box{border:2px dashed var(--ac);border-radius:10px;padding:8px 10px;margin:8px 0}
+.sw{width:28px;height:28px;border-radius:50%;border:2px solid var(--bd);padding:0;cursor:pointer;vertical-align:middle;margin:0 2px}
+#co{vertical-align:middle;width:34px;height:30px;border:0;background:none;padding:0}
+.stk{position:absolute;left:8px;top:8px;background:var(--card);border:2px solid var(--ac);border-radius:10px;padding:6px 28px 6px 10px;cursor:grab;touch-action:none;font-size:1.1rem;z-index:3;max-width:92%;user-select:none}
+.stk .x{position:absolute;right:3px;top:1px;cursor:pointer;border:0;background:none;color:var(--bad);font-size:1rem}
+.cv{display:block;width:100%;border:2px solid var(--bd);border-radius:10px;touch-action:none;background-color:var(--card);background-image:linear-gradient(var(--bd) 1px,transparent 1px),linear-gradient(90deg,var(--bd) 1px,transparent 1px);background-size:24px 24px}
+</style></head><body><div class="w">
+<h1>Тотожні перетворення раціональних виразів</h1>
+<p class="sub">§ 7, підручник 8 клас. Тисни «Наступний крок», але спершу спробуй вгадати його сам.</p>
+<details id="ff" open><summary>📌 Формули скороченого множення (завжди перед очима)</summary>
+<div class="g">
+<div>(a + b)² = a² + 2ab + b²</div><div>(a − b)² = a² − 2ab + b²</div>
+<div>a² − b² = (a − b)(a + b)</div><div>a³ + b³ = (a + b)(a² − ab + b²)</div>
+<div>a³ − b³ = (a − b)(a² + ab + b²)</div><div>b − a = −(a − b)</div>
+<div>a² + 2ab + b² = (a + b)²</div><div>a² − 2ab + b² = (a − b)²</div></div></details>
+<nav id="nav"></nav><div id="v"></div>
+<div class="card"><b>🖊 Дошка: розв’язуй тут</b> <button class="b" id="pen">✏️ Олівець</button> <button class="b" id="er">🧽 Стирачка</button> <button class="b" id="cl">🗑 Очистити</button> <span id="sw"></span><input type="color" id="co" value="#2563eb" title="Свій колір">
+<div id="bw" style="margin-top:8px;position:relative"><canvas id="cv" class="cv"></canvas></div></div></div>
+<script>
+const f=(n,d)=>`<span class="fr"><span>${n}</span><span>${d}</span></span>`;
+const H=t=>`<span class="h">${t}</span>`;
+const $=id=>document.getElementById(id);
+const T={};
+T.theory={name:"1. Теорія",steps:[
+["Раціональний дріб — це дріб, у якому в чисельнику й знаменнику многочлени. Головне правило: знаменник ≠ 0. Тому завжди думай, які значення змінної заборонені.",f("x+1","x−3")+" &nbsp;→&nbsp; x ≠ 3"],
+["Додавання й віднімання: якщо знаменники однакові — дії роблять з чисельниками. Якщо різні — спершу шукаємо спільний знаменник.",f("a","c")+" ± "+f("b","c")+" = "+f("a ± b","c")],
+["Множення: чисельник на чисельник, знаменник на знаменник. Краще спочатку розкласти на множники й скоротити.",f("a","b")+" · "+f("c","d")+" = "+f("a·c","b·d")],
+["Ділення: заміни на множення на обернений дріб (переверни другий дріб).",f("a","b")+" : "+f("c","d")+" = "+f("a","b")+" · "+f("d","c")],
+["Порядок дій такий самий, як у числах: 1) дужки, 2) множення й ділення, 3) додавання й віднімання.","Не знаєш, з чого почати? Починай із дужок."],
+["Алгоритм для будь-якого завдання:<br>① розклади знаменники на множники (формули зверху!)<br>② знайди спільний знаменник<br>③ виконай дії в дужках<br>④ ділення → множення<br>③ скороти<br>⑥ запиши відповідь.","Хитрість зі знаками: "+H("b − a = −(a − b)")]
+]};
+const mk=(title,expr,steps)=>({title,expr,steps});
+const S={
+"7.5":[
+mk("1)","("+f("m","5")+" + "+f("5","m")+" − 2) · "+f("1","m−5")+"<div class='note'>Читай так: у дужці три доданки (m/5, 5/m і −2). Результат дужки множимо на дріб 1/(m−5).</div>",[
+["Спершу дужка. Спільний знаменник для 5 і m — це "+H("5m")+". Кожен доданок домножуємо на «чого не вистачає».",f("m·m","5m")+" + "+f("5·5","5m")+" − "+f("2·5m","5m")+" = "+f("m²+25−10m","5m")],
+["Розглянь чисельник: m² − 10m + 25. Це формула "+H("(a − b)²")+", де a = m, b = 5.",f("m²−10m+25","5m")+" = "+f("(m−5)²","5m")],
+["Тепер множимо на другий дріб. Усе записуємо в один дріб.",f("(m−5)²","5m")+" · "+f("1","m−5")+" = "+f("(m−5)(m−5)","5m(m−5)")],
+["Скорочуємо спільний множник (m − 5).","Відповідь: "+H(f("m−5","5m"))+" &nbsp; (m ≠ 0, m ≠ 5)"]]),
+mk("2)","(1 − "+f("x","y")+") : (1 + "+f("x","y")+")",[
+["Кожну дужку зводимо до спільного знаменника y. Число 1 = y/y.",f("y−x","y")+" : "+f("y+x","y")],
+["Ділення замінюємо множенням на обернений дріб.",f("y−x","y")+" · "+f("y","y+x")],
+["Скорочуємо y.","Відповідь: "+H(f("y−x","y+x"))+" &nbsp; (y ≠ 0, y ≠ −x)"]]),
+mk("3)","("+f("b","b−3")+" − 2b) · "+f("b−3","b"),[
+["У дужці спільний знаменник b − 3. Число 2b = 2b(b − 3)/(b − 3).",f("b − 2b(b−3)","b−3")+" = "+f("b − 2b² + 6b","b−3")+" = "+f("7b − 2b²","b−3")],
+["Виносимо b за дужки в чисельнику: 7b − 2b² = "+H("b(7 − 2b)"),f("b(7−2b)","b−3")+" · "+f("b−3","b")],
+["Скорочуємо (b − 3) і b.","Відповідь: "+H("7 − 2b")+" &nbsp; (b ≠ 0, b ≠ 3)"]]),
+mk("4)","(3 − "+f("m","m+2")+") : "+f("4m+12","m²+2m"),[
+["Дужка: 3 = 3(m+2)/(m+2).",f("3(m+2) − m","m+2")+" = "+f("2m+6","m+2")+" = "+f("2(m+3)","m+2")],
+["Розкладаємо: 4m + 12 = 4(m+3); m² + 2m = m(m+2). Ділення → множення.",f("2(m+3)","m+2")+" · "+f("m(m+2)","4(m+3)")],
+["Скорочуємо (m+3), (m+2) і 2/4.","Відповідь: "+H(f("m","2"))+" &nbsp; (m ≠ 0, −2, −3)"]])],
+"7.2":[
+mk("1)",f("10x+y","5x")+" − "+f("3y²","x²")+" · "+f("x","15y"),[
+["Порядок дій: спершу "+H("множення")+". Скорочуємо 3 і 15, y² і y, x і x².",f("3y²","x²")+" · "+f("x","15y")+" = "+f("y","5x")],
+["Тепер віднімання. Знаменники вже однакові!",f("10x+y","5x")+" − "+f("y","5x")+" = "+f("10x+y−y","5x")],
+["Скорочуємо.",f("10x","5x")+" = "+H("2")]]),
+mk("2)",f("a²−4","9−b²")+" : "+f("a−2","3+b")+" − "+f("2","3−b"),[
+["Розкладаємо за формулою "+H("a² − b² = (a−b)(a+b)")+":<br>a² − 4 = (a−2)(a+2), 9 − b² = (3−b)(3+b).",f("(a−2)(a+2)","(3−b)(3+b)")+" : "+f("a−2","3+b")],
+["Ділення → множення. Скорочуємо (a−2) і (3+b).",f("(a−2)(a+2)","(3−b)(3+b)")+" · "+f("3+b","a−2")+" = "+f("a+2","3−b")],
+["Віднімаємо: знаменники однакові.",f("a+2","3−b")+" − "+f("2","3−b")+" = "+H(f("a","3−b"))]]),
+mk("3)",f("x+y","3x−y")+" + "+f("1","x+y")+" · "+f("x²−y²","3x−y"),[
+["Множення першим: x² − y² = (x−y)(x+y). Скорочуємо (x+y).",f("1","x+y")+" · "+f("(x−y)(x+y)","3x−y")+" = "+f("x−y","3x−y")],
+["Додаємо дроби з однаковим знаменником.",f("x+y+x−y","3x−y")+" = "+H(f("2x","3x−y"))]]),
+mk("4)","m + "+f("m²+mn","n−m")+" · "+f("m","m+n"),[
+["Виносимо m: m² + mn = m(m+n). Скорочуємо (m+n).",f("m(m+n)","n−m")+" · "+f("m","m+n")+" = "+f("m²","n−m")],
+["Число m записуємо як дріб зі знаменником n − m.",f("m(n−m)+m²","n−m")+" = "+f("mn−m²+m²","n−m")],
+["Скорочуємо −m² і +m².","Відповідь: "+H(f("mn","n−m")) ]])],
+"7.7":[
+mk("1) довести","(1 + "+f("2x","y")+" + "+f("x²","y²")+") · "+f("y","x+y")+" = "+f("x+y","y"),[
+["Беремо лівий бік. У дужці спільний знаменник y².",f("y²+2xy+x²","y²")],
+["У чисельнику — формула "+H("(a + b)²")+" (a = x, b = y).",f("(x+y)²","y²")+" · "+f("y","x+y")],
+["Скорочуємо (x+y) і y.",f("(x+y)(x+y)·y","y·y·(x+y)")+" = "+H(f("x+y","y"))+"<br>Лівий бік = правий. Тотожність доведено ✔"]]),
+mk("2) довести","("+f("2m","n²")+" − "+f("1","2m")+") : ("+f("1","n")+" + "+f("1","2m")+") = "+f("2m−n","n"),[
+["Перша дужка: спільний знаменник 2mn². Друга: 2mn.",f("4m²−n²","2mn²")+" : "+f("2m+n","2mn")],
+["4m² − n² — різниця квадратів: (2m−n)(2m+n). Ділення → множення.",f("(2m−n)(2m+n)","2mn²")+" · "+f("2mn","2m+n")],
+["Скорочуємо (2m+n), 2m і n.",H(f("2m−n","n"))+"<br>Тотожність доведено ✔"]])]};
+// quizzes
+const D=[
+["x² − 9 = ?",["(x − 3)²","(x − 3)(x + 3)","(x + 3)²"],1,"Різниця квадратів: x² − 3²"],
+["(x + 4)² = ?",["x² + 16","x² + 8x + 16","x² + 4x + 16"],1,"Середній доданок 2·x·4 = 8x"],
+["x² − 10x + 25 = ?",["(x − 5)²","(x − 5)(x + 5)","(x − 10)²"],0,"25 = 5², 10x = 2·x·5"],
+["4a² − 1 = ?",["(2a − 1)²","(4a − 1)(a + 1)","(2a − 1)(2a + 1)"],2,"4a² = (2a)²"],
+["9 − b² = ?",["(3 − b)(3 + b)","(3 − b)²","(b − 3)²"],0,"3² − b²"],
+["b − a = ?",["a − b","−(a − b)","−(a + b)"],1,"Виносимо мінус за дужку"],
+["8x³ − 1 = ?",["(2x − 1)(4x² + 2x + 1)","(2x − 1)³","(2x − 1)(4x² + 4x + 1)"],0,"Різниця кубів: (2x)³ − 1³"],
+["x² + 6x + 9 = ?",["(x + 3)²","(x + 9)²","(x + 3)(x − 3)"],0,"9 = 3², 6x = 2·x·3"]];
+const C=[
+["7.5(1): "+f("m","5")+"+"+f("5","m")+"−2, помножити на "+f("1","m−5"),[f("m−5","5m"),f("m+5","5m"),f("m−5","m")],0,"Див. вкладку 7.5"],
+["7.5(2): (1 − x/y) : (1 + x/y)",[f("y+x","y−x"),f("y−x","y+x"),f("1","y")],1,"Спільний знаменник y, потім ділення"],
+["7.5(4): (3 − m/(m+2)) : (4m+12)/(m²+2m)",[f("m","2"),f("m+3","2"),f("2","m")],0,"Розклади 4m+12 і m²+2m"],
+["7.2(1): значення виразу",["2","y/(5x)","10x"],0,"Спершу множення"],
+["7.2(3): "+f("x+y","3x−y")+" + "+f("1","x+y")+"·"+f("x²−y²","3x−y"),[f("2x","3x−y"),f("2y","3x−y"),f("x","3x−y")],0,"x² − y² = (x−y)(x+y)"]];
+const E=[
+["Знайди помилку: (x − 3)² = x² − 9. Як правильно?",["x² − 6x + 9","x² + 6x + 9","x² − 3x + 9"],0,"(a − b)² = a² − 2ab + b². Квадрат різниці — не різниця квадратів!"],
+["Знайди помилку: "+f("3","x")+" + "+f("2","x")+" = "+f("5","2x")+". Правильно:",[f("5","x"),f("5","x²"),f("6","x")],0,"Знаменники однакові — їх не додають, додаємо лише чисельники."],
+["Знайди помилку: "+f("x","x+2")+" : "+f("3","x+2")+" = "+f("x","x+2")+" · "+f("3","x+2")+". Правильний результат ділення:",[f("x","3"),f("3x","(x+2)²"),f("3","x")],0,"Другий дріб треба перевернути: · (x+2)/3, і далі скоротити (x+2)."],
+["Знайди помилку: "+f("a−b","b−a")+" = 1. Правильно:",["−1","1","0"],0,"b − a = −(a − b), тому дріб дорівнює −1."],
+["Знайди помилку: "+f("x+5","5")+" = x (скоротили 5). Що правильно?",["Скоротити не можна: 5 — не множник усього чисельника","x + 1","x + 5"],0,"Скорочувати можна лише множники, а не доданки."],
+["Знайди рядок з помилкою:<br>1) "+f("2","x−1")+" − "+f("1","x+1")+"<br>2) = "+f("2(x+1) − (x−1)","x²−1")+"<br>3) = "+f("2x+2−x−1","x²−1")+"<br>4) = "+f("x+1","x²−1")+" = "+f("1","x−1"),["Рядок 2","Рядок 3 (мінус перед дужкою)","Рядок 4"],1,"−(x − 1) = −x + 1, тому 2x + 2 − x + 1 = x + 3."],
+["Знайди помилку: x² − 16 = (x − 4)². Правильно:",["(x − 4)(x + 4)","(x + 4)²","(x − 8)(x + 2)"],0,"Різниця квадратів: a² − b² = (a − b)(a + b)."]];
+function quiz(L){let i=0,s=0;const r=$("q");
+function show(){if(i>=L.length){r.innerHTML=`<div class="card"><b>Результат: ${s} з ${L.length}</b><p class="note">${s==L.length?"Чудово! 🎉":"Повтори формули зверху й спробуй ще раз."}</p><button class="b p" id="rs">Ще раз</button></div>`;$("rs").onclick=()=>{i=0;s=0;show()};return}
+const q=L[i];r.innerHTML=`<div class="card"><p class="note">Питання ${i+1} з ${L.length}</p><div class="m"><b>${q[0]}</b></div><button class="b" id="cq">📋 На дошку</button>${q[1].map((o,k)=>`<button class="b op" data-k="${k}">${o}</button>`).join("")}<div id="fb"></div></div>`;
+$("cq").onclick=()=>stick(q[0]);r.querySelectorAll(".op").forEach(b=>b.onclick=()=>{const k=+b.dataset.k,ok=k==q[2];if(ok)s++;r.querySelectorAll(".op").forEach(x=>x.disabled=true);
+$("fb").innerHTML=(ok?`<p class="ok">✔ Правильно!</p>`:`<p class="no">✘ Ні.</p>`)+`<p class="note">Підказка: ${q[3]}</p><button class="b p" id="nx">Далі ▶</button>`;$("nx").onclick=()=>{i++;show()}})}
+show()}
+const tabs=[["theory","1. Теорія"],["drill","2. Формули-тренажер"],["7.2","3. Завдання 7.2"],["7.5","4. Завдання 7.5"],["7.7","5. Завдання 7.7"],["err","6. Знайди помилку"],["check","7. Перевір себе"]];
+function stepper(el,t){let n=0;const r=document.createElement("div");el.appendChild(r);
+function draw(){r.innerHTML=(t.expr?`<div class="box m">${t.expr}<br><button class="b" id="cp">📋 Скопіювати на дошку</button></div>`:"")+t.steps.slice(0,n).map((s,k)=>`<div class="st"><div class="note">Крок ${k+1}. ${s[0]}</div><div class="m">${s[1]}</div></div>`).join("")+
+(n<t.steps.length?`<p class="note">${n?"":"Подумай: що треба зробити першим? "}</p><button class="b p" id="n">Наступний крок ▶</button> `:`<p class="ok">Готово! Тепер спробуй пояснити своїми словами.</p>`)+(n?`<button class="b" id="z">↺ Спочатку</button>`:"");
+if($("cp"))$("cp").onclick=()=>stick(t.expr);if($("n"))$("n").onclick=()=>{n++;draw()};if($("z"))$("z").onclick=()=>{n=0;draw()}}draw()}
+function go(k){document.querySelectorAll("#nav button").forEach(b=>b.classList.toggle("on",b.dataset.k==k));const v=$("v");v.innerHTML="";
+if(k=="theory"){const c=document.createElement("div");c.className="card";v.appendChild(c);stepper(c,T.theory)}
+else if(k=="drill"){v.innerHTML=`<p class="note">Обери правильну відповідь. Формули зверху підкажуть!</p><div id="q"></div>`;quiz(D)}
+else if(k=="err"){v.innerHTML=`<p class="note">Спробуй знайти помилку й виправити її. Це найкращий спосіб запам’ятати правила.</p><div id="q"></div>`;quiz(E)}
+else if(k=="check"){v.innerHTML=`<p class="note">Фінальна перевірка: розв’яжи в зошиті, потім обери відповідь.</p><div id="q"></div>`;quiz(C)}
+else{const c=document.createElement("div");c.className="card";const sb=document.createElement("div");sb.className="sub2";const body=document.createElement("div");c.append(sb,body);v.appendChild(c);
+const pick=j=>{[...sb.children].forEach((b,x)=>b.classList.toggle("p",x==j));body.innerHTML="";stepper(body,S[k][j])};
+S[k].forEach((t,j)=>{const b=document.createElement("button");b.className="b";b.textContent="Завдання "+k+" "+t.title;b.onclick=()=>pick(j);sb.appendChild(b)});pick(0)}}
+tabs.forEach(([k,n])=>{const b=document.createElement("button");b.textContent=n;b.dataset.k=k;b.onclick=()=>go(k);$("nav").appendChild(b)});
+go("theory");
+const cv=$("cv"),cx=cv.getContext("2d");let tool="pen",dr=false,pc="#2563eb";
+cv.width=Math.max(300,cv.parentNode.clientWidth-4);cv.height=380;
+const pos=e=>{const r=cv.getBoundingClientRect();return[(e.clientX-r.left)*cv.width/r.width,(e.clientY-r.top)*cv.height/r.height]};
+cv.onpointerdown=e=>{dr=true;cv.setPointerCapture(e.pointerId);const[p,q]=pos(e);cx.beginPath();cx.moveTo(p,q)};
+cv.onpointermove=e=>{if(!dr)return;const[p,q]=pos(e);cx.lineCap="round";cx.lineJoin="round";
+if(tool=="pen"){cx.globalCompositeOperation="source-over";cx.strokeStyle=pc;cx.lineWidth=2.5}else{cx.globalCompositeOperation="destination-out";cx.lineWidth=24}
+cx.lineTo(p,q);cx.stroke()};
+cv.onpointerup=cv.onpointercancel=()=>{dr=false};
+$("pen").onclick=()=>{tool="pen"};$("er").onclick=()=>{tool="er"};$("cl").onclick=()=>cx.clearRect(0,0,cv.width,cv.height);
+["#2563eb","#dc2626","#16a34a","#f59e0b"].forEach(c=>{const b=document.createElement("button");b.className="sw";b.style.background=c;b.title="Колір";b.onclick=()=>{pc=c;tool="pen";$("co").value=c};$("sw").appendChild(b)});
+$("co").oninput=e=>{pc=e.target.value;tool="pen"};
+function stick(h){const w=$("bw"),k=w.querySelectorAll(".stk").length*16,s=document.createElement("div");s.className="stk";s.innerHTML=h+`<button class="x" title="Прибрати">✕</button>`;s.style.left=(8+k)+"px";s.style.top=(8+k)+"px";let ox=0,oy=0,d=false;
+s.onpointerdown=e=>{if(e.target.className=="x"){s.remove();return}d=true;s.setPointerCapture(e.pointerId);ox=e.clientX-s.offsetLeft;oy=e.clientY-s.offsetTop;s.style.cursor="grabbing"};
+s.onpointermove=e=>{if(d){s.style.left=Math.max(0,e.clientX-ox)+"px";s.style.top=Math.max(0,e.clientY-oy)+"px"}};
+s.onpointerup=()=>{d=false;s.style.cursor="grab"};
+w.appendChild(s);w.scrollIntoView({behavior:"smooth",block:"center"})}
+</script></body></html>
