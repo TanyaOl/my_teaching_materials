@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Практична робота № 2. Опрацювання чисел у різних системах числення</title>
+<style>
+:root{--bg:#f6f7fb;--fg:#1d2433;--card:#fff;--mut:#5d667a;--ac:#3b5bdb;--acs:#e7ecff;--ok:#1e8e3e;--oks:#e3f6e8;--bad:#c62828;--bads:#fdeaea;--bd:#d9deea;--hl:#fff3bf;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#141824;--fg:#e8ebf3;--card:#1e2434;--mut:#9aa4bb;--ac:#8ea6ff;--acs:#27304d;--ok:#6fd48a;--oks:#1b3a27;--bad:#ff8a80;--bads:#43222a;--bd:#323a52;--hl:#4a4320}}
+:root[data-theme="dark"]{--bg:#141824;--fg:#e8ebf3;--card:#1e2434;--mut:#9aa4bb;--ac:#8ea6ff;--acs:#27304d;--ok:#6fd48a;--oks:#1b3a27;--bad:#ff8a80;--bads:#43222a;--bd:#323a52;--hl:#4a4320}
+html{scroll-padding-top:60px}
+body{margin:0;background:var(--bg);color:var(--fg);font:16px/1.55 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+header{padding:20px 16px 8px;max-width:1170px;margin:auto}
+h1{font-size:1.45rem;margin:0 0 4px}h2{font-size:1.2rem;margin:0 0 8px}h3{font-size:1.02rem;margin:14px 0 6px}
+nav{position:sticky;top:0;z-index:5;background:var(--bg);border-bottom:1px solid var(--bd);display:flex;gap:6px;overflow-x:auto;padding:8px 12px;white-space:nowrap}
+nav a{color:var(--ac);text-decoration:none;font-size:.85rem;padding:4px 10px;border-radius:14px;background:var(--acs)}
+.wrap{display:flex;gap:16px;max-width:1170px;margin:auto;padding:0 14px;align-items:flex-start}
+main{flex:1;min-width:0;padding:8px 0 60px}
+section{background:var(--card);border:1px solid var(--bd);border-radius:14px;padding:16px;margin:14px 0}
+.tm{float:right;font-size:.8rem;color:var(--mut);background:var(--acs);padding:2px 9px;border-radius:10px}
+.mut{color:var(--mut)}.box{background:var(--acs);border-radius:10px;padding:10px 12px;margin:10px 0}
+.q{background:var(--hl);border-radius:10px;padding:10px 12px;margin:10px 0}
+button,select,input,textarea{font:inherit;color:var(--fg)}
+button{background:var(--ac);color:#fff;border:0;border-radius:9px;padding:7px 14px;cursor:pointer;margin:3px 3px 3px 0}
+:root[data-theme="dark"] button{color:#101428}
+button.s{background:var(--acs);color:var(--ac)}button:disabled{opacity:.5;cursor:default}
+input,select,textarea{background:var(--bg);border:1px solid var(--bd);border-radius:8px;padding:6px 9px}
+input.n{width:10em;font-family:ui-monospace,Consolas,monospace}textarea{width:100%;box-sizing:border-box;min-height:90px}
+.row{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:6px 0}
+.big{font-size:1.4rem;font-weight:700}.qq{font-size:1.25rem;font-weight:700;font-family:ui-monospace,Consolas,monospace}
+.out{font-family:ui-monospace,Consolas,monospace;font-size:.95rem;margin:8px 0;line-height:1.7;overflow-x:auto}
+.ok{color:var(--ok);font-weight:600}.no{color:var(--bad);font-weight:600}
+.opt{display:block;width:100%;text-align:left;background:var(--bg);color:var(--fg);border:1px solid var(--bd)}
+.opt.g{background:var(--oks)}.opt.b{background:var(--bads)}
+.chip{display:inline-block;background:var(--acs);color:var(--ac);border-radius:8px;padding:0 8px;margin:1px}
+.task{border:1px solid var(--bd);border-radius:12px;padding:12px;margin:10px 0}
+.hint{background:var(--hl);border-radius:10px;padding:8px 12px;margin:6px 0;display:none}
+.sol{background:var(--oks);border-radius:10px;padding:8px 12px;margin:6px 0;display:none}
+.ref{width:210px;flex:none;position:sticky;top:56px;background:var(--card);border:1px solid var(--bd);border-radius:14px;padding:10px;margin:14px 0;max-height:calc(100vh - 72px);overflow:auto;font-size:.85rem}
+.ref h3{font-size:.78rem;margin:0 0 6px;text-align:center;line-height:1.3}
+.ref table{width:100%;border-collapse:collapse}.ref th{background:var(--acs);color:var(--ac)}
+.ref td,.ref th{border:1px dotted var(--bd);padding:2px 4px;text-align:center;font-family:ui-monospace,Consolas,monospace}
+.rb{display:none;position:fixed;right:12px;bottom:14px;z-index:21;border-radius:24px;box-shadow:0 4px 16px rgba(0,0,0,.3)}
+@media(max-width:1020px){.wrap{display:block}.ref{display:none;position:fixed;right:10px;bottom:64px;width:220px;max-height:70vh;z-index:20;margin:0;box-shadow:0 6px 24px rgba(0,0,0,.3)}.ref.open{display:block}.rb{display:block}}
+</style>
+</head>
+<body>
+<header>
+<h1>Практична робота № 2. Опрацювання чисел у різних системах числення</h1>
+<div class="mut">Інформатика, 10 клас · урок узагальнення і систематизації знань · 45 хвилин: вступ 2 + повторення 15 + практична ≈ 23 + підсумок 5</div>
+</header>
+<nav><a href="#s1">1. Вступ</a><a href="#s2">2. Повторення (15 хв)</a><a href="#s3">3. Практична робота</a><a href="#s4">4. Підсумок</a></nav>
+<div class="wrap"><main>
+
+<section id="s1"><span class="tm">2 хв</span><h2>1. Вступна частина. Постановка завдання</h2>
+<div class="box"><b>Завдання:</b> виконати арифметичні дії в різних системах числення і переведення чисел з однієї системи числення в іншу.<br><b>Обладнання:</b> комп’ютер із сучасною операційною системою, під’єднаний до інтернету.<br><b>Тип уроку:</b> комплексне застосування знань, умінь і навичок.</div>
+<div class="q"><b>Проблемне питання.</b> Один і той самий запис, наприклад 101, означає різні числа в різних системах. Як зрозуміти, яке саме число записано, і як виконати з ним дії, якщо кожна система має свою основу?</div>
+<details><summary><b>Інструктаж із БЖД (під час роботи за комп’ютером)</b></summary><ul><li>Сидіть на відстані 50–70 см від екрана, спина пряма.</li><li>Не торкайтеся дротів і розеток, не вмикайте та не вимикайте техніку без дозволу вчителя.</li><li>Роблячи перерви, відводьте очі від екрана і виконуйте вправи для очей.</li><li>Про будь-яку несправність негайно повідомте вчителя.</li></ul></details>
+</section>
+
+<section id="s2"><span class="tm">15 хв</span><h2>2. Повторення чотирьох тем</h2>
+<p class="mut">Таблиця порівняння систем числення завжди перед очима справа. Блоки: 1) системи числення (3 хв), 2) переведення 10 ↔ q (4 хв), 3) основи 2ⁿ (4 хв), 4) арифметика (4 хв).</p>
+
+<h3>Блок 1. Поняття системи числення. Позиційні й непозиційні системи</h3>
+<div id="qz1"></div>
+
+<h3>Блок 2. Переведення з десяткової в довільну систему і навпаки</h3>
+<div class="box"><b>Правила.</b> <b>10 → q:</b> цілу частину ділимо на q, остачі читаємо знизу вгору; дробову множимо на q, цілі частини читаємо зверху вниз. <b>q → 10:</b> кожну цифру множимо на q у степені її розряду й додаємо.</div>
+<div class="row"><select id="cm"><option value="a">10 → q</option><option value="b">q → 10</option></select>
+<input class="n" id="cn" value="235,125"><select id="cb"><option>2</option><option>8</option><option selected>16</option></select>
+<button onclick="cv()">Показати розв’язок</button>
+<button class="s" onclick="ex(1)">Приклад: 235,125 → 16</button><button class="s" onclick="ex(2)">Приклад: D1,6 (16) → 10</button></div>
+<div class="out" id="co"></div>
+
+<h3>Блок 3. Двійкова, вісімкова, шістнадцяткова: основи 2ⁿ</h3>
+<div class="box">Вісімкова цифра = 3 двійкові цифри (тріада), шістнадцяткова = 4 (тетрада). Групуємо від коми: ціла частина ліворуч, дробова праворуч.</div>
+<div class="row"><input class="n" id="gn" value="D1,6"><select id="gb"><option value="2">двійкова</option><option value="8">вісімкова</option><option value="16" selected>шістнадцяткова</option></select><button onclick="gp()">Перевести</button><button class="s" onclick="$('gb').value=2;$('gn').value='1110101,011';gp()">Приклад: 1110101,011</button></div>
+<div class="out" id="go"></div>
+
+<h3>Блок 4. Арифметичні дії у двійковій і шістнадцятковій системах</h3>
+<div class="box"><b>Додавання:</b> сума цифр ≥ q → пишемо (сума − q), переносимо 1. <b>Віднімання:</b> цифра менша → позичаємо 1 (вона дає q). <b>Множення:</b> двійкове за рядками зі зсувом; шістнадцяткове через десяткову. <b>Перевірка:</b> через десяткову систему.</div>
+<div class="row"><select id="tm"><option value="a2">двійкове додавання</option><option value="s2">двійкове віднімання</option><option value="m2">двійкове множення</option><option value="a16">шістнадцяткове додавання</option><option value="s16">шістнадцяткове віднімання</option><option value="m16">шістнадцяткове множення</option></select><button class="s" onclick="nt()">Нове завдання</button><span>Правильних поспіль: <b id="stk">0</b></span></div>
+<div class="row"><span class="qq" id="tq"></span><input class="n" id="ta" placeholder="відповідь" autocomplete="off"><button onclick="ct()">Перевірити</button><button class="s" onclick="rt()">Показати відповідь</button></div>
+<div class="out" id="tr"></div>
+</section>
+
+<section id="s3"><span class="tm">≈ 23 хв · 12 балів</span><h2>3. Виконання практичної роботи</h2>
+<p>Виконуйте завдання по черзі. Записуйте відповіді (кома або крапка для дробів, без основи). Відповіді перевіряються <b>один раз</b>, коли ви натиснете «Здати роботу» внизу. Якщо щось не виходить, відкрийте підказку. Для самоперевірки можна користуватися <b>онлайн-калькулятором систем числення</b>. Тестове завдання з автоматичною перевіркою: <b>rnk.com.ua/117178</b>.</p>
+<div class="box"><b>Оцінювання: 12 балів.</b> Кожне з 12 завдань коштує 1 бал. Якщо завдання має кілька відповідей, бал ділиться між ними порівну. Завдання 12: 1 бал за змістовний висновок (не менше 80 символів), його перевіряє вчитель.</div>
+<div class="row"><input class="n" id="nm" placeholder="Прізвище та ім’я" style="min-width:14em"><span class="no" id="nerr"></span></div>
+<div id="tasks"></div>
+</section>
+
+<section id="s4"><span class="tm">5 хв</span><h2>4. Підсумок уроку</h2>
+<h3>Яка система числення найзручніша? Оберіть відповідь</h3>
+<div id="qz2"></div>
+<h3>Рефлексія (запишіть у чат Teams)</h3>
+<ol><li>Яке переведення чисел вам далося найлегше, а яке потребує повторення?</li><li>Що ви скажете про ефективність переведення вручну та за допомогою онлайн-калькулятора? (це і є ваш висновок до завдання 12)</li></ol>
+</section>
+
+</main><aside class="ref" id="ref"></aside></div>
+<button class="rb" onclick="document.getElementById('ref').classList.toggle('open')">📋 Таблиця</button>
+
+<script>
+const D='0123456789ABCDEF',$=i=>document.getElementById(i);
+const sub=n=>String(n).replace(/\d/g,c=>'₀₁₂₃₄₅₆₇₈₉'[c]);
+const sup=n=>String(n).replace(/[\d-]/g,c=>'⁰¹²³⁴⁵⁶⁷⁸⁹⁻'['0123456789-'.indexOf(c)]);
+const fmt=x=>String(parseFloat(x.toFixed(8))).replace('.',',');
+function norm(s){s=String(s).toUpperCase().replace(/\s/g,'').replace('.',',');if(s.includes(',')){let[a,b]=s.split(',');b=(b||'').replace(/0+$/,'');a=a.replace(/^0+(?=.)/,'');return b?a+','+b:a}return s.replace(/^0+(?=.)/,'')}
+function pr(s,q){s=String(s).trim().toUpperCase().replace('.',',');const p=s.split(',');if(p.length>2||!p.join(''))return null;for(const c of p.join('')){const k=D.indexOf(c);if(k<0||k>=q)return null}return{i:p[0]||'0',f:p[1]||''}}
+// ref table
+let h='<h3>Порівняльна таблиця запису десяткових чисел у різних системах числення</h3><table><tr><th>10</th><th>16</th><th>8</th><th>2</th></tr>';for(let i=0;i<16;i++)h+=`<tr><td>${i}</td><td>${i.toString(16).toUpperCase()}</td><td>${i.toString(8)}</td><td>${i.toString(2)}</td></tr>`;$('ref').innerHTML=h+'</table>';
+// quizzes
+const QS={qz1:[['Яка з систем числення є непозиційною?',['римська','двійкова','вісімкова'],0],['Що називають основою позиційної системи числення?',['кількість цифр (символів) в алфавіті системи','найбільшу цифру в записі числа','кількість розрядів у числі'],0],['У якій із систем можна записати число 3A9?',['вісімковій','десятковій','шістнадцятковій'],2],['Скільки двійкових цифр відповідає одній вісімковій цифрі?',['2','3','4'],1]],
+qz2:[['Яку систему числення використовує комп’ютер для зберігання та обробки даних?',['двійкову','вісімкову','римську'],0],['У якій системі зручно коротко записувати великі двійкові коди (адреси пам’яті, кольори)?',['шістнадцятковій','римській','непозиційній'],0],['Яка система числення звична людині в повсякденному житті?',['десяткова','двійкова','шістнадцяткова'],0]]};
+for(const id in QS)$(id).innerHTML=QS[id].map((q,i)=>`<div class="box"><b>${i+1}. ${q[0]}</b>${q[1].map((o,j)=>`<button class="opt" onclick="qa(this,'${id}',${i},${j})">${o}</button>`).join('')}</div>`).join('');
+function qa(el,id,i,j){el.className='opt '+(j==QS[id][i][2]?'g':'b')}
+// converter
+function ex(k){if(k==1){$('cm').value='a';$('cn').value='235,125';$('cb').value=16}else{$('cm').value='b';$('cn').value='D1,6';$('cb').value=16}cv()}
+function cv(){const q=+$('cb').value,m=$('cm').value,o=$('co');
+if(m=='a'){const p=pr($('cn').value,10);if(!p){o.innerHTML='<span class="no">Введіть десяткове число, наприклад 235,125</span>';return}
+let x=BigInt(p.i),qq=BigInt(q),L=[],dg=[];if(x==0n)dg.push('0');
+while(x>0n){const r=x%qq;L.push(`${x} : ${q} = ${x/qq}, остача ${r}${r>9n?' = '+D[+r.toString()]:''}`);dg.unshift(D[+r.toString()]);x/=qq}
+let t='<b>Ціла частина (ділимо на '+q+'):</b><br>'+(L.join('<br>')||'0')+'<br>Читаємо остачі знизу вгору: <b>'+dg.join('')+'</b>';
+let fr='';if(p.f){t+='<br><br><b>Дробова частина (множимо на '+q+'):</b><br>';let n=BigInt(p.f),den=10n**BigInt(p.f.length),w=p.f.length,k=0;
+while(n>0n&&k<8){const cur=n.toString().padStart(w,'0'),pr2=n*qq,d=pr2/den;n=pr2%den;fr+=D[+d.toString()];t+=`0,${cur} · ${q} = ${d}${d>9n?' ('+D[+d.toString()]+')':''},${n.toString().padStart(w,'0')}<br>`;k++}
+t+='Цілі частини зверху вниз: <b>'+fr+'</b>'+(n>0n?' (≈, дріб періодичний)':'')}
+t+=`<br><br><b>Відповідь: ${p.i}${p.f?','+p.f:''}${sub(10)} = ${dg.join('')}${fr?','+fr:''}${sub(q)}</b>`;o.innerHTML=t}
+else{const p=pr($('cn').value,q);if(!p){o.innerHTML='<span class="no">Перевірте запис: допустимі цифри '+D.slice(0,q)+' і кома</span>';return}
+const a=[],b=[];let v=0;const n=p.i.length;[...p.i].forEach((c,i)=>{const d=D.indexOf(c),e=n-1-i;a.push(`${d}·${q}${sup(e)}`);b.push(fmt(d*q**e));v+=d*q**e});
+[...p.f].forEach((c,i)=>{const d=D.indexOf(c),e=-(i+1);a.push(`${d}·${q}${sup(e)}`);b.push(fmt(d*q**e));v+=d*q**e});
+o.innerHTML=`${p.i+(p.f?','+p.f:'')}${sub(q)} = ${a.join(' + ')}<br>= ${b.join(' + ')}<br><b>= ${fmt(v)}${sub(10)}</b>`}}
+// grouping
+function gp(){const q=+$('gb').value,p=pr($('gn').value,q),o=$('go');if(!p){o.innerHTML='<span class="no">Перевірте запис числа</span>';return}
+const w=q==2?1:q==8?3:4,bits=c=>D.indexOf(c).toString(2).padStart(w,'0');
+let bi=[...p.i].map(bits).join('').replace(/^0+(?=.)/,''),bf=[...p.f].map(bits).join('').replace(/0+$/,''),t='';
+if(q!=2)t+=`<b>У двійкову (кожна цифра → ${w} біти):</b><br>${[...p.i+p.f].map(c=>`<span class="chip">${c} → ${bits(c)}</span>`).join('')}<br>Двійкове число: <b>${bi}${bf?','+bf:''}₂</b><br><br>`;
+else t+=`Двійкове число: <b>${bi}${bf?','+bf:''}₂</b><br><br>`;
+for(const k of [3,4]){const bq=k==3?8:16;if(bq==q)continue;const I=bi.padStart(Math.ceil(bi.length/k)*k,'0'),F=bf.padEnd(Math.ceil(bf.length/k)*k,'0'),g=(s)=>s.match(new RegExp('.{'+k+'}','g'))||[];
+const gi=g(I),gf=g(F);t+=`<b>У ${k==3?'вісімкову':'шістнадцяткову'} (групи по ${k}):</b><br>${gi.join(' ')}${gf.length?' , '+gf.join(' '):''} → <b>${gi.map(x=>D[parseInt(x,2)]).join('').replace(/^0+(?=.)/,'')}${gf.length?','+gf.map(x=>D[parseInt(x,2)]).join('').replace(/0+$/,''):''}${sub(bq)}</b><br><br>`}
+o.innerHTML=t}
+// trainer
+let T=null,sk=0;const rnd=(a,b)=>a+Math.floor(Math.random()*(b-a+1));
+function nt(){const m=$('tm').value,k=m[0],q=m.slice(1)==16?16:2;let x,y;if(k=='m'){x=q==2?rnd(5,31):rnd(12,60);y=q==2?rnd(3,7):rnd(2,9)}else{x=rnd(q==2?9:20,q==2?63:255);y=rnd(q==2?5:10,q==2?63:255);if(k=='s'){if(x<y)[x,y]=[y,x];if(x==y)x++}}
+const ex=k=='a'?x+y:k=='s'?x-y:x*y;T={q,k,a:x.toString(q).toUpperCase(),b:y.toString(q).toUpperCase(),ex:ex.toString(q).toUpperCase(),x,y,e:ex};
+$('tq').innerHTML=`${T.a}${sub(q)} ${{a:'+',s:'−',m:'·'}[k]} ${T.b}${sub(q)} = ?`;$('ta').value='';$('tr').textContent=''}
+function dec(){return `Перевірка в десятковій: ${T.x} ${{a:'+',s:'−',m:'·'}[T.k]} ${T.y} = ${T.e} = ${T.ex}${sub(T.q)}`}
+function ct(){if(!T)return;if(norm($('ta').value)==T.ex){sk++;$('tr').innerHTML='<span class="ok">Правильно ✓</span> '+dec()}else{sk=0;$('tr').innerHTML='<span class="no">Ще ні.</span> Перевірте перенесення (позичку) у кожному розряді або порахуйте в десятковій.'}$('stk').textContent=sk}
+function rt(){if(T){sk=0;$('stk').textContent=0;$('tr').innerHTML='Відповідь: <b>'+T.ex+sub(T.q)+'</b>. '+dec()}}
+$('tm').onchange=nt;
+// practical
+const P=[["Запишіть у двійковій і шістнадцятковій системах числення число A₁₀ = 235,125. Доведіть правильність отриманого результату.", [["двійкова", "11101011,001"], ["шістнадцяткова", "EB,2"]], "Цілу частину діліть на основу, дробову множте на основу. Шістнадцяткову можна отримати з двійкової групами по 4 цифри від коми."], ["Числа A₁₀ = 19,5 і B₁₀ = 23,125 переведіть у двійкову систему числення. Додайте числа у двійковій системі.", [["19,5 у двійковій", "10011,1"], ["23,125 у двійковій", "10111,001"], ["сума у двійковій", "101010,101"]], "Вирівняйте числа по комі, дробові розряди доповніть нулями: 10011,100 і 10111,001. Додавайте справа наліво з перенесенням."], ["Помножте число A₂ = 1101,01 на число B₂ = 1011,1. Отриманий результат переведіть у десяткову систему числення.", [["добуток у двійковій", "10011000,011"], ["добуток у десятковій", "152,375"]], "Множіть як цілі числа 110101 · 10111, а потім відділіть комою 3 цифри справа (2 + 1 дробові розряди). Для перевірки: 13,25 · 11,5."], ["Переведіть число A₁₀ = 96,75 у шістнадцяткову систему числення.", [["шістнадцяткова", "60,C"]], "96 : 16 = 6 (остача 0); 0,75 · 16 = 12 = C."], ["Переведіть число A₁₆ = 5A,D у десяткову систему числення.", [["десяткова", "90,8125"]], "Кожну цифру множте на 16 у степені її розряду: 5·16¹ + A·16⁰ + D·16⁻¹."], ["Складіть шістнадцяткові числа DBC7,A та EF9,5.", [["сума", "EAC0,F"]], "Рахуйте цифри в десятковій, 16 = 10₁₆: якщо сума ≥ 16, пишіть (сума − 16) і переносіть 1. Вирівняйте число EF9 нулем: 0EF9."], ["Від шістнадцяткового числа 7BA9,4 відніміть шістнадцяткове число FEC,2.", [["різниця", "6BBD,2"]], "Якщо цифра зменшуваного менша, позичаємо 1 зі старшого розряду (вона дає 16). Не забувайте, що старший розряд після позички зменшується на 1."], ["Здійсніть множення шістнадцяткових чисел 7BA9,4 і FEC,2.", [["добуток", "7B0FA3C,28"]], "Найпростіше: переведіть множники в десяткову (31657,25 і 4076,125), перемножте й переведіть добуток у шістнадцяткову. Або множте як 7BA94 · FEC2 і відділіть 2 цифри."], ["Переведіть числа A₁₆ = 5B і B₁₆ = FA5 у двійкову й десяткову системи числення.", [["5B у двійковій", "1011011"], ["5B у десятковій", "91"], ["FA5 у двійковій", "111110100101"], ["FA5 у десятковій", "4005"]], "Кожну шістнадцяткову цифру замініть чотирма двійковими, потім для десяткової скористайтеся степенями 16."], ["Переведіть числа A₈ = 76 і B₈ = 123 у двійкову, десяткову і шістнадцяткову системи числення.", [["76₈ у двійковій", "111110"], ["76₈ у десятковій", "62"], ["76₈ у шістнадцятковій", "3E"], ["123₈ у двійковій", "1010011"], ["123₈ у десятковій", "83"], ["123₈ у шістнадцятковій", "53"]], "Вісімкову цифру замініть трьома двійковими, потім згрупуйте двійкове число по 4 цифри."], ["Переведіть числа A₂ = 0,1011 і B₂ = 0,11 у десяткову систему числення.", [["0,1011 у десятковій", "0,6875"], ["0,11 у десятковій", "0,75"]], "Дробові розряди мають ваги 2⁻¹ = 0,5; 2⁻² = 0,25; 2⁻³ = 0,125; 2⁻⁴ = 0,0625."]];
+$('tasks').innerHTML=P.map((t,i)=>`<div class="task"><b>${i+1}.</b> ${t[0]}${t[1].map((f,j)=>`<div class="row"><span style="min-width:12em">${f[0]} =</span><input class="n" id="a${i}_${j}" autocomplete="off"><span id="m${i}_${j}"></span></div>`).join('')}<button class="s" onclick="tg('h${i}')">Підказка</button><div class="hint" id="h${i}">${t[2]}</div><div class="mut" id="pt${i}"></div></div>`).join('')+
+`<div class="task"><b>12.</b> Знайдіть в інтернеті онлайн-калькулятори для переведення чисел з однієї системи числення в іншу та для виконання арифметичних операцій над числами в різних системах числення. Перевірте ними свої результати з попередніх завдань.<br><b>Зробіть висновок про ефективність методів перетворення чисел з однієї системи числення в іншу.</b><textarea id="c12" placeholder="Ваш висновок: що швидше і надійніше, ручне переведення чи калькулятор? Коли потрібні обидва способи?"></textarea><div class="mut" id="pt11"></div></div>
+<div class="row"><button onclick="sd()" id="sdb">Здати роботу</button></div><div class="box" id="sm" style="display:none"></div>`;
+function tg(id){const e=$(id);e.style.display=e.style.display=='block'?'none':'block'}
+const f1=x=>String(Math.round(x*100)/100).replace('.',',');
+function sd(){const nm=$('nm').value.trim();if(!nm){$('nerr').textContent='Введіть прізвище та ім’я перед здачею.';$('nm').focus();return}$('nerr').textContent='';
+let sum=0;const rows=[];
+P.forEach((t,i)=>{let c=0;t[1].forEach((f,j)=>{const ok=norm($(`a${i}_${j}`).value)==norm(f[1]);if(ok)c++;$(`m${i}_${j}`).innerHTML=ok?'<span class="ok">✓</span>':'<span class="no">✗</span>'});const p=c/t[1].length;sum+=p;rows.push(p);$('pt'+i).textContent='Бали: '+f1(p)+' з 1'});
+const L=$('c12').value.trim().length,p12=L>=80?1:L>=40?.5:0;sum+=p12;rows.push(p12);$('pt11').textContent='Бали: '+f1(p12)+' з 1 (висновок оцінює вчитель)';
+const sc=Math.round(sum);document.querySelectorAll('.task input,.task textarea,#nm').forEach(e=>e.disabled=true);$('sdb').disabled=true;
+const txt=`${nm}: ${sc} з 12 балів. За завданнями: ${rows.map(f1).join('; ')}`;
+$('sm').style.display='block';$('sm').innerHTML=`<div class="big">Результат: ${sc} з 12 балів</div><p class="mut">Сума за завданнями: ${f1(sum)}. Кожне завдання коштує 1 бал, за часткову правильність нараховується частина бала (за кожну правильну відповідь). Підсумок округлено до цілого.</p><button onclick="navigator.clipboard&&navigator.clipboard.writeText(this.dataset.t).then(()=>this.textContent='Скопійовано ✓')" data-t="${txt}">Скопіювати результат для чату Teams</button>`;$('sm').scrollIntoView({behavior:'smooth'})}
+nt();
+</script>
+</body>
+</html>

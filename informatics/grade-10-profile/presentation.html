@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Узагальнення: системи числення (повторення)</title>
+<style>
+:root{--bg:#d9dcea;--bar:#ffffff;--bf:#1d2433;--sbg:#f7f5ef;--sfg:#1b2340;--card:#ffffff;--bd:#d9dcea;--chip:#e7ecff;--mut:#5d667a;--ac:#3b5bdb;--or:#e8590c;--cbg:#1b2340;--cc:#27305a;
+box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0e121f;--bar:#1e2434;--bf:#e8ebf3;--sbg:#1b2036;--sfg:#e8ebf3;--card:#262d4a;--bd:#3a4366;--chip:#2f3a66;--mut:#a9b2cc;--ac:#8ea6ff;--or:#ffa94d}}
+:root[data-theme="dark"]{--bg:#0e121f;--bar:#1e2434;--bf:#e8ebf3;--sbg:#1b2036;--sfg:#e8ebf3;--card:#262d4a;--bd:#3a4366;--chip:#2f3a66;--mut:#a9b2cc;--ac:#8ea6ff;--or:#ffa94d}
+html,body{height:100%}
+body{margin:0;background:var(--bg);display:flex;flex-direction:column;font-family:Arial,sans-serif;overflow:hidden}
+#wrap{flex:1;display:flex;align-items:center;justify-content:center;min-height:0}
+#fit{position:relative}
+#stage{position:absolute;left:0;top:0;width:1280px;height:720px;transform-origin:0 0;box-shadow:0 8px 40px rgba(0,0,0,.25);border-radius:6px;overflow:hidden}
+.sl{position:absolute;inset:0;display:none;padding:56px 72px;box-sizing:border-box;background:var(--sbg);color:var(--sfg);flex-direction:column;gap:22px}
+.sl.on{display:flex}
+.cov{background:var(--cbg);color:#f7f5ef;justify-content:center;gap:28px}
+.cov h1{font-size:68px;line-height:1.1;margin:0}.cov p{margin:0}
+.dk{background:var(--cbg);color:#f7f5ef}.dk .card{background:var(--cc);border-color:var(--cc)}
+h2{font-size:42px;margin:0;line-height:1.1}
+.row{display:flex;gap:20px;align-items:stretch}
+.card{flex:1;background:var(--card);border:2px solid var(--bd);border-radius:16px;padding:20px 24px;display:flex;flex-direction:column;gap:9px}
+.card h3{margin:0;font-size:26px;color:var(--ac)}.card p{margin:0}
+.m{font-family:"Courier New",monospace;font-weight:700}
+.t{font-size:23px;line-height:1.35}.mut{color:var(--mut);font-size:19px}.or{color:var(--or)}
+.chip{background:var(--chip);border-radius:10px;padding:8px 14px;font-size:30px;color:var(--sfg)}
+.big{font-size:42px}.mid{font-size:25px}
+.st{opacity:0;transform:translateY(8px);transition:opacity .25s,transform .25s}.st.vis{opacity:1;transform:none}
+#bar{display:flex;align-items:center;justify-content:center;gap:10px;height:54px;background:var(--bar);color:var(--bf);flex:none}
+#bar button{background:transparent;color:var(--bf);border:1px solid var(--mut);border-radius:8px;padding:6px 14px;font:inherit;cursor:pointer}
+#bar span{min-width:5em;text-align:center}.hint{color:var(--mut);font-size:.85rem}
+</style>
+</head>
+<body>
+<div id="wrap"><div id="fit"><div id="stage">
+
+<section class="sl cov"><p style="font-size:24px;color:#ffa94d">Інформатика · 10 клас · Практична робота № 2</p><h1>Узагальнення і систематизація знань</h1><p style="font-size:30px;color:#c5cae9">Системи числення, переведення, основи 2ⁿ, арифметичні дії</p></section>
+
+<section class="sl"><h2>Системи числення: позиційні й непозиційні</h2>
+<div class="row">
+<div class="card st"><h3 style="color:var(--or)">Непозиційна</h3><p class="t">Значення цифри не залежить від її місця в записі.</p><p class="m big">XXX = 10 + 10 + 10</p><p class="mut">Римська система: X завжди означає 10</p></div>
+<div class="card st"><h3>Позиційна</h3><p class="t">Значення цифри залежить від її розряду.</p><p class="m big">222 = 200 + 20 + 2</p><p class="mut">Одна й та сама цифра 2 означає різне</p></div></div>
+<p class="mid st"><b>Основа q = кількість цифр в алфавіті системи</b></p>
+<div class="row st">
+<div class="card"><p class="mid"><b>q = 2</b></p><p class="m mid">0, 1</p></div>
+<div class="card"><p class="mid"><b>q = 8</b></p><p class="m mid">0 – 7</p></div>
+<div class="card"><p class="mid"><b>q = 10</b></p><p class="m mid">0 – 9</p></div>
+<div class="card"><p class="mid"><b>q = 16</b></p><p class="m mid">0 – 9, A – F</p></div></div></section>
+
+<section class="sl"><h2>Переведення: 10 → q і q → 10</h2>
+<div class="row">
+<div class="card"><h3>10 → 16: 235,125</h3>
+<p class="m t st">235 : 16 = 14, остача 11 = B</p><p class="m t st">14 : 16 = 0, остача 14 = E</p><p class="mut st">Остачі читаємо знизу вгору: EB</p>
+<p class="m t st">0,125 · 16 = 2,0</p><p class="mut st">Цілі частини читаємо зверху вниз: 2</p>
+<p class="m or big st">EB,2₁₆</p></div>
+<div class="card"><h3>16 → 10: D1,6₁₆</h3>
+<p class="m t st">13·16¹ + 1·16⁰ + 6·16⁻¹</p><p class="m t st">= 208 + 1 + 0,375</p><p class="mut st">Кожну цифру множимо на основу в степені розряду</p>
+<p class="m or big st">209,375₁₀</p></div></div></section>
+
+<section class="sl"><h2>Двійкова, вісімкова, шістнадцяткова: основи 2ⁿ</h2>
+<div class="card"><h3>Шістнадцяткова → двійкова: кожна цифра = 4 біти (тетрада)</h3>
+<div class="row" style="align-items:center"><p class="m big">D1,6₁₆ =</p><span class="chip m st">D → 1101</span><span class="chip m st">1 → 0001</span><span class="chip m st">6 → 0110</span></div>
+<p class="m or mid st" style="font-size:34px">11010001,011₂</p></div>
+<div class="card"><h3>Двійкова → вісімкова: групи по 3 від коми (тріада)</h3>
+<div class="row" style="align-items:center"><span class="chip m st">011</span><span class="chip m st">010</span><span class="chip m st">001</span><span class="m big st">,</span><span class="chip m st">011</span><span class="m big st">→ 321,3₈</span></div></div></section>
+
+<section class="sl"><h2>Арифметичні дії у двійковій і шістнадцятковій</h2>
+<div class="row">
+<div class="card st"><h3>Додавання</h3><p class="t">Сума ≥ q: пишемо (сума − q), переносимо 1.</p><p class="m mid">1₂ + 1₂ = 10₂</p><p class="m mid">A + B = 15₁₆</p></div>
+<div class="card st"><h3>Віднімання</h3><p class="t">Цифра менша: позичаємо 1, вона дає q.</p><p class="m mid">E − F: 16 + 14 − 15 = F</p></div>
+<div class="card st"><h3>Множення</h3><p class="t">У двійковій: рядки зі зсувом. У шістнадцятковій: через десяткову.</p><p class="m mid">C · 3 = 36 = 24₁₆</p></div></div>
+<div class="card st" style="flex:none;background:var(--chip)"><p class="mid"><b>Перевірка: переведіть числа в десяткову систему і порівняйте результати.</b></p></div></section>
+
+<section class="sl dk"><h2>Готові до практичної роботи</h2><p class="mid" style="color:#ffa94d;margin:0">12 завдань · 12 балів · кожне завдання 1 бал</p>
+<div class="row">
+<div class="card st"><p class="t">Перед кожним завданням перевірте основу системи числення.</p></div>
+<div class="card st"><p class="t">Користуйтеся таблицею порівняння систем і підказками.</p></div>
+<div class="card st"><p class="t">Перевіряйте результат через десяткову систему.</p></div></div></section>
+
+</div></div></div>
+<div id="bar"><button onclick="prev()" aria-label="Назад">◀</button><span id="cnt">1 / 6</span><button onclick="next()" aria-label="Далі">▶</button><button onclick="fs()">⛶</button><span class="hint">Натискайте ▶, → або пробіл</span></div>
+<script>
+const $=i=>document.getElementById(i),S=[...document.querySelectorAll('.sl')];let i=0,k=0;
+const nst=j=>S[j].querySelectorAll('.st').length;
+function show(){S.forEach((s,j)=>s.classList.toggle('on',j==i));S[i].querySelectorAll('.st').forEach((e,j)=>e.classList.toggle('vis',j<k));$('cnt').textContent=(i+1)+' / '+S.length;try{history.replaceState(null,'','#slide-'+(i+1))}catch(e){}}
+function next(){if(k<nst(i))k++;else if(i<S.length-1){i++;k=0}show()}
+function prev(){if(k>0)k--;else if(i>0){i--;k=nst(i)}show()}
+function fs(){try{document.fullscreenElement?document.exitFullscreen():document.documentElement.requestFullscreen()}catch(e){}}
+function fit(){const w=$('wrap').clientWidth,h=$('wrap').clientHeight,s=Math.min(w/1280,h/720);$('fit').style.width=1280*s+'px';$('fit').style.height=720*s+'px';$('stage').style.transform='scale('+s+')'}
+addEventListener('resize',fit);
+addEventListener('keydown',e=>{if(['ArrowRight','PageDown',' ','Enter'].includes(e.key)){e.preventDefault();next()}else if(['ArrowLeft','PageUp','Backspace'].includes(e.key)){e.preventDefault();prev()}else if(e.key=='Home'){i=0;k=0;show()}else if(e.key=='End'){i=S.length-1;k=nst(i);show()}});
+$('stage').addEventListener('click',e=>{const r=$('stage').getBoundingClientRect();(e.clientX-r.left<r.width*.3)?prev():next()});
+const m=/^#slide-(\d+)$/.exec(location.hash);if(m){i=Math.min(S.length,Math.max(1,+m[1]))-1;k=nst(i)}
+fit();show();
+</script>
+</body>
+</html>

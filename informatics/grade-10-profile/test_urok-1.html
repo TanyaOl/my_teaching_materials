@@ -1,0 +1,154 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>Тест з кодування</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600&display=swap">
+<style>
+/* Layout: one narrow column; start form, then one question at a time with a progress strip, then a copyable text report. */
+:root{
+  --bg:#eef1f4; --surface:#ffffff; --fg:#14202b; --muted:#5a6b79; --line:#cfd8df;
+  --accent:#0b6e6e; --accent-fg:#ffffff; --accent-soft:#dcefee; --ok:#1f7a3d; --ok-soft:#e1f3e7; --bad:#b3261e; --bad-soft:#fbe6e4;
+  --font-body:"IBM Plex Sans",system-ui,sans-serif; --font-mono:"IBM Plex Mono",ui-monospace,Consolas,monospace;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#0f1a22; --surface:#16252f; --fg:#e4ecf1; --muted:#93a5b2; --line:#2a3d4a;
+  --accent:#4fc3be; --accent-fg:#0f1a22; --accent-soft:#16363a; --ok:#6fcf8f; --ok-soft:#173526; --bad:#ff8a80; --bad-soft:#41201f; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#0f1a22; --surface:#16252f; --fg:#e4ecf1; --muted:#93a5b2; --line:#2a3d4a;
+  --accent:#4fc3be; --accent-fg:#0f1a22; --accent-soft:#16363a; --ok:#6fcf8f; --ok-soft:#173526; --bad:#ff8a80; --bad-soft:#41201f; color-scheme:dark}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--fg);font-family:var(--font-body);font-size:16px;line-height:1.55;
+  padding-block:20px 40px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+main{max-width:680px;margin:0 auto;display:flex;flex-direction:column;gap:16px}
+h1{font-size:1.5rem;line-height:1.2;margin:0;text-wrap:balance}
+h2{font-size:1.15rem;margin:0}
+p{margin:0}
+.muted{color:var(--muted);font-size:.95rem}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:16px;display:flex;flex-direction:column;gap:12px;min-width:0}
+.label{font-size:.78rem;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);font-weight:600;display:block;margin-bottom:4px}
+input,textarea{width:100%;font:inherit;color:var(--fg);background:var(--surface);border:1px solid var(--line);border-radius:6px;padding:.6em .75em}
+textarea{font-family:var(--font-mono);font-size:.92rem;min-height:12em;resize:vertical}
+.row{display:flex;gap:12px;flex-wrap:wrap}.row>div{flex:1 1 200px;min-width:0}
+button{font:inherit;font-weight:500;cursor:pointer;border-radius:6px;border:1px solid var(--line);background:var(--surface);color:var(--fg);padding:.6em 1.1em}
+button.primary{background:var(--accent);color:var(--accent-fg);border-color:var(--accent)}
+button:disabled{opacity:.5;cursor:not-allowed}
+button:focus-visible,input:focus-visible,textarea:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.btns{display:flex;gap:8px;flex-wrap:wrap}
+.strip{display:flex;gap:4px}
+.strip i{flex:1;height:6px;border-radius:3px;background:var(--line)}
+.strip i.on{background:var(--accent)}.strip i.ok{background:var(--ok)}.strip i.no{background:var(--bad)}
+.meta{display:flex;justify-content:space-between;gap:8px;font-family:var(--font-mono);font-size:.85rem;color:var(--muted)}
+.qt{font-weight:600;font-size:1.1rem;line-height:1.35}
+.opts{display:flex;flex-direction:column;gap:8px}
+.opt{text-align:left;background:var(--surface);padding:.7em 1em}
+.opt.right{background:var(--ok-soft);border-color:var(--ok)}
+.opt.wrong{background:var(--bad-soft);border-color:var(--bad)}
+.fb{min-height:1.4em}
+.good{color:var(--ok)}.badc{color:var(--bad)}
+.score{font-family:var(--font-mono);font-size:3rem;font-weight:600;color:var(--accent);line-height:1}
+.note{border-left:3px solid var(--accent);padding:2px 0 2px 12px}
+.err{color:var(--bad);font-size:.92rem;min-height:1.3em}
+</style>
+
+<main>
+  <h1>Тест: кодування й декодування інформації</h1>
+
+  <section id="s-start" class="card">
+    <p class="muted">10 запитань, кожне оцінюється в 1 бал. Максимум 10 балів. Після відповіді одразу видно правильний варіант і пояснення. Наприкінці ти отримаєш текстовий звіт, який треба скопіювати й надіслати вчителю або вчительці.</p>
+    <div class="row">
+      <div><label class="label" for="i-name">Прізвище та ім’я</label><input id="i-name" type="text" autocomplete="name"></div>
+      <div><label class="label" for="i-class">Клас</label><input id="i-class" type="text" placeholder="наприклад, 10-А"></div>
+    </div>
+    <p class="err" id="i-err" role="alert"></p>
+    <div class="btns"><button class="primary" id="b-start">Почати тест</button></div>
+  </section>
+
+  <section id="s-quiz" class="card" hidden>
+    <div class="meta"><span id="q-num"></span><span id="q-score"></span></div>
+    <div class="strip" id="strip" aria-hidden="true"></div>
+    <p class="qt" id="q-text"></p>
+    <div class="opts" id="q-opts"></div>
+    <p class="fb" id="q-fb" aria-live="polite"></p>
+    <div class="btns"><button class="primary" id="b-next" hidden>Далі →</button></div>
+  </section>
+
+  <section id="s-end" hidden style="display:flex;flex-direction:column;gap:16px">
+    <div class="card">
+      <h2>Тест завершено</h2>
+      <div class="score" id="e-score"></div>
+      <p class="muted" id="e-msg"></p>
+    </div>
+    <div class="card">
+      <h2>Звіт для вчителя</h2>
+      <p class="muted">Скопіюй цей текст і надішли його вчителю або вчительці.</p>
+      <textarea id="e-text" readonly aria-label="Текст звіту"></textarea>
+      <div class="btns"><button class="primary" id="b-copy">Копіювати звіт</button><button id="b-again">Пройти ще раз</button></div>
+      <p class="fb" id="e-fb" aria-live="polite"></p>
+    </div>
+  </section>
+</main>
+
+<script>
+(function(){
+var $=function(id){return document.getElementById(id)};
+function shuffle(a){a=a.slice();for(var i=a.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1)),t=a[i];a[i]=a[j];a[j]=t}return a}
+var Q=[
+ {q:"Що таке код?",o:["Система правил для перетворення форми даних","Будь-яке повідомлення","Пристрій для передавання даних","Двійкове число"],w:"Код — система правил для перетворення форми даних."},
+ {q:"Що таке кодування?",o:["Процес заміни однієї форми даних на іншу, зручну для передавання, опрацювання та зберігання","Процес відновлення змісту закодованої інформації","Процес знищення даних","Передавання даних каналом зв’язку"],w:"Кодування — заміна однієї форми даних на іншу за правилами коду."},
+ {q:"Який процес відновлює зміст закодованого повідомлення?",o:["Декодування","Кодування","Передавання","Копіювання"],w:"Відновлення змісту закодованої інформації називають декодуванням."},
+ {q:"Який порядок ланок передавання повідомлення правильний?",o:["Джерело → кодування → канал → декодування → отримувач","Джерело → канал → кодування → декодування → отримувач","Отримувач → кодування → канал → декодування → джерело","Джерело → декодування → канал → кодування → отримувач"],w:"Спочатку повідомлення кодують, потім передають каналом, потім декодують."},
+ {q:"Скільки бітів в одному байті?",o:["8","4","16","10"],w:"Байт — послідовність із 8 бітів."},
+ {q:"Як записується число 3 у чотирьох бітах?",o:["0011","0111","0110","1100"],w:"3 = 2 + 1, тому 0011. Запис 0111 — це число 7."},
+ {q:"Яке число закодовано двійковим записом 1010?",o:["10","5","12","6"],w:"8 + 2 = 10."},
+ {q:"Скільки найменше бітів потрібно, щоб закодувати 20 різних символів однаковою кількістю бітів?",o:["5","4","6","20"],w:"2⁴ = 16 < 20 ≤ 2⁵ = 32."},
+ {q:"Чому в комп’ютерах не використовують азбуку Морзе?",o:["Кодові слова різної довжини потребують пауз між символами, а комп’ютеру зручніша однакова довжина","Азбука Морзе не може закодувати літери","Азбука Морзе працює лише з цифрами","Азбуку Морзе можна записати лише на папері"],w:"У коді Морзе літери мають різну довжину, тому потрібні паузи."},
+ {q:"Яке твердження правильне?",o:["Шифрування — окремий випадок кодування, його мета — захист даних від сторонніх","Шифрування й декодування — одне й те саме","Кодувати можна лише за допомогою комп’ютера","Канал передавання перетворює повідомлення на код"],w:"Шифрування — це кодування для захисту від несанкціонованого доступу."}
+];
+var name="",klass="",idx=0,score=0,res=[],t0=0,answered=false;
+
+function show(id){["s-start","s-quiz","s-end"].forEach(function(s){$(s).hidden=s!==id;if(s==="s-end")$(s).style.display=s===id?"flex":"none"})}
+function strip(){var s=$("strip");s.innerHTML="";Q.forEach(function(_,i){var e=document.createElement("i");e.className=i<res.length?(res[i]?"ok":"no"):(i===idx?"on":"");s.appendChild(e)})}
+function render(){
+  answered=false;var q=Q[idx];
+  $("q-num").textContent="Запитання "+(idx+1)+" з "+Q.length;
+  $("q-score").textContent="Балів: "+score;
+  $("q-text").textContent=q.q;$("q-fb").textContent="";$("q-fb").className="fb";
+  $("b-next").hidden=true;$("b-next").textContent=idx===Q.length-1?"Завершити тест":"Далі →";
+  var box=$("q-opts");box.innerHTML="";
+  var items=shuffle(q.o.map(function(t,i){return {t:t,c:i===0}}));
+  items.forEach(function(it){
+    var b=document.createElement("button");b.type="button";b.className="opt";b.textContent=it.t;
+    b.onclick=function(){
+      if(answered)return;answered=true;
+      Array.prototype.forEach.call(box.children,function(x,k){x.disabled=true;if(items[k].c)x.classList.add("right")});
+      if(!it.c)b.classList.add("wrong");
+      res.push(it.c);if(it.c)score++;
+      $("q-score").textContent="Балів: "+score;
+      $("q-fb").className="fb "+(it.c?"good":"badc");
+      $("q-fb").textContent=(it.c?"Правильно. ":"Неправильно. ")+q.w;
+      strip();$("b-next").hidden=false;$("b-next").focus()};
+    box.appendChild(b)});
+  strip();
+}
+function finish(){
+  var mins=Math.max(1,Math.round((Date.now()-t0)/60000));
+  var date=new Date().toLocaleDateString("uk-UA",{day:"numeric",month:"long",year:"numeric"});
+  var lines=["Результат тесту «Кодування й декодування інформації»","Учень / учениця: "+name,"Клас: "+klass,"Дата: "+date,"Результат: "+score+" з "+Q.length+" балів","Відповіді: "+res.map(function(r,i){return (i+1)+(r?" +":" −")}).join(", "),"Час проходження: близько "+mins+" хв"];
+  $("e-score").textContent=score+" / "+Q.length;
+  $("e-msg").textContent=score>=9?"Відмінний результат.":score>=7?"Добрий результат.":score>=5?"Непогано, але варто повторити тему.":"Потрібно повторити тему й спробувати ще раз.";
+  $("e-text").value=lines.join("\n");$("e-fb").textContent="";
+  show("s-end");window.scrollTo(0,0);
+}
+$("b-start").onclick=function(){
+  name=$("i-name").value.trim();klass=$("i-class").value.trim();
+  if(!name||!klass){$("i-err").textContent="Введи прізвище, ім’я та клас, щоб почати.";return}
+  $("i-err").textContent="";idx=0;score=0;res=[];t0=Date.now();show("s-quiz");render()};
+$("b-next").onclick=function(){if(idx<Q.length-1){idx++;render()}else finish()};
+$("b-again").onclick=function(){idx=0;score=0;res=[];t0=Date.now();show("s-quiz");render();window.scrollTo(0,0)};
+function fallback(){var t=$("e-text");t.focus();t.select();var ok=false;try{ok=document.execCommand("copy")}catch(e){}
+  $("e-fb").className="fb "+(ok?"good":"muted");$("e-fb").textContent=ok?"Скопійовано.":"Виділи текст у полі й скопіюй його вручну."}
+$("b-copy").onclick=function(){try{navigator.clipboard.writeText($("e-text").value).then(function(){$("e-fb").className="fb good";$("e-fb").textContent="Скопійовано."},fallback)}catch(e){fallback()}};
+show("s-start");
+})();
+</script>
+
+</body></html>
