@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="uk"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Тест: Моделі й моделювання. Опрацювання статистичних даних</title>
+<style>
+:root{--bg:#f6f8f7;--card:#fff;--tx:#16302b;--mu:#5b7069;--ac:#0f9b8e;--ac2:#e6f5f3;--bd:#d3e3df;--ok:#1b8a4b;--no:#c0392b;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media(prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#10201d;--card:#172b27;--tx:#e6f1ee;--mu:#9bb5ae;--ac:#3cc7b8;--ac2:#1d3a35;--bd:#2c4a44;--ok:#4ed08a;--no:#ff7b6b}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--tx);font:16px/1.55 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+header{background:var(--ac);color:#fff;padding:20px 16px}header h1{margin:0;font-size:1.35rem}header p{margin:4px 0 0;opacity:.92}
+main{max-width:820px;margin:0 auto;padding:12px}
+.card{background:var(--card);border:1px solid var(--bd);border-radius:14px;padding:18px;margin:14px 0}
+input[type=text]{width:100%;max-width:340px;padding:8px;border:1px solid var(--bd);border-radius:8px;background:var(--bg);color:var(--tx);font:inherit}
+button{font:inherit;cursor:pointer;border:1px solid var(--ac);background:var(--ac);color:#fff;border-radius:9px;padding:9px 18px}
+button.s{background:transparent;color:var(--ac)}
+.bar{height:8px;background:var(--ac2);border-radius:8px;overflow:hidden;margin:6px 0 2px}.bar i{display:block;height:100%;background:var(--ac);width:0;transition:width .3s}
+.o{display:block;width:100%;text-align:left;margin:6px 0;padding:10px 12px;background:var(--card);color:var(--tx);border:1px solid var(--bd);border-radius:9px}
+.o.ok{border-color:var(--ok);background:var(--ac2)}.o.no{border-color:var(--no)}
+.msg{margin-top:8px;font-weight:600}.g{color:var(--ok)}.b{color:var(--no)}
+.big{font-size:2.2rem;font-weight:700;color:var(--ac)}
+li{margin:6px 0}.mu{color:var(--mu);font-size:.9rem}
+</style></head><body>
+<header><h1>Тест за розділом 1</h1><p>Моделі й моделювання. Опрацювання статистичних даних · 10 клас · 12 запитань, 12 балів</p></header>
+<main>
+<div class="card" id="start"><p>Введи прізвище та ім’я, потім відповідай на запитання. Одразу після відповіді видно, правильно чи ні. Час — близько 10 хв.</p>
+<input type="text" id="nm" placeholder="Прізвище та ім’я"><p><button onclick="go()">Почати тест</button></p></div>
+<div class="card" id="qa" hidden><div class="mu" id="cnt"></div><div class="bar"><i id="pb"></i></div>
+<h3 id="q"></h3><div id="opts"></div><div class="msg" id="fb"></div><p><button id="nx" onclick="nxt()" hidden>Далі →</button></p></div>
+<div class="card" id="end" hidden><p id="who" class="mu"></p><div class="big" id="sc"></div><p id="gr"></p><div id="wr"></div>
+<p><button onclick="go()">Пройти ще раз</button></p></div>
+</main>
+<script>
+const Q=[
+{q:'Модель — це …',o:['точна копія об’єкта','спрощений образ об’єкта, що відображає його суттєві для дослідження властивості','будь-який малюнок об’єкта'],a:1,e:'Модель свідомо спрощує об’єкт, залишаючи лише важливі для мети властивості.'},
+{q:'Комп’ютерний експеримент — це …',o:['запуск будь-якої програми','створення презентації про об’єкт','дослідження комп’ютерної моделі зі зміною параметрів і аналізом результатів'],a:2,e:'У комп’ютерному експерименті змінюють параметри моделі й спостерігають результати.'},
+{q:'Ряд даних — це …',o:['одна окрема величина','впорядкований набір значень певної величини (наприклад, продажі за дні)','будь-яка діаграма'],a:1,e:'Ряд даних (вибірка) — набір спостережень однієї величини.'},
+{q:'Для ряду 80, 82, 83, 85, 85, 86, 89 медіана дорівнює …',o:['83','85','85,43'],a:1,e:'Ряд уже впорядкований, посередині (4-те з 7 значень) стоїть 85.'},
+{q:'Розмах ряду з найбільшим значенням 111 і найменшим 93 дорівнює …',o:['18','204','102'],a:0,e:'Розмах = максимум − мінімум = 111 − 93 = 18.'},
+{q:'Яка функція табличного процесора обчислює середнє значення?',o:['SUM','COUNT','AVERAGE'],a:2,e:'AVERAGE (СЕРЕДНЄ) — середнє арифметичне; SUM — сума, COUNT — кількість.'},
+{q:'Що характеризує стандартне відхилення?',o:['розкид значень відносно середнього','найчастіше значення','найбільше значення'],a:0,e:'Чим більше стандартне відхилення, тим менш стабільні значення ряду.'},
+{q:'Яка діаграма найкраще показує зміну величини за днями (тренд)?',o:['кругова','лінійний графік','гістограма розподілу'],a:1,e:'Тренд у часі найнагляднішо показує лінійний графік.'},
+{q:'Консолідація даних — це …',o:['сортування таблиці за стовпцем','об’єднання даних із кількох діапазонів чи аркушів із застосуванням функції (сума, середнє тощо)','заміна формул значеннями'],a:1,e:'Консолідація зводить дані з кількох джерел в одну таблицю за допомогою функції.'},
+{q:'Зведена таблиця призначена для …',o:['швидкого узагальнення, групування й аналізу великих обсягів даних','малювання схем і блок-схем','перевірки правопису'],a:0,e:'Зведена таблиця дозволяє інтерактивно групувати й підсумовувати великі таблиці.'},
+{q:'Підбір параметра — це …',o:['видалення параметра з формули','сортування за параметром','пошук вхідного значення, за якого формула дає потрібний результат'],a:2,e:'Підбір параметра змінює одну вхідну комірку, щоб результат формули став заданим.'},
+{q:'Середній обсяг продажів зріс з 84,29 до 102,86. Приріст приблизно …',o:['18,6 %','22 %','122 %'],a:1,e:'(102,86 − 84,29) / 84,29 · 100 % ≈ 22 %.'}];
+let i=0,s=0,miss=[];const $=id=>document.getElementById(id);
+function go(){i=0;s=0;miss=[];$('start').hidden=true;$('end').hidden=true;$('qa').hidden=false;show()}
+function show(){const x=Q[i];$('cnt').textContent='Запитання '+(i+1)+' з '+Q.length;$('pb').style.width=(i/Q.length*100)+'%';$('q').textContent=x.q;$('fb').textContent='';$('nx').hidden=true;
+$('opts').innerHTML='';x.o.forEach((t,j)=>{const b=document.createElement('button');b.className='o';b.textContent=t;b.onclick=()=>ans(j);$('opts').appendChild(b)})}
+function ans(j){const x=Q[i],bs=$('opts').children;if(!$('nx').hidden)return;
+for(let k=0;k<bs.length;k++){if(k==x.a)bs[k].classList.add('ok');else if(k==j)bs[k].classList.add('no')}
+const ok=j==x.a;if(ok)s++;else miss.push(i);$('fb').className='msg '+(ok?'g':'b');$('fb').textContent=(ok?'✔ Вірно. ':'✘ Невірно. ')+x.e;
+$('nx').textContent=i==Q.length-1?'Результат':'Далі →';$('nx').hidden=false}
+function nxt(){i++;i<Q.length?show():fin()}
+function fin(){$('qa').hidden=true;$('end').hidden=false;$('who').textContent=($('nm').value||'Учень(-ця'+')')+' · '+new Date().toLocaleDateString('uk-UA');
+$('sc').textContent=s+' / '+Q.length;$('gr').textContent=s>=11?'Високий рівень: відмінне засвоєння розділу.':s>=8?'Достатній рівень: повтори теми, де були помилки.':s>=5?'Середній рівень: поверни до теорії розділу та пройди тест ще раз.':'Початковий рівень: потрібне повторення розділу.';
+$('wr').innerHTML=miss.length?'<b>Повтори:</b><ul>'+miss.map(k=>'<li>'+(k+1)+'. '+Q[k].q+'<br><span class="mu">Правильно: '+Q[k].o[Q[k].a]+'</span></li>').join('')+'</ul>':'<p class="g">Жодної помилки — чудово!</p>'}
+</script></body></html>

@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="uk"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Аналіз ефективності рекламної акції — 10 клас</title>
+<style>
+:root{--bg:#f6f8f7;--card:#fff;--tx:#16302b;--mu:#5b7069;--ac:#0f9b8e;--ac2:#e6f5f3;--bd:#d3e3df;--ok:#1b8a4b;--no:#c0392b;--wn:#b9770e;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media(prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#10201d;--card:#172b27;--tx:#e6f1ee;--mu:#9bb5ae;--ac:#3cc7b8;--ac2:#1d3a35;--bd:#2c4a44;--ok:#4ed08a;--no:#ff7b6b;--wn:#f0b45a}}
+*{box-sizing:border-box}html{scroll-padding-top:70px}
+body{margin:0;background:var(--bg);color:var(--tx);font:16px/1.55 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+header{background:var(--ac);color:#fff;padding:22px 16px}
+header h1{margin:0;font-size:1.5rem}header p{margin:4px 0 0;opacity:.92}
+nav{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--card);border-bottom:1px solid var(--bd);display:flex;gap:6px;overflow-x:auto;padding:8px 12px}
+nav a{white-space:nowrap;padding:6px 12px;border-radius:20px;background:var(--ac2);color:var(--tx);text-decoration:none;font-size:.88rem}
+main{max-width:900px;margin:0 auto;padding:12px}
+section{background:var(--card);border:1px solid var(--bd);border-radius:14px;padding:18px;margin:16px 0}
+h2{margin:0 0 4px;color:var(--ac);font-size:1.25rem}h3{margin:18px 0 6px;font-size:1.05rem}
+.t{display:inline-block;background:var(--ac2);border-radius:10px;padding:1px 10px;font-size:.8rem;color:var(--mu);margin-bottom:8px}
+.goal{background:var(--ac2);border-radius:10px;padding:10px 14px;margin:8px 0}
+button{font:inherit;cursor:pointer;border:1px solid var(--ac);background:var(--ac);color:#fff;border-radius:9px;padding:7px 14px}
+button.s{background:transparent;color:var(--ac)}
+.opt{display:block;width:100%;text-align:left;margin:6px 0;background:var(--card);color:var(--tx);border:1px solid var(--bd)}
+.opt.ok{border-color:var(--ok);background:var(--ac2)}.opt.no{border-color:var(--no)}
+table{border-collapse:collapse;margin:8px 0}td,th{border:1px solid var(--bd);padding:5px 10px;text-align:center}th{background:var(--ac2)}
+.sc{overflow-x:auto}
+input[type=text]{width:78px;padding:5px;border:1px solid var(--bd);border-radius:7px;background:var(--bg);color:var(--tx);font:inherit;text-align:center}
+input.ok{border-color:var(--ok);background:var(--ac2)}input.no{border-color:var(--no)}
+textarea{width:100%;min-height:90px;border:1px solid var(--bd);border-radius:8px;padding:8px;background:var(--bg);color:var(--tx);font:inherit}
+.cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:10px}
+.fc{border:1px solid var(--bd);border-radius:10px;padding:12px;min-height:92px;cursor:pointer;background:var(--ac2)}
+.fc b{color:var(--ac)}.fc span{display:none;font-size:.9rem}.fc.o span{display:block}.fc.o em{display:none}
+details{border:1px solid var(--bd);border-radius:10px;padding:8px 12px;margin:8px 0}summary{cursor:pointer;font-weight:600}
+code{background:var(--ac2);padding:1px 6px;border-radius:5px;font-size:.9rem}
+.msg{font-weight:600;margin:6px 0}.g{color:var(--ok)}.b{color:var(--no)}.w{color:var(--wn)}
+svg{max-width:100%;height:auto;background:var(--card);border:1px solid var(--bd);border-radius:10px}
+svg text{fill:var(--tx);font-size:11px}
+.q{margin:14px 0;padding-bottom:8px;border-bottom:1px dashed var(--bd)}
+label.c{display:block;margin:4px 0}
+.row{display:flex;gap:8px;flex-wrap:wrap;margin:8px 0}
+</style></head><body>
+<header><h1>Практична робота 1. Аналіз ефективності рекламної акції</h1>
+<p>Інформатика, 10 клас · Розділ 1 «Моделі і моделювання. Аналіз та візуалізація даних» · підсумковий урок, 45 хв</p></header>
+<nav><a href="#s1">1 · БЖД</a><a href="#s2">2 · Проблема</a><a href="#s3">3 · Повторення</a><a href="#s4">4 · Практична</a><a href="#s5">5 · Тест</a><a href="#s6">6 · Рефлексія</a></nav>
+<main>
+
+<section id="s1"><span class="t">⏱ 2 хв</span><h2>1. Організаційний етап. Інструктаж із БЖД</h2>
+<div class="goal"><b>Мета уроку:</b> застосувати табличний процесор (Excel / Google Таблиці) для консолідації даних, обчислення статистичних характеристик, побудови діаграм і обґрунтованого висновку; узагальнити знання розділу.</div>
+<p>Познач правила, які ти прочитав(-ла):</p>
+<label class="c"><input type="checkbox"> Сидіти на відстані не менше 50–70 см від екрана, спина пряма.</label>
+<label class="c"><input type="checkbox"> Не торкатися кабелів, розеток, не вмикати й не вимикати техніку без дозволу вчителя.</label>
+<label class="c"><input type="checkbox"> Не їсти й не пити біля комп’ютера; мокрими руками техніку не торкатися.</label>
+<label class="c"><input type="checkbox"> Про будь-яку несправність або запах гару одразу повідомити вчителя.</label>
+<label class="c"><input type="checkbox"> Безперервна робота за екраном — не довше 20–25 хв, потім гімнастика для очей.</label>
+</section>
+
+<section id="s2"><span class="t">⏱ 3 хв</span><h2>2. Вступна частина. Постановка завдання</h2>
+<div class="goal"><b>Проблемне питання:</b> мережа магазинів провела рекламну акцію нового товару. Продажі зросли — але чи <i>саме акція</i> цьому причина? Як за таблицею чисел довести, що акція спрацювала?</div>
+<p>Твоя перша думка (до аналізу):</p>
+<button class="opt" onclick="pick(this,'Гіпотеза записана. Перевіримо її розрахунками!')">Акція точно ефективна, адже продажі зросли</button>
+<button class="opt" onclick="pick(this,'Гарна позиція: “на око” судити не можна. Саме тому нам потрібна статистика.')">Не можна стверджувати без розрахунків і графіків</button>
+<button class="opt" onclick="pick(this,'Можливо! Дізнаємося, чи змінилися середнє, медіана та розкид.')">Акція не вплинула — зростання випадкове</button>
+<div class="msg" id="pm"></div>
+<p><b>Завдання:</b> об’єднати дані двох філіалів → статистичний аналіз → візуалізація → висновок про ефективність акції. <b>Тип уроку:</b> комплексне застосування знань, умінь і навичок.</p>
+</section>
+
+<section id="s3"><span class="t">⏱ 7 хв</span><h2>3. Актуалізація опорних знань</h2>
+<p>Клікни на картку — побачиш відповідь. Спочатку спробуй пригадати сам(-а)!</p>
+<div class="cards" id="fc"></div>
+<h3>Швидка перевірка</h3>
+<div id="mini"></div>
+</section>
+
+<section id="s4"><span class="t">⏱ 20 хв</span><h2>4. Виконання практичної роботи</h2>
+<p>Працюй в Excel або Google Таблицях. Варіанти даних: підручник [1], с. 90 (робочий аркуш) або [2] за посиланням <code>rnk.com.ua/117136</code>. Нижче — дані з підручника.</p>
+<h3>Кроки 1–2. Нова книга, аркуші «Філіал 1» і «Філіал 2»</h3>
+<div class="sc" id="data"></div>
+<h3>Кроки 3–5. Консолідація даних</h3>
+<details open><summary>Як виконати консолідацію</summary>
+<p>Створи аркуш <b>Зведені дані</b>, став курсор у <code>A1</code>.</p>
+<p><b>Excel:</b> Дані → Консолідація → функція <b>Сума</b> → Посилання: виділи діапазон на аркуші «Філіал 1» (разом із заголовками) → Додати → те саме для «Філіал 2» → постав галочки <b>підписи верхнього рядка</b> і <b>значення лівого стовпця</b> → ОК.</p>
+<p><b>Excel 365 (якщо немає пункту):</b> у комірці <code>B2</code> введи <code>='Філіал 1'!B2+'Філіал 2'!B2</code> і простягни формулу на 7 рядків і 2 стовпці.</p>
+<p><b>Google Таблиці:</b> немає кнопки «Консолідація» — використай формулу вище для підсумовування діапазонів двох аркушів.</p></details>
+<p>Введи результат консолідації (сума продажів двох філіалів за день):</p>
+<div class="sc" id="cons"></div><button onclick="chk('cons')">Перевірити</button> <div class="msg" id="cons_m"></div>
+
+<h3>Крок 6–7. Статистичні показники</h3>
+<details><summary>Підказка: функції</summary>
+<p><code>=AVERAGE()</code> середнє · <code>=MEDIAN()</code> медіана · <code>=MAX()</code> · <code>=MIN()</code> · <code>=STDEV.S()</code> стандартне відхилення · розмах = <code>MAX − MIN</code>. В українській локалізації назви можуть відрізнятися — шукай через майстер функцій <b>fx</b>.</p>
+<p>Приріст (%) = (Середнє після − Середнє до) / Середнє до · 100 %.</p></details>
+<p>Заповни таблицю (округли до сотих; стандартне відхилення можна обчислити як вибіркове або генеральне — зараховуються обидва).</p>
+<div class="sc" id="stat"></div><button onclick="chk('stat')">Перевірити</button> <div class="msg" id="stat_m"></div>
+
+<h3>Кроки 8–9. Діаграми (еталон для звірки)</h3>
+<p>Побудуй у таблиці стовпчикову діаграму, лінійний графік і гістограму. Не забудь <b>назви діаграм і підписи осей</b>. Порівняй зі зразком:</p>
+<div class="row"><button class="s" onclick="draw('bar')">Стовпчикова</button><button class="s" onclick="draw('line')">Лінійний графік</button><button class="s" onclick="draw('hist')">Гістограма</button></div>
+<div id="chart"></div>
+
+<h3>Крок 10. Запитання для аналізу</h3>
+<p>Спочатку дай відповідь у зошиті, потім відкрий перевірку.</p>
+<details><summary>1) На скільки відсотків змінився середній обсяг продажів?</summary>Приблизно на <b>22 %</b> (з ≈84,29 до ≈102,86 одиниць за день).</details>
+<details><summary>2) Чи збільшилася медіана після акції?</summary>Так: з <b>85</b> до <b>105</b> — зросла на 20 одиниць, тобто типовий день став значно продуктивнішим.</details>
+<details><summary>3) Чи змінилася стабільність продажів?</summary>Стандартне відхилення зросло (≈2,93 → ≈6,18), розмах збільшився з 9 до 18: продажі стали <b>менш стабільними</b>, хоча вищими. Відносний розкид (стандартне відхилення / середнє) теж зріс: ≈3,5 % → ≈6,0 %.</details>
+<details><summary>4) У які дні були найбільші продажі?</summary>Після акції — <b>день 6</b> (111), далі день 7 (108). До акції найбільшим теж був день 6 (89).</details>
+
+<h3>Крок 11. Висновок</h3>
+<textarea id="concl" placeholder="Чи можна вважати акцію успішною? Наведи 2–3 числові аргументи, зазнач обмеження аналізу та рекомендацію."></textarea>
+<details><summary>Приклад висновку та критичні зауваження</summary>
+<p><i>Проведена рекламна акція мала позитивний вплив на продажі: середній денний обсяг зріс приблизно на 22 %, медіана — з 85 до 105, а кожного з 7 днів продажі були вищими, ніж у відповідний день до акції. Водночас розкид продажів зріс, тому стабільність знизилася. Рекомендовано продовжити акцію й перевірити її в інших категоріях товарів.</i></p>
+<p><b>Подумай:</b> різниця за днями дорівнює 13, 14, 17, 19, 20, 22, 25 — вона сама <i>росте</i>. Це може означати наростання ефекту акції, а може — тренд, не пов’язаний з нею. Вибірка маленька (7 днів), тож слово «статистично значущий» без спеціального тесту варто вживати обережно.</p></details>
+<h3>Крок 12. Збереження</h3>
+<p>Збережи файл із назвою <code>Ефективність_реклами.xlsx</code> і покажи вчителю.</p>
+<h3>Чек-лист виконання</h3>
+<label class="c"><input type="checkbox" onchange="prog()"> Дані введено на двох аркушах</label>
+<label class="c"><input type="checkbox" onchange="prog()"> Виконано консолідацію (аркуш «Зведені дані»)</label>
+<label class="c"><input type="checkbox" onchange="prog()"> Обчислено середнє, медіану, max/min, стандартне відхилення, розмах, приріст %</label>
+<label class="c"><input type="checkbox" onchange="prog()"> Побудовано 3 діаграми з назвами й підписами осей</label>
+<label class="c"><input type="checkbox" onchange="prog()"> Записано висновок</label>
+<label class="c"><input type="checkbox" onchange="prog()"> Файл збережено</label>
+<div class="msg" id="pg"></div>
+</section>
+
+<section id="s5"><span class="t">⏱ 10 хв</span><h2>5. Тест за розділом «Моделі й моделювання. Опрацювання статистичних даних»</h2>
+<p>12 запитань, по 1 балу. Обери одну відповідь.</p>
+<div id="quiz"></div><button onclick="grade()">Показати результат</button><div class="msg" id="res"></div>
+</section>
+
+<section id="s6"><span class="t">⏱ 3 хв</span><h2>6. Підсумки та рефлексія</h2>
+<p>Заверши речення (обери одне або кілька):</p>
+<label class="c"><input type="checkbox"> Сьогодні я навчився(-лася) об’єднувати дані з кількох аркушів.</label>
+<label class="c"><input type="checkbox"> Мені було найважче обчислювати/інтерпретувати стандартне відхилення.</label>
+<label class="c"><input type="checkbox"> Я зможу застосувати аналіз даних у …</label>
+<p><b>Квиток на вихід.</b> Одним реченням: чому для висновку про акцію недостатньо порівняти лише два числа — середні?</p>
+<textarea placeholder="Твоя відповідь…"></textarea>
+<p><b>Домашнє завдання:</b> доопрацювати файл <code>Ефективність_реклами.xlsx</code>; повторити теми розділу 1 до наступного уроку.</p>
+</section>
+</main>
+<script>
+const $=id=>document.getElementById(id);
+const D1=[[42,48],[45,52],[40,50],[47,54],[44,53],[46,57],[43,55]],D2=[[38,45],[40,47],[42,49],[39,51],[41,52],[43,54],[40,53]];
+const B=D1.map((r,i)=>r[0]+D2[i][0]),A=D1.map((r,i)=>r[1]+D2[i][1]);
+function pick(b,t){document.querySelectorAll('#s2 .opt').forEach(x=>x.classList.remove('ok'));b.classList.add('ok');$('pm').textContent=t}
+function tbl(n,d){return '<table style="display:inline-table;margin-right:14px"><tr><th colspan=3>Аркуш Філіал '+n+'</th></tr><tr><th>День</th><th>До акції</th><th>Після акції</th></tr>'+d.map((r,i)=>'<tr><td>'+(i+1)+'</td><td>'+r[0]+'</td><td>'+r[1]+'</td></tr>').join('')+'</table>'}
+$('data').innerHTML=tbl(1,D1)+tbl(2,D2);
+const terms=[['Модель','Спрощений образ об’єкта чи процесу, що зберігає суттєві для дослідження властивості.'],['Моделювання','Процес створення й дослідження моделей.'],['Комп’ютерний експеримент','Дослідження моделі на комп’ютері зі зміною параметрів і аналізом результатів.'],['Ряд даних / вибірка','Впорядкований набір значень величини (наприклад, продажі за дні).'],['Середнє, медіана','Середнє — сума/кількість; медіана — значення посередині впорядкованого ряду.'],['Стандартне відхилення, розмах','Показники розкиду: розмах = max − min; стандартне відхилення — типове відхилення від середнього.'],['Консолідація даних','Об’єднання даних з кількох діапазонів чи аркушів у один із застосуванням функції (сума, середнє …).'],['Зведена таблиця; підбір параметра','Зведена — інтерактивне узагальнення великих таблиць; підбір параметра — пошук вхідного значення для потрібного результату формули.']];
+$('fc').innerHTML=terms.map(t=>'<div class="fc" onclick="this.classList.toggle(\'o\')"><b>'+t[0]+'</b><br><em>клік, щоб побачити</em><span>'+t[1]+'</span></div>').join('');
+function qz(id,arr,isTest){ $(id).innerHTML=arr.map((x,i)=>'<div class="q" data-i="'+i+'"><b>'+(i+1)+'. '+x.q+'</b>'+x.o.map((o,j)=>'<label class="c"><input type="radio" name="'+id+i+'" value="'+j+'"> '+o+'</label>').join('')+'<div class="msg"></div></div>').join('')}
+const mini=[{q:'Який показник описує розкид значень ряду?',o:['Медіана','Стандартне відхилення','Максимум'],a:1},{q:'Що робить консолідація даних?',o:['Будує діаграму','Об’єднує дані з кількох діапазонів/аркушів','Видаляє дублікати'],a:1},{q:'Яка діаграма найкраще показує зміну за днями?',o:['Лінійний графік','Кругова діаграма','Гістограма'],a:0}];
+qz('mini',mini);
+document.querySelectorAll('#mini input').forEach(r=>r.onchange=()=>{const q=r.closest('.q'),m=mini[q.dataset.i],ok=+r.value===m.a,d=q.querySelector('.msg');d.textContent=ok?'✔ Вірно':'✘ Спробуй ще';d.className='msg '+(ok?'g':'b')});
+const quiz=[
+{q:'Модель — це …',o:['точна копія об’єкта','спрощений образ об’єкта, що відображає суттєві властивості','будь-який малюнок'],a:1},
+{q:'Комп’ютерний експеримент — це …',o:['запуск програми без змін','дослідження комп’ютерної моделі зі зміною параметрів','створення презентації'],a:1},
+{q:'Ряд даних 80, 82, 83, 85, 85, 86, 89. Медіана дорівнює …',o:['83','85','85,43'],a:1},
+{q:'Розмах ряду 80…89 дорівнює …',o:['9','169','84,5'],a:0},
+{q:'Яка функція Excel обчислює середнє значення?',o:['SUM','AVERAGE','COUNT'],a:1},
+{q:'Менше стандартне відхилення означає, що значення …',o:['більш розкидані','щільніше групуються навколо середнього','всі однакові завжди'],a:1},
+{q:'Консолідація даних — це …',o:['об’єднання даних із кількох діапазонів чи аркушів із застосуванням функції','сортування таблиці','заміна формул значеннями'],a:0},
+{q:'Для показу структури частин цілого найкраще підходить …',o:['лінійний графік','кругова діаграма','точкова діаграма'],a:1},
+{q:'Зведена таблиця призначена для …',o:['швидкого узагальнення й групування великих даних','малювання схем','перевірки орфографії'],a:0},
+{q:'Підбір параметра — це …',o:['пошук такого вхідного значення, за якого формула дає потрібний результат','сортування за параметром','видалення параметра'],a:0},
+{q:'Приріст (%) середніх 84,29 → 102,86 становить приблизно …',o:['18,6 %','22 %','122 %'],a:1},
+{q:'Інфографіка — це …',o:['таблиця без підписів','візуальне подання даних і ідей у стислій наочній формі','текст без малюнків'],a:1}];
+qz('quiz',quiz);
+function grade(){let s=0;document.querySelectorAll('#quiz .q').forEach(q=>{const m=quiz[q.dataset.i],c=q.querySelector('input:checked'),d=q.querySelector('.msg');if(c&&+c.value===m.a){s++;d.textContent='✔';d.className='msg g'}else{d.textContent='✘ Правильно: '+m.o[m.a];d.className='msg b'}});
+$('res').textContent='Результат: '+s+' з 12 балів'+(s>=10?' — чудово!':s>=7?' — добре, повтори слабкі теми.':' — повтори матеріал розділу.');}
+const f2=n=>n.toFixed(2),mean=a=>a.reduce((x,y)=>x+y)/a.length,sd=(a,p)=>{const m=mean(a);return Math.sqrt(a.reduce((s,x)=>s+(x-m)**2,0)/(a.length-(p?0:1)))},med=a=>{const s=[...a].sort((x,y)=>x-y);return s[s.length>>1]};
+const rows=[['Середнє',mean(B),mean(A)],['Медіана',med(B),med(A)],['Максимум',Math.max(...B),Math.max(...A)],['Мінімум',Math.min(...B),Math.min(...A)],['Розмах',Math.max(...B)-Math.min(...B),Math.max(...A)-Math.min(...A)],['Станд. відхилення',[sd(B),sd(B,1)],[sd(A),sd(A,1)]]];
+let h='<table><tr><th>День</th><th>До акції</th><th>Після акції</th></tr>';
+B.forEach((v,i)=>{h+='<tr><td>'+(i+1)+'</td><td><input type="text" data-a="'+v+'" data-t="0"></td><td><input type="text" data-a="'+A[i]+'" data-t="0"></td></tr>'});
+$('cons').innerHTML=h+'</table>';
+h='<table><tr><th>Показник</th><th>До акції</th><th>Після акції</th></tr>';
+rows.forEach(r=>{h+='<tr><td>'+r[0]+'</td>'+[1,2].map(k=>'<td><input type="text" data-a="'+[].concat(r[k]).join('|')+'" data-t="0.02"></td>').join('')+'</tr>'});
+const gr=(mean(A)-mean(B))/mean(B)*100;
+$('stat').innerHTML=h+'<tr><td>Приріст, %</td><td colspan=2><input type="text" data-a="'+gr+'" data-t="0.1"></td></tr></table>';
+function chk(id){let ok=0,n=0;document.querySelectorAll('#'+id+' input').forEach(i=>{n++;const v=parseFloat(i.value.replace(',','.')),t=+i.dataset.t,g=i.dataset.a.split('|').some(a=>Math.abs(v-a)<=t+1e-9);i.className=g?'ok':'no';if(g)ok++});
+const m=$(id+'_m');m.textContent=ok+' з '+n+' вірно'+(ok<n?'. Червоні поля перевір ще раз.':' — чудово!');m.className='msg '+(ok==n?'g':'w')}
+function prog(){const c=document.querySelectorAll('#s4 label.c input:checked').length;$('pg').textContent='Виконано '+c+' з 6 пунктів'}
+function draw(k){const W=560,H=300,L=44,Bt=36,T=30,pw=W-L-12,ph=H-Bt-T;let s='<svg viewBox="0 0 '+W+' '+H+'" role="img">',max=120;
+const y=v=>T+ph-v/max*ph;
+const ttl={bar:'Продажі до та після акції',line:'Зміна продажів за днями',hist:'Розподіл продажів після акції'}[k];
+s+='<text x="'+W/2+'" y="18" text-anchor="middle" style="font-size:13px;font-weight:600">'+ttl+'</text>';
+if(k=='hist')max=4;const st=k=='hist'?1:20;for(let v=0;v<=max;v+=st)s+='<line x1="'+L+'" x2="'+(W-12)+'" y1="'+y(v)+'" y2="'+y(v)+'" stroke="#8883" /><text x="'+(L-6)+'" y="'+(y(v)+4)+'" text-anchor="end">'+v+'</text>';
+if(k=='bar'){const g=pw/7;B.forEach((v,i)=>{const x=L+i*g+g*.12;s+='<rect x="'+x+'" y="'+y(v)+'" width="'+g*.34+'" height="'+(T+ph-y(v))+'" fill="#8aa5a0"/><rect x="'+(x+g*.38)+'" y="'+y(A[i])+'" width="'+g*.34+'" height="'+(T+ph-y(A[i]))+'" fill="#0f9b8e"/><text x="'+(x+g*.36)+'" y="'+(H-Bt+14)+'" text-anchor="middle">'+(i+1)+'</text>'});
+s+='<text x="'+(L+10)+'" y="'+(T+10)+'">▮ до акції (сірий)  ▮ після акції (зелений)</text>'}
+if(k=='line'){const g=pw/7;[[B,'#8aa5a0'],[A,'#0f9b8e']].forEach(([d,c])=>{s+='<polyline fill="none" stroke="'+c+'" stroke-width="3" points="'+d.map((v,i)=>(L+g*(i+.5))+','+y(v)).join(' ')+'"/>'});B.forEach((v,i)=>s+='<text x="'+(L+g*(i+.5))+'" y="'+(H-Bt+14)+'" text-anchor="middle">'+(i+1)+'</text>');
+s+='<text x="'+(L+10)+'" y="'+(T+10)+'">сірий — до акції, зелений — після</text>'}
+if(k=='hist'){const bins=[['93–98',1],['99–104',2],['105–110',3],['111–116',1]],g=pw/4,yy=y;
+bins.forEach((b,i)=>{s+='<rect x="'+(L+i*g+2)+'" y="'+yy(b[1])+'" width="'+(g-4)+'" height="'+(T+ph-yy(b[1]))+'" fill="#0f9b8e"/><text x="'+(L+g*(i+.5))+'" y="'+(H-Bt+14)+'" text-anchor="middle">'+b[0]+'</text>'})}
+s+='<text x="'+(W/2)+'" y="'+(H-6)+'" text-anchor="middle">'+(k=='hist'?'Інтервали продажів, од.':'День')+'</text><text transform="translate(12,'+(H/2)+') rotate(-90)" text-anchor="middle">'+(k=='hist'?'Кількість днів':'Продажі, од.')+'</text></svg>';
+$('chart').innerHTML=s}
+</script></body></html>
