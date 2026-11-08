@@ -1,0 +1,139 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>Практична робота: Графіка в Скретч</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;700;800&family=Unbounded:wght@500;700&family=JetBrains+Mono:wght@500&display=swap">
+<style>
+/* Layout: task sheet with sticky timer bar, four task tabs, checkable steps, hints, self-assessment at the end. */
+:root{--bg:#F3F5FB;--surface:#fff;--surface2:#EBEEF9;--ink:#1B2140;--muted:#566089;--line:#D8DDEE;--accent:#5B3FD6;--accent-ink:#fff;--good:#0B7D5C;--goodbg:#DDF4EC;--stage:#fff;--pen:#0B8A67;--motion:#2F6FD6;--ctrl:#FFAB19;
+--f-display:"Unbounded","Manrope",system-ui,sans-serif;--f-body:"Manrope",system-ui,sans-serif;--f-mono:"JetBrains Mono",ui-monospace,monospace}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0F1224;--surface:#181C34;--surface2:#20264A;--ink:#E7EAFB;--muted:#A0A9D0;--line:#2D3560;--accent:#A58BFF;--accent-ink:#14102B;--good:#5FE0B6;--goodbg:#123A30;--stage:#141830;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#0F1224;--surface:#181C34;--surface2:#20264A;--ink:#E7EAFB;--muted:#A0A9D0;--line:#2D3560;--accent:#A58BFF;--accent-ink:#14102B;--good:#5FE0B6;--goodbg:#123A30;--stage:#141830;color-scheme:dark}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font:16px/1.55 var(--f-body)}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:30;background:var(--surface)}
+.wrap{max-width:860px;margin:0 auto;padding-inline:max(16px,env(safe-area-inset-left,0px)) max(16px,env(safe-area-inset-right,0px));padding-block:0 48px}
+h1,h2,h3{font-family:var(--f-display);line-height:1.2;text-wrap:balance;margin:0}h1{font-size:clamp(1.5rem,5vw,2.1rem)}h2{font-size:1.15rem}h3{font:800 1rem var(--f-body)}
+.lead{color:var(--muted)}
+.bar{position:sticky;top:env(safe-area-inset-top,0px);z-index:20;background:var(--surface);border-bottom:1px solid var(--line);margin-inline:calc(-1*max(16px,env(safe-area-inset-left,0px)));padding:8px max(16px,env(safe-area-inset-left,0px))}
+.bar .in{display:flex;gap:10px;align-items:center;flex-wrap:wrap;max-width:860px;margin:0 auto}
+.timer{font-family:var(--f-display);font-size:1.4rem;min-width:5ch}
+.prog{flex:1;min-width:120px;height:8px;border-radius:4px;background:var(--line);overflow:hidden}.prog i{display:block;height:100%;width:0;background:var(--good);transition:width .3s}
+.pct{font-family:var(--f-mono);font-size:.85rem;color:var(--muted)}
+.btn{font:inherit;font-weight:800;font-size:.88rem;border:1px solid var(--line);background:var(--surface2);color:var(--ink);padding:7px 14px;border-radius:10px;cursor:pointer;text-decoration:none;display:inline-block}
+.btn.pri{background:var(--accent);color:var(--accent-ink);border-color:var(--accent)}
+.btn:focus-visible,.tab:focus-visible,input:focus-visible,textarea:focus-visible,summary:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.tabs{display:flex;gap:6px;flex-wrap:wrap;margin:18px 0 8px}
+.tab{font:inherit;font-weight:800;font-size:.9rem;border:1.5px solid var(--line);background:var(--surface);color:var(--ink);padding:8px 16px;border-radius:99px;cursor:pointer}
+.tab[aria-selected="true"]{background:var(--accent);color:var(--accent-ink);border-color:var(--accent)}
+.tab .t{font-family:var(--f-mono);font-size:.75rem;opacity:.8;margin-left:6px}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:20px;margin-top:12px}
+.goal{display:flex;gap:10px;align-items:center;flex-wrap:wrap;color:var(--muted);font-size:.9rem;margin:6px 0 10px}
+.steps{list-style:none;margin:10px 0;padding:0;display:grid;gap:6px;counter-reset:s}
+.steps li{border:1px solid var(--line);border-radius:10px;padding:8px 12px;background:var(--bg)}
+.steps label{display:flex;gap:10px;align-items:flex-start;cursor:pointer}
+.steps input{margin-top:.3em;width:20px;height:20px;accent-color:var(--accent);flex:none}
+.steps input:checked+span{color:var(--muted);text-decoration:line-through}
+.btnname{font-weight:800;color:var(--accent)}
+details{margin-top:10px;border:1px dashed var(--line);border-radius:10px;padding:8px 12px}summary{cursor:pointer;font-weight:800}
+.blocks{display:grid;gap:3px;max-width:320px;margin:10px 0}
+.blk{display:flex;gap:6px;flex-wrap:wrap;align-items:center;color:#fff;font-weight:700;font-size:.85rem;padding:5px 10px;border-radius:7px}
+.blk.pen{background:var(--pen)}.blk.motion{background:var(--motion)}.blk.hat{background:var(--ctrl);color:#1B2140;border-radius:16px 16px 7px 7px;padding-top:9px}
+.blk b{background:#fff;color:#1B2140;border-radius:99px;padding:0 9px}
+.ex{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:16px;align-items:start}@media(max-width:640px){.ex{grid-template-columns:1fr}}
+canvas{max-width:100%;height:auto;background:var(--stage);border:1px solid var(--line);border-radius:10px}
+table{border-collapse:collapse;width:100%;font-size:.9rem}th,td{border:1px solid var(--line);padding:6px 10px;text-align:left}th{background:var(--surface2)}
+.tblwrap{overflow-x:auto}
+textarea{font:inherit;width:100%;min-height:56px;border-radius:10px;border:1.5px solid var(--line);background:var(--surface);color:var(--ink);padding:8px 10px;resize:vertical}
+.rate{display:flex;gap:6px;flex-wrap:wrap}.rate label{display:flex;gap:6px;align-items:center;font-size:.88rem}
+.crit{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:10px;align-items:center;padding:8px 0;border-bottom:1px solid var(--line)}
+.crit select{font:inherit;font-weight:700;padding:6px;border-radius:8px;border:1.5px solid var(--line);background:var(--surface);color:var(--ink)}
+.result{margin-top:12px;padding:12px 14px;border-radius:10px;background:var(--goodbg);color:var(--good);font-weight:800}.result:empty{display:none}
+</style>
+<div class="wrap">
+  <header style="padding-top:22px">
+    <h1>Практична робота: графіка в Скретч</h1>
+    <p class="lead">§ 23, с. 124–125. Завдання: відпрацювати навички роботи з інструментами графічного редактора й командами групи «Олівець».</p>
+  </header>
+  <div class="bar"><div class="in">
+    <div class="prog" role="progressbar" aria-label="Виконано кроків"><i id="pb"></i></div><span class="pct" id="pct">0%</span>
+    <a class="btn" href="https://scratch.mit.edu/projects/editor/" target="_blank" rel="noopener">Відкрити Скретч ↗</a>
+  </div></div>
+
+  <div class="card" style="margin-top:16px"><h3>Правила роботи за комп'ютером</h3>
+    <p style="margin:6px 0 0">Сиди рівно, екран на відстані витягнутої руки. Не їж і не пий біля техніки. Не чіпай кабелі. Якщо щось не працює, підніми руку. Час від часу відводь погляд від екрана вдалину.</p></div>
+
+  <div class="tabs" role="tablist" id="tabs"></div>
+  <div id="panel"></div>
+</div>
+
+<script>
+(function(){
+const $=(s,r=document)=>r.querySelector(s),$$=(s,r=document)=>[...r.querySelectorAll(s)];
+const bn=t=>'<span class="btnname">'+t+'</span>';
+const blk=(c,t,v)=>'<div class="blk '+c+'">'+t+(v!==undefined?' <b>'+v+'</b>':'')+'</div>';
+const hat=blk('hat','коли 🏁 натиснуто');
+const T=[
+ {id:'e1',name:'Вправа 1',time:'5 хв',goal:'Створити кілька копій вибраного образу спрайта.',steps:[
+   'Додай готовий спрайт із бібліотеки та перейди на вкладку '+bn('Образи')+'.',
+   'Скопіюй спрайт кнопками '+bn('Копія')+' та '+bn('Вставити')+'.',
+   'Перетягни скопійований спрайт у потрібне місце. Зроби три-чотири копії.'],
+   hint:'Спочатку клацни по спрайту, щоб виділити його. Рамка з маркерами означає, що об\'єкт виділено.',
+   extra:()=> '<p class="lead">Результат: кілька однакових спрайтів у ряд, як на малюнку в підручнику (краби, рибки).</p>'},
+ {id:'e2',name:'Вправа 2',time:'10 хв',goal:'Створити колаж із геометричних фігур.',steps:[
+   'У полі спрайтів обери '+bn('Обрати спрайт → Малювати')+'.',
+   'Інструментами '+bn('Пензель')+' і '+bn('Лінія')+' намалюй кілька ліній різної товщини й кольору.',
+   'Інструментами '+bn('Коло')+' і '+bn('Прямокутник')+' намалюй кілька геометричних фігур різного кольору. Для кола й квадрата тримай клавішу Shift.',
+   'Інструментом '+bn('Гумка')+' видали частину накреслених ліній.',
+   'Інструментом '+bn('Заповнення')+' залий фігури різними кольорами.',
+   'Інструментом '+bn('Текст')+' підпиши малюнок.',
+   'Зроби висновок: як створюють малюнки в графічному редакторі середовища Скретч? Запиши його внизу сторінки.'],
+   hint:'Якщо фігура вийшла не рівною, пробуй ще раз із затиснутою клавішею Shift. Скасувати останню дію можна кнопкою ↶ у редакторі.',
+   extra:()=>'<canvas id="collage" width="260" height="180" aria-label="Приклад колажу"></canvas>'},
+ {id:'z5',name:'Завдання 5',time:'8 хв',goal:'Створити скрипти для малювання квадрата, правильного п\'ятикутника й шестикутника.',steps:[
+   'Підключи розширення «Олівець» (кнопка «Додати розширення» унизу ліворуч).',
+   'Збери скрипт для квадрата: опусти олівець, а потім повтори пару «перемістити на 100 кроків» і «поворот на 90 градусів» чотири рази, не забудь підняти олівець.',
+   'Збери скрипт для правильного п\'ятикутника. Обчисли кут повороту: 360 / 5.',
+   'Збери скрипт для правильного шестикутника. Обчисли кут повороту: 360 / 6.',
+   'Запусти кожен скрипт і перевір малюнок. На початку скрипта став «очистити все».'],
+   hint:'Кут повороту дорівнює 360 / n, де n — кількість кутів. Квадрат: 90°, п\'ятикутник: 72°, шестикутник: 60°. Блоки повторення ми вивчимо на наступних уроках, тому зараз виписуй кожну команду окремо.',
+   extra:()=>{const sq=[['pen','опустити олівець'],['motion','перемістити на','100 кроків'],['motion','поворот ↻ на','90 градусів'],['motion','перемістити на','100 кроків'],['motion','поворот ↻ на','90 градусів'],['motion','…'],['pen','підняти олівець']];
+     return '<details><summary>Показати початок скрипта для квадрата</summary><div class="ex"><div class="blocks">'+hat+sq.map(b=>blk(...b)).join('')+'</div><canvas id="sqc" width="160" height="160" aria-label="Квадрат"></canvas></div></details>'+
+     '<details><summary>Таблиця кутів</summary><div class="tblwrap"><table><tr><th>Фігура</th><th>n</th><th>360 / n</th></tr><tr><td>Рівносторонній трикутник</td><td>3</td><td>120°</td></tr><tr><td>Квадрат</td><td>4</td><td>90°</td></tr><tr><td>П\'ятикутник</td><td>5</td><td>72°</td></tr><tr><td>Шестикутник</td><td>6</td><td>60°</td></tr></table></div></details>'}},
+ {id:'z6',name:'Творче завдання',time:'2 хв + вдома',goal:'Намалювати в графічному редакторі новий спрайт і нове тло для сцени.',steps:[
+   'Вибери об\'єкт (сцену) і відкрий вкладку '+bn('Образи')+' (для сцени — '+bn('Тло')+').',
+   'Скопіюй образ (тло) кілька разів: контекстне меню → «дублювати».',
+   'Відредагуй кожен образ (тло): змінюй кольори, додавай деталі.'],
+   hint:'Нове тло: натисни «Сцена» в полі об\'єктів і перейди на вкладку «Тло». Для симетрії є кнопка віддзеркалення.',
+   extra:()=>'<p class="lead">Збережи проєкт: <b>Файл → Зберегти на свій комп\'ютер</b>. Надішли файл учителю так, як домовились у класі.</p>'}
+];
+const tabs=$('#tabs'),panel=$('#panel');
+T.forEach((t,k)=>{const b=document.createElement('button');b.className='tab';b.setAttribute('role','tab');b.textContent=t.name;b.dataset.k=k;b.onclick=()=>sel(k);tabs.appendChild(b)});
+const checks={};
+function sel(k){$$('.tab').forEach((b,j)=>b.setAttribute('aria-selected',j===k));const t=T[k];
+  panel.innerHTML='<div class="card"><h2>'+t.name+'</h2><div class="goal"><span><b>Завдання:</b> '+t.goal+'</span></div><ul class="steps">'+t.steps.map((s,i)=>'<li><label><input type="checkbox" data-id="'+t.id+'-'+i+'"'+(checks[t.id+'-'+i]?' checked':'')+'><span>'+s+'</span></label></li>').join('')+'</ul>'+t.extra()+'<details><summary>Підказка</summary><p>'+t.hint+'</p></details></div>';
+  $$('input[type=checkbox]',panel).forEach(c=>c.onchange=()=>{checks[c.dataset.id]=c.checked;upd()});
+  if(t.id==='e2')collage();if(t.id==='z5'){const c=$('#sqc');if(c){const x=c.getContext('2d');x.strokeStyle='#0B8A67';x.lineWidth=4;x.strokeRect(30,30,100,100);x.fillStyle='#FFAB19';x.font='28px serif';x.fillText('🐱',112,150)}}}
+function collage(){const c=$('#collage'),x=c.getContext('2d');x.lineWidth=4;x.strokeStyle='#C0392B';x.beginPath();x.arc(170,80,50,0,7);x.stroke();
+  x.strokeStyle='#2F6FD6';x.strokeRect(40,40,90,90);x.fillStyle='rgba(255,171,25,.55)';x.fillRect(42,42,86,86);x.strokeStyle='#0B8A67';x.beginPath();x.moveTo(30,150);x.lineTo(110,35);x.lineTo(190,150);x.closePath();x.stroke();x.fillStyle='#7C4DDB';x.font='bold 16px sans-serif';x.fillText('Мій колаж',90,172)}
+const total=T.reduce((a,t)=>a+t.steps.length,0);
+function upd(){const n=Object.values(checks).filter(Boolean).length,p=Math.round(100*n/total);$('#pb').style.width=p+'%';$('#pct').textContent=p+'%'}
+sel(0);
+})();
+</script>
+<div class="wrap" style="padding-top:0">
+  <div class="card"><h2>Висновок і самооцінювання</h2>
+    <p class="lead">Запиши висновок: як створюють малюнки в графічному редакторі середовища Скретч?</p>
+    <label for="concl" class="lead" style="display:none">Висновок</label><textarea id="concl" placeholder="Малюнки в графічному редакторі створюють так: …"></textarea>
+    <div id="crit" style="margin-top:12px"></div>
+    <div class="result" id="selfres" aria-live="polite"></div>
+  </div>
+</div>
+<script>
+(function(){const C=['Скопіював(ла) спрайт кілька разів (вправа 1)','Створив(ла) колаж із фігур, залив(ла) кольорами, додав(ла) підпис (вправа 2)','Скрипт для квадрата малює правильну фігуру','Скрипти для п\'ятикутника й шестикутника працюють','Можу пояснити, чому кут повороту дорівнює 360 / n'];
+const L=[['','Обери…'],['2','Так, самостійно'],['1','З підказкою'],['0','Ще ні']];
+const box=document.getElementById('crit');box.innerHTML=C.map((c,i)=>'<div class="crit"><span>'+c+'</span><select data-i="'+i+'" aria-label="'+c+'">'+L.map(o=>'<option value="'+o[0]+'">'+o[1]+'</option>').join('')+'</select></div>').join('');
+box.addEventListener('change',()=>{const s=[...box.querySelectorAll('select')];if(s.some(x=>x.value===''))return;const sum=s.reduce((a,x)=>a+ +x.value,0),max=C.length*2,r=sum/max;
+  document.getElementById('selfres').textContent='Самооцінка: '+sum+' із '+max+' — '+(r>=.8?'високий рівень':r>=.55?'достатній рівень':r>=.3?'середній рівень':'початковий рівень')+'.'})})();
+</script>
+
+</body></html>

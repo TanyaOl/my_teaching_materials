@@ -1,0 +1,107 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>Тест: Графіка в Скретч</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;700;800&family=Unbounded:wght@500;700&family=JetBrains+Mono:wght@500&display=swap">
+<style>
+/* Layout: one question per screen, progress dots at top, result screen with review. Same tokens as the lesson page. */
+:root{--bg:#F3F5FB;--surface:#fff;--surface2:#EBEEF9;--ink:#1B2140;--muted:#566089;--line:#D8DDEE;--accent:#5B3FD6;--accent-ink:#fff;--good:#0B7D5C;--goodbg:#DDF4EC;--bad:#B3261E;--badbg:#FBE4E2;--pen:#0B8A67;--motion:#2F6FD6;--ctrl:#FFAB19;
+--f-display:"Unbounded","Manrope",system-ui,sans-serif;--f-body:"Manrope",system-ui,sans-serif;--f-mono:"JetBrains Mono",ui-monospace,monospace}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0F1224;--surface:#181C34;--surface2:#20264A;--ink:#E7EAFB;--muted:#A0A9D0;--line:#2D3560;--accent:#A58BFF;--accent-ink:#14102B;--good:#5FE0B6;--goodbg:#123A30;--bad:#FF9A92;--badbg:#43181A;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#0F1224;--surface:#181C34;--surface2:#20264A;--ink:#E7EAFB;--muted:#A0A9D0;--line:#2D3560;--accent:#A58BFF;--accent-ink:#14102B;--good:#5FE0B6;--goodbg:#123A30;--bad:#FF9A92;--badbg:#43181A;color-scheme:dark}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font:16px/1.55 var(--f-body)}
+.wrap{max-width:720px;margin:0 auto;padding-inline:max(16px,env(safe-area-inset-left,0px)) max(16px,env(safe-area-inset-right,0px));padding-block:24px 48px}
+h1,h2{font-family:var(--f-display);line-height:1.2;text-wrap:balance;margin:0}
+h1{font-size:clamp(1.5rem,5vw,2rem)}h2{font-size:1.15rem}
+.lead{color:var(--muted)}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:22px;margin-top:16px}
+.btn{font:inherit;font-weight:800;font-size:.95rem;border:1px solid var(--line);background:var(--surface2);color:var(--ink);padding:10px 18px;border-radius:10px;cursor:pointer}
+.btn.pri{background:var(--accent);color:var(--accent-ink);border-color:var(--accent)}.btn[disabled]{opacity:.5;cursor:default}
+.btn:focus-visible,.opt:focus-visible,select:focus-visible,input:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.dots{display:flex;gap:5px;flex-wrap:wrap;margin-top:14px}
+.dots i{width:22px;height:8px;border-radius:4px;background:var(--line)}.dots i.cur{background:var(--accent)}.dots i.ok{background:var(--good)}.dots i.no{background:var(--bad)}
+.meta{display:flex;justify-content:space-between;font-family:var(--f-mono);font-size:.8rem;color:var(--muted)}
+.opts{display:grid;gap:8px;margin-top:12px}
+.opt{display:flex;gap:10px;align-items:flex-start;font:inherit;text-align:left;border:1.5px solid var(--line);background:var(--surface);color:var(--ink);border-radius:10px;padding:10px 12px;cursor:pointer;width:100%}
+.opt:hover:not([disabled]){border-color:var(--accent)}.opt .mk{flex:none;width:20px;height:20px;border:2px solid var(--muted);border-radius:50%;margin-top:2px}
+.opt.multi .mk{border-radius:5px}.opt.sel{border-color:var(--accent);background:var(--surface2)}.opt.sel .mk{background:var(--accent);border-color:var(--accent)}
+.opt.good{border-color:var(--good);background:var(--goodbg)}.opt.bad{border-color:var(--bad);background:var(--badbg)}.opt[disabled]{cursor:default}
+.row{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.fb{margin-top:14px;padding:10px 14px;border-radius:10px;font-weight:700}.fb.ok{background:var(--goodbg);color:var(--good)}.fb.no{background:var(--badbg);color:var(--bad)}
+.fb small{display:block;font-weight:500;color:var(--ink);margin-top:3px}
+.num{font:inherit;font-weight:800;width:100px;padding:8px 12px;border-radius:8px;border:1.5px solid var(--line);background:var(--surface);color:var(--ink);font-size:1.1rem}
+.mrow{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:10px;align-items:center;padding:8px 0;border-bottom:1px solid var(--line)}
+.mrow select{font:inherit;font-weight:700;padding:8px;border-radius:8px;border:1.5px solid var(--line);background:var(--surface);color:var(--ink)}
+.mrow.good select{border-color:var(--good);background:var(--goodbg)}.mrow.bad select{border-color:var(--bad);background:var(--badbg)}
+.blocks{display:grid;gap:3px;max-width:340px;margin:10px 0}
+.blk{display:flex;gap:6px;flex-wrap:wrap;align-items:center;color:#fff;font-weight:700;font-size:.85rem;padding:5px 10px;border-radius:7px}
+.blk.pen{background:var(--pen)}.blk.motion{background:var(--motion)}.blk.hat{background:var(--ctrl);color:#1B2140;border-radius:16px 16px 7px 7px;padding-top:9px}
+.blk b{background:#fff;color:#1B2140;border-radius:99px;padding:0 9px}
+.score{font-family:var(--f-display);font-size:3rem;line-height:1}
+.lvl{display:inline-block;margin-top:8px;font-weight:800;padding:4px 14px;border-radius:99px;background:var(--accent);color:var(--accent-ink)}
+.rev{border-top:1px solid var(--line);padding:12px 0}.rev:first-child{border-top:0}.rev b.bad{color:var(--bad)}.rev b.good{color:var(--good)}
+.name{width:100%;font:inherit;padding:10px 12px;border-radius:10px;border:1.5px solid var(--line);background:var(--surface);color:var(--ink);margin-top:8px}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+<div class="wrap">
+  <h1>Тест: графіка в середовищі Скретч</h1>
+  <p class="lead">§ 23 · 5 клас · 12 запитань, 12 балів. Після кожної відповіді ти бачиш, чи вона вірна, і чому.</p>
+  <div id="app"></div>
+</div>
+<script>
+(function(){
+const $=(s,r=document)=>r.querySelector(s);
+const blk=(c,t,v)=>'<div class="blk '+c+'">'+t+(v!==undefined?' <b>'+v+'</b>':'')+'</div>';
+const Q=[
+ {t:'single',q:'Що таке комп\'ютерна графіка?',o:['Галузь інформатики, пов\'язана зі створенням зображень за допомогою комп\'ютера','Набір кабелів для підключення монітора','Мова програмування для сайтів','Вид комп\'ютерних ігор'],a:0,e:'Комп\'ютерна графіка — одна з популярних галузей інформатики. Зображення створюють у графічних редакторах або програмами.'},
+ {t:'single',q:'Як створюються зображення у фрактальній графіці?',o:['Їх малює людина пензлем','За математичними формулами','Їх завантажують з інтернету','Їх фотографують камерою'],a:1,e:'Фрактальну графіку ще називають математичним мистецтвом.'},
+ {t:'multi',q:'Де використовують комп\'ютерну графіку? Обери всі вірні відповіді.',o:['У кінематографі','У рекламі','У поліграфії','В інтернеті','Лише в калькуляторах'],a:[0,1,2,3],e:'Комп\'ютерну графіку використовують у кінематографі, рекламі, поліграфії, а з розвитком мереж і в інтернеті.'},
+ {t:'single',q:'Яка група команд у Скретч дозволяє малювати на сцені?',o:['Рух','Вигляд','Олівець','Звук'],a:2,e:'Команди групи «Олівець» налаштовують олівець і керують ним. Її додають через «Додати розширення».'},
+ {t:'single',q:'Що відбувається, якщо олівець опущено, а спрайт рухається сценою?',o:['Спрайт зникає','Спрайт лишає слід','Сцена очищується','Нічого не змінюється'],a:1,e:'Опущений олівець залишає слід. Щоб припинити малювання, олівець піднімають.'},
+ {t:'single',q:'Що робить команда «очистити все»?',o:['Видаляє спрайт','Видаляє зі сцени малюнок, створений олівцем','Видаляє тло сцени','Закриває проєкт'],a:1,e:'Команда не впливає на тло сцени й розташовані на ній об\'єкти.'},
+ {t:'single',q:'Що робить команда «штамп»?',o:['Змінює колір олівця','Піднімає олівець','Залишає на сцені відбиток спрайта','Видаляє малюнок'],a:2,e:'«Штамп» залишає у відповідному місці сцени відбиток спрайта.'},
+ {t:'single',q:'Що намалює спрайт після виконання цього скрипта?',pre:blk('hat','коли 🏁 натиснуто')+blk('pen','опустити олівець')+blk('pen','надати олівцю колір','червоний')+blk('motion','перемістити на','100 кроків')+blk('pen','підняти олівець'),
+  o:['Червону лінію довжиною 100 кроків','Нічого, бо олівець піднято','Червоний квадрат','Синю лінію довжиною 10 кроків'],a:0,e:'Олівець опущено, колір червоний, спрайт пройшов 100 кроків. Піднятий наприкінці олівець лише припиняє малювання далі.'},
+ {t:'match',q:'Обери кут повороту для кожної правильної фігури (кут = 360 / n).',rows:[['Рівносторонній трикутник',['60','90','120'],'120'],['Квадрат',['45','90','120'],'90'],['Правильний п\'ятикутник',['36','72','108'],'72']],e:'360 / 3 = 120°, 360 / 4 = 90°, 360 / 5 = 72°.'},
+ {t:'num',q:'Який кут повороту потрібен, щоб намалювати правильний шестикутник? Запиши число в градусах.',a:60,e:'360 / 6 = 60°.'},
+ {t:'match',q:'Який інструмент графічного редактора потрібен?',rows:[['Видалити частину накреслених ліній',['Гумка','Заповнення','Текст'],'Гумка'],['Залити фігуру кольором',['Гумка','Заповнення','Текст'],'Заповнення'],['Підписати малюнок',['Гумка','Заповнення','Текст'],'Текст']],e:'Гумка видаляє, Заповнення заливає кольором, Текст підписує малюнок.'},
+ {t:'single',q:'Як створити нове тло сцени?',o:['Натиснути «Сцена» в полі об\'єктів і перейти на вкладку «Тло»','Відкрити вкладку «Код» і додати блок «тло»','Натиснути «Копія» на спрайті','Перейти на вкладку «Звуки»'],a:0,e:'Графічний редактор відкривається на вкладці «Образи». Для сцени це вкладка «Тло».'}
+];
+const LV=[[10,'Високий'],[7,'Достатній'],[4,'Середній'],[0,'Початковий']];
+let i=0,res=[],name='';
+const app=$('#app');
+function dots(){return '<div class="dots">'+Q.map((_,k)=>'<i class="'+(k===i?'cur':res[k]===1?'ok':res[k]===0?'no':'')+'"></i>').join('')+'</div>'}
+function start(){i=0;res=[];app.innerHTML='<div class="card"><h2>Готовий(а)?</h2><p class="lead">Читай запитання уважно. Є запитання з одним варіантом, з кількома, з вибором зі списку й із числом.</p><label for="nm">Твоє ім\'я (для результату):</label><input class="name" id="nm" placeholder="Прізвище та ім\'я"><div class="row" style="margin-top:14px"><button class="btn pri" id="go">Почати тест</button></div></div>';
+  $('#go').onclick=()=>{name=$('#nm').value.trim();show()}}
+function show(){const q=Q[i];let h='<div class="card"><div class="meta"><span>Запитання '+(i+1)+' із '+Q.length+'</span><span>'+res.filter(x=>x===1).length+' б.</span></div>'+dots()+'<h2 style="margin-top:16px">'+q.q+'</h2>'+(q.pre?'<div class="blocks">'+q.pre+'</div>':'');
+  if(q.t==='single'||q.t==='multi')h+='<div class="opts">'+q.o.map((t,k)=>'<button class="opt'+(q.t==='multi'?' multi':'')+'" data-k="'+k+'"><span class="mk"></span><span>'+t+'</span></button>').join('')+'</div>';
+  if(q.t==='match')h+='<div style="margin-top:8px">'+q.rows.map((r,k)=>'<div class="mrow" data-k="'+k+'"><span>'+r[0]+'</span><select aria-label="'+r[0]+'"><option value="">Обери…</option>'+r[1].map(o=>'<option>'+o+'</option>').join('')+'</select></div>').join('')+'</div>';
+  if(q.t==='num')h+='<div class="row" style="margin-top:12px"><input class="num" type="number" id="ni" aria-label="Відповідь"> °</div>';
+  h+='<div class="row" style="margin-top:16px"><button class="btn pri" id="ck"'+(q.t==='single'?' disabled':'')+'>Перевірити</button></div><div id="fb" aria-live="polite"></div></div>';
+  app.innerHTML=h;const ck=$('#ck');let pick=new Set();
+  if(q.t==='single'||q.t==='multi')app.querySelectorAll('.opt').forEach(b=>b.onclick=()=>{const k=+b.dataset.k;
+    if(q.t==='single'){pick=new Set([k]);app.querySelectorAll('.opt').forEach(x=>x.classList.toggle('sel',x===b))}
+    else{pick.has(k)?pick.delete(k):pick.add(k);b.classList.toggle('sel')}ck.disabled=!pick.size});
+  if(q.t==='multi')ck.disabled=true;
+  ck.onclick=()=>{let ok=false;
+    if(q.t==='single')ok=pick.has(q.a);
+    if(q.t==='multi')ok=pick.size===q.a.length&&q.a.every(k=>pick.has(k));
+    if(q.t==='match'){const rs=[...app.querySelectorAll('.mrow')];if(rs.some(r=>!$('select',r).value)){$('#fb').innerHTML='<div class="fb no">Обери відповідь у кожному рядку.</div>';return}
+      ok=true;rs.forEach((r,k)=>{const g=$('select',r).value===q.rows[k][2];r.classList.add(g?'good':'bad');if(!g)ok=false;$('select',r).disabled=true})}
+    if(q.t==='num'){const v=$('#ni').value;if(v===''){$('#fb').innerHTML='<div class="fb no">Введи число.</div>';return}ok=+v===q.a;$('#ni').disabled=true}
+    if(q.t==='single'||q.t==='multi')app.querySelectorAll('.opt').forEach((b,k)=>{b.disabled=true;const right=q.t==='single'?k===q.a:q.a.includes(k);if(right)b.classList.add('good');else if(pick.has(k))b.classList.add('bad')});
+    res[i]=ok?1:0;ck.disabled=true;
+    $('#fb').innerHTML='<div class="fb '+(ok?'ok':'no')+'">'+(ok?'Вірно! +1 бал':'Не зовсім.')+'<small>'+q.e+'</small></div><div class="row" style="margin-top:12px"><button class="btn pri" id="nx">'+(i===Q.length-1?'Показати результат':'Далі')+'</button></div>';
+    $('#nx').onclick=()=>{i++;i<Q.length?show():finish()};$('#nx').focus()}}
+function finish(){const s=res.filter(x=>x===1).length,lv=LV.find(l=>s>=l[0])[1];
+  const bad=Q.map((q,k)=>[q,k]).filter(([q,k])=>res[k]!==1);
+  app.innerHTML='<div class="card"><div class="meta"><span>'+(name||'Результат')+'</span><span>12-бальна шкала</span></div><div class="score" style="margin-top:10px">'+s+' / '+Q.length+'</div><span class="lvl">Рівень: '+lv+'</span>'+
+   '<p class="lead">'+(s===12?'Бездоганно! Ти готовий(а) до практичної роботи.':s>=7?'Гарний результат. Перевір, де були помилки.':'Повтори тему за інтерактивним уроком і спробуй ще раз.')+'</p></div>'+
+   (bad.length?'<div class="card"><h2>Над чим попрацювати</h2>'+bad.map(([q,k])=>'<div class="rev"><b class="bad">'+(k+1)+'. '+q.q+'</b><br>'+q.e+'</div>').join('')+'</div>':'')+
+   '<div class="row" style="margin-top:16px"><button class="btn pri" id="again">Пройти ще раз</button></div>';
+  $('#again').onclick=start}
+start();
+})();
+</script>
+
+</body></html>

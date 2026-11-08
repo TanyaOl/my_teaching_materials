@@ -1,0 +1,569 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>Графіка в Скретч</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;700;800&family=Unbounded:wght@500;700&family=JetBrains+Mono:wght@500&display=swap">
+<style>
+/* Layout: one long scrolling lesson, sticky top bar with score; each step is a card column of max 880px.
+   Palette follows Scratch block categories: pen green, motion blue, control orange, accent violet. */
+:root{
+  --bg:#F3F5FB; --surface:#FFFFFF; --surface2:#EBEEF9; --ink:#1B2140; --muted:#566089; --line:#D8DDEE;
+  --accent:#5B3FD6; --accent-ink:#FFFFFF; --good:#0B7D5C; --goodbg:#DDF4EC; --bad:#B3261E; --badbg:#FBE4E2;
+  --pen:#0B8A67; --motion:#2F6FD6; --ctrl:#FFAB19; --stage:#FFFFFF; --grid:#E4E8F5;
+  --f-display:"Unbounded","Manrope",system-ui,sans-serif; --f-body:"Manrope",system-ui,sans-serif; --f-mono:"JetBrains Mono",ui-monospace,monospace;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#0F1224; --surface:#181C34; --surface2:#20264A; --ink:#E7EAFB; --muted:#A0A9D0; --line:#2D3560;
+  --accent:#A58BFF; --accent-ink:#14102B; --good:#5FE0B6; --goodbg:#123A30; --bad:#FF9A92; --badbg:#43181A; --stage:#141830; --grid:#232A50; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#0F1224; --surface:#181C34; --surface2:#20264A; --ink:#E7EAFB; --muted:#A0A9D0; --line:#2D3560;
+  --accent:#A58BFF; --accent-ink:#14102B; --good:#5FE0B6; --goodbg:#123A30; --bad:#FF9A92; --badbg:#43181A; --stage:#141830; --grid:#232A50; color-scheme:dark}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font:16px/1.55 var(--f-body)}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:30;background:var(--surface)}
+.wrap{max-width:880px;margin:0 auto;padding-inline:max(16px,env(safe-area-inset-left,0px)) max(16px,env(safe-area-inset-right,0px));padding-block:0 110px}
+.slidenav{position:fixed;left:0;right:0;bottom:0;z-index:20;background:var(--surface);border-top:1px solid var(--line);padding:10px max(16px,env(safe-area-inset-right,0px)) calc(10px + env(safe-area-inset-bottom,0px)) max(16px,env(safe-area-inset-left,0px))}
+.slidenav .in{display:flex;gap:10px;align-items:center;justify-content:space-between;max-width:880px;margin:0 auto}
+.slidenav .btn{min-width:110px}
+#slCount{font-family:var(--f-mono);font-size:.9rem;color:var(--muted)}
+.nav a[aria-current="true"]{background:var(--accent);color:var(--accent-ink)}
+h1,h2,h3{font-family:var(--f-display);line-height:1.2;text-wrap:balance;margin:0}
+h2{font-size:1.3rem}h3{font-size:1.02rem;font-family:var(--f-body);font-weight:800}
+p{margin:.5em 0}
+.topbar{position:sticky;top:env(safe-area-inset-top,0px);z-index:20;background:var(--surface);border-bottom:1px solid var(--line);margin-inline:calc(-1*max(16px,env(safe-area-inset-left,0px)));padding:8px max(16px,env(safe-area-inset-left,0px))}
+.topbar .row{display:flex;gap:10px;align-items:center;max-width:880px;margin:0 auto}
+.nav{display:flex;gap:6px;overflow-x:auto;flex:1;min-width:0;scrollbar-width:thin;padding-bottom:2px}
+.nav a{flex:none;font-size:.8rem;font-weight:700;color:var(--muted);text-decoration:none;padding:4px 10px;border-radius:99px;background:var(--surface2)}
+.nav a:hover,.nav a:focus-visible{color:var(--ink);outline:2px solid var(--accent)}
+.score{flex:none;font-family:var(--f-mono);font-size:.85rem;font-weight:500;background:var(--accent);color:var(--accent-ink);padding:4px 12px;border-radius:99px}
+.bar{height:3px;background:var(--line);margin-top:6px}.bar i{display:block;height:100%;width:0;background:var(--accent);transition:width .3s}
+.hero{padding:28px 0 8px;display:grid;grid-template-columns:1fr 220px;gap:20px;align-items:center}
+.hero small{font-family:var(--f-mono);color:var(--muted);font-size:.8rem}
+.hero h1{font-size:clamp(1.7rem,5vw,2.5rem);margin:6px 0 10px}
+.hero canvas{width:100%;aspect-ratio:1;border-radius:50%;background:var(--surface);border:1px solid var(--line)}
+@media(max-width:620px){.hero{grid-template-columns:1fr}.hero canvas{max-width:200px}}
+.sec{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:22px;margin-top:20px;scroll-margin-top:96px}
+.sec>header{display:flex;gap:12px;align-items:baseline;flex-wrap:wrap;margin-bottom:10px}
+.pg{font-family:var(--f-mono);font-size:.78rem;color:var(--muted);background:var(--surface2);padding:2px 8px;border-radius:6px}
+.lead{color:var(--muted)}
+.btn{font:inherit;font-weight:700;font-size:.9rem;border:1px solid var(--line);background:var(--surface2);color:var(--ink);padding:8px 14px;border-radius:10px;cursor:pointer}
+.btn:hover{border-color:var(--accent)}.btn:focus-visible,select:focus-visible,input:focus-visible,textarea:focus-visible,.hot:focus-visible,.opt:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.btn.pri{background:var(--accent);color:var(--accent-ink);border-color:var(--accent)}
+.btn[disabled]{opacity:.5;cursor:default}
+.row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.moods{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;margin:12px 0}
+.mood{font:inherit;font-size:2rem;border:2px solid var(--line);background:var(--surface2);border-radius:14px;padding:8px 0;cursor:pointer}
+.mood[aria-pressed="true"]{border-color:var(--accent);background:var(--surface);transform:translateY(-2px)}
+.mood small{display:block;font-size:.7rem;font-weight:700;color:var(--muted)}
+.say{min-height:1.6em;font-weight:700}
+.goals{display:grid;grid-template-columns:1fr 1fr;gap:18px}@media(max-width:620px){.goals{grid-template-columns:1fr}}
+.goals ul{margin:.4em 0;padding-left:1.2em}.chips{display:flex;gap:6px;flex-wrap:wrap}
+.chip{font-size:.85rem;font-weight:700;padding:4px 12px;border-radius:99px;background:var(--surface2);border:1px solid var(--line)}
+button.chip{font-family:inherit;color:var(--ink);cursor:pointer}button.chip[aria-pressed="true"]{background:var(--accent);color:var(--accent-ink);border-color:var(--accent)}
+.fb{margin-top:8px;padding:8px 12px;border-radius:10px;font-weight:700;font-size:.92rem}
+.fb.ok{background:var(--goodbg);color:var(--good)}.fb.no{background:var(--badbg);color:var(--bad)}.fb:empty{display:none}
+.tf{display:grid;gap:10px;margin-top:12px}
+.q{border:1px solid var(--line);border-radius:12px;padding:12px 14px;background:var(--bg)}
+.q p{margin:0 0 8px;font-weight:700}
+.opts{display:grid;gap:8px}
+.opt{font:inherit;text-align:left;border:1.5px solid var(--line);background:var(--surface);color:var(--ink);border-radius:10px;padding:9px 12px;cursor:pointer}
+.opt:hover{border-color:var(--accent)}.opt.good{border-color:var(--good);background:var(--goodbg)}.opt.bad{border-color:var(--bad);background:var(--badbg)}
+.opt[disabled]{cursor:default}
+.sim{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:16px;margin-top:12px}
+@media(max-width:760px){.sim{grid-template-columns:1fr}}
+.stage{position:relative;border:1px solid var(--line);border-radius:10px;background:var(--stage);overflow:hidden;
+  background-image:linear-gradient(var(--grid) 1px,transparent 1px),linear-gradient(90deg,var(--grid) 1px,transparent 1px);background-size:30px 30px;background-position:center}
+.stage canvas{display:block;width:100%;height:auto}.stage canvas+canvas{position:absolute;inset:0;pointer-events:none}
+.read{font-family:var(--f-mono);font-size:.78rem;color:var(--muted);margin-top:6px}
+.pal{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:10px}
+.pal .grp{width:100%;font-size:.75rem;font-weight:800;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;margin-top:2px}
+.pb{font:inherit;font-size:.82rem;font-weight:700;border:0;border-radius:8px;padding:6px 10px;cursor:pointer;color:#fff}
+.pb.pen,.blk.pen{background:var(--pen)}.pb.motion,.blk.motion{background:var(--motion)}
+.pb.pen[data-t="stamp"]{color:#fff}
+.blocks{display:grid;gap:3px;min-height:60px}
+.blk{display:flex;align-items:center;gap:6px;flex-wrap:wrap;color:#fff;font-weight:700;font-size:.85rem;padding:5px 8px;border-radius:7px}
+.blk.hat{background:var(--ctrl);color:#1B2140;border-radius:16px 16px 7px 7px;padding-top:9px}
+.blk.stop{background:var(--ctrl);color:#1B2140}
+.blk input,.blk select{font:inherit;font-weight:700;width:64px;padding:1px 6px;border-radius:99px;border:0;background:#fff;color:#1B2140;text-align:center}
+.blk select{width:auto}
+.blk .ctl{margin-left:auto;display:flex;gap:2px}.blk .ctl button{border:0;background:rgba(255,255,255,.22);color:#fff;border-radius:5px;cursor:pointer;font-size:.75rem;padding:1px 6px}
+.blk .ctl button:hover{background:rgba(255,255,255,.4)}
+.tabs{display:flex;gap:6px;flex-wrap:wrap;margin:12px 0 4px}
+.tab{font:inherit;font-weight:800;font-size:.85rem;border:1.5px solid var(--line);background:var(--surface);color:var(--ink);padding:6px 14px;border-radius:99px;cursor:pointer}
+.tab[aria-selected="true"]{background:var(--accent);color:var(--accent-ink);border-color:var(--accent)}
+.task{background:var(--surface2);border-radius:10px;padding:10px 14px;margin:8px 0;font-size:.92rem}
+.minis{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin:12px 0}@media(max-width:760px){.minis{grid-template-columns:1fr}}
+.mini{border:1px solid var(--line);border-radius:10px;padding:10px;background:var(--bg)}
+.mini canvas{display:block;width:100%;height:auto;background:var(--stage);border-radius:6px;margin-top:8px}
+.mini b{font-family:var(--f-mono);font-size:.8rem}
+.fig{display:grid;grid-template-columns:auto minmax(0,1fr);gap:18px;align-items:center}@media(max-width:620px){.fig{grid-template-columns:1fr}}
+.fig canvas{background:var(--stage);border:1px solid var(--line);border-radius:10px;width:min(100%,240px);height:auto}
+.big{font-family:var(--f-display);font-size:1.5rem}
+input[type=range]{width:100%;accent-color:var(--accent)}
+.num{font:inherit;font-weight:700;width:80px;padding:6px 10px;border-radius:8px;border:1.5px solid var(--line);background:var(--surface);color:var(--ink)}
+.angs{display:grid;gap:8px;margin-top:10px}.angs .r{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.eye{position:relative;height:220px;border-radius:12px;background:#0E1230;overflow:hidden;margin-top:10px;color:#fff}
+.eye .dot{position:absolute;width:26px;height:26px;border-radius:50%;background:#FFAB19;box-shadow:0 0 22px #FFAB19;translate:-50% -50%;left:50%;top:50%}
+.eye .msg{position:absolute;left:0;right:0;bottom:12px;text-align:center;font-weight:800;padding:0 12px}
+.ed{border:1px solid var(--line);border-radius:12px;background:var(--bg);padding:10px;margin-top:12px;max-width:720px}
+.ed-top,.ed-bot{display:flex;flex-wrap:wrap;gap:8px;align-items:center;padding:6px 4px}
+.ed-body{display:grid;grid-template-columns:96px minmax(0,1fr);gap:8px}
+.ed-tools{display:grid;grid-template-columns:1fr 1fr;gap:4px;padding:6px;background:var(--surface);border-radius:8px;position:relative}
+.ed-canvas{min-height:150px;border-radius:8px;background:var(--stage);border:1px dashed var(--line);display:grid;place-items:center;color:var(--muted);font-size:.8rem}
+.hot{position:relative;font:inherit;font-weight:700;font-size:.82rem;border:1.5px solid var(--line);background:var(--surface);color:var(--ink);border-radius:8px;padding:6px 10px;cursor:pointer;min-width:34px}
+.hot[data-n]::after{content:attr(data-n);position:absolute;top:-9px;right:-7px;background:var(--accent);color:var(--accent-ink);font-family:var(--f-mono);font-size:.62rem;min-width:18px;height:18px;border-radius:9px;display:grid;place-items:center;padding:0 3px}
+.hot.pick{border-color:var(--accent);background:var(--surface2)}.hot.good{border-color:var(--good);background:var(--goodbg)}.hot.bad{border-color:var(--bad);background:var(--badbg)}
+.hot.sw{width:32px;padding:0;height:30px}
+.tool{font-size:1rem;padding:5px 0}
+.desc{margin-top:8px;padding:8px 12px;border-radius:10px;background:var(--surface2);font-weight:700;min-height:2.6em}
+.game{margin-top:12px;padding:12px 14px;border:1px solid var(--accent);border-radius:12px}
+.tq{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:8px;align-items:center;padding:6px 0;border-bottom:1px solid var(--line)}
+.tq select{font:inherit;font-weight:700;padding:6px 8px;border-radius:8px;border:1.5px solid var(--line);background:var(--surface);color:var(--ink)}
+.tq.good select{border-color:var(--good);background:var(--goodbg)}.tq.bad select{border-color:var(--bad);background:var(--badbg)}
+.steps{margin:6px 0;padding:0;list-style:none;display:grid;gap:4px}
+.steps label{display:flex;gap:8px;align-items:flex-start;cursor:pointer}.steps input{margin-top:.35em;accent-color:var(--accent);width:18px;height:18px}
+.steps input:checked+span{color:var(--muted);text-decoration:line-through}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:16px}@media(max-width:700px){.two{grid-template-columns:1fr}}
+.card{border:1px solid var(--line);border-radius:12px;padding:14px;background:var(--bg)}
+.timer{font-family:var(--f-display);font-size:2rem}
+.flip{width:100%;text-align:left;font:inherit;border:1.5px solid var(--line);background:var(--bg);color:var(--ink);border-radius:12px;padding:12px 14px;cursor:pointer;margin-top:8px}
+.flip .a{display:none;margin-top:8px;color:var(--good);font-weight:700}.flip[aria-expanded="true"] .a{display:block}
+.tl{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:8px}
+.tl button{font:inherit;font-weight:800;border:2px solid var(--line);background:var(--surface);color:var(--ink);border-radius:12px;padding:12px 6px;cursor:pointer}
+.tl button[aria-pressed="true"]{border-color:var(--accent);background:var(--surface2)}
+textarea{font:inherit;width:100%;min-height:54px;border-radius:10px;border:1.5px solid var(--line);background:var(--surface);color:var(--ink);padding:8px 10px;resize:vertical}
+.vis-hide{position:absolute;left:-9999px}
+a.link{color:var(--accent);font-weight:800}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+
+<div class="wrap">
+<div class="topbar"><div class="row">
+  <nav class="nav" aria-label="Кроки уроку">
+    <a href="#s0">Настрій</a><a href="#s1">Цілі</a><a href="#s2">Графіка</a><a href="#s3">Олівець</a><a href="#s4">Кути</a><a href="#s5">Вправа 4</a><a href="#s6">Очі</a><a href="#s7">Редактор</a><a href="#s8">Практика</a><a href="#s9">Підсумок</a><a href="#s10">Рефлексія</a>
+  </nav>
+  <div class="score" id="score" aria-live="polite">★ 0/0</div>
+</div><div class="bar"><i id="bar"></i></div></div>
+
+<section class="hero">
+  <div>
+    <small>Інформатика · 5 клас · НУШ · § 23, с. 121–125</small>
+    <h1>Графіка в середовищі Скретч</h1>
+    <p class="lead">Сьогодні спрайт стане художником: навчимо його малювати командами й намалюємо власні образи в графічному редакторі.</p>
+  </div>
+  <div><canvas id="art" width="440" height="440" aria-label="Малюнок, створений алгоритмом"></canvas>
+  <p class="read" id="artcap" style="text-align:center"></p>
+  <div class="row" style="justify-content:center"><button class="btn" id="artBtn">Інший кут повороту</button></div></div>
+</section>
+
+<section class="sec" id="s0">
+  <header><h2>Який у тебе сьогодні настрій?</h2></header>
+  <p class="lead">Обери кота, який найкраще показує твій настрій.</p>
+  <div class="moods" id="moodIn"></div>
+  <div class="say" id="moodInSay" aria-live="polite"></div>
+</section>
+
+<section class="sec" id="s1">
+  <header><h2>Що ми сьогодні дізнаємось</h2><span class="pg">с. 121</span></header>
+  <div class="goals">
+    <div><h3>Сьогодні ви:</h3><ul>
+      <li>дізнаєтеся про графічні можливості середовища Скретч;</li>
+      <li>розглянете графічний редактор Скретч;</li>
+      <li>навчитеся створювати графічні зображення в Скретч.</li></ul></div>
+    <div><h3>Словничок</h3><div class="chips" style="margin-top:8px">
+      <span class="chip">Комп'ютерна графіка</span><span class="chip">Графічний редактор</span><span class="chip">Інструменти</span><span class="chip">Налаштування інструментів</span></div></div>
+  </div>
+</section>
+
+<section class="sec" id="s2">
+  <header><h2>1. Комп'ютерна графіка</h2><span class="pg">с. 121</span></header>
+  <p>Найбільше інформації ми отримуємо завдяки зору. Для роботи із зображеннями є графічні редактори, а ще зображення можна створювати програмою, яку написано в середовищі програмування.</p>
+  <p><b>Поміркуй.</b> Малюнок угорі створила не людина пензлем. Його намалювала програма: вона 900 разів повторює одну дію (поставити точку і повернути напрям) за заданим алгоритмом. Натисни «Інший кут повороту» і подивись, як зміниться малюнок.</p>
+  <p>Є окремий розділ комп'ютерної графіки, <b>фрактальна графіка</b>: зображення створюються за математичними формулами. Її ще називають математичним мистецтвом. Комп'ютерну графіку використовують у кінематографі, рекламі, поліграфії, а з розвитком мереж і в інтернеті.</p>
+  <h3 style="margin-top:14px">Правда чи ні?</h3>
+  <div class="tf" id="tf"></div>
+</section>
+
+<section class="sec" id="s3">
+  <header><h2>2. Команди групи «Олівець»</h2><span class="pg">с. 122</span></header>
+  <p>Команди групи «Олівець» налаштовують олівець (колір, товщину, розмір) і керують ним: <b>опустити</b> та <b>підняти</b>. Якщо олівець опущено, спрайт під час руху лишає слід. Команда <b>очистити все</b> видаляє зі сцени малюнок олівця (тло й об'єкти лишаються). Команда <b>штамп</b> залишає на сцені відбиток спрайта.</p>
+  <div class="q" id="predQ">
+    <p>Скрипт 1 нижче: опустити олівець → надати олівцю колір червоний → перемістити на 100 кроків → підняти олівець. Що буде результатом?</p>
+    <div class="opts" id="predOpts"></div><div class="fb" id="predFb"></div>
+  </div>
+  <h3 style="margin-top:16px">Майстерня робота-художника</h3>
+  <p class="lead">Збирай скрипт із блоків, запускай і дивись, що намалює спрайт. Малюнок лишається на сцені, доки не виконано «очистити все» або не натиснуто «Очистити сцену».</p>
+  <div class="sim">
+    <div>
+      <div class="stage"><canvas id="penC" width="480" height="360"></canvas><canvas id="spC" width="480" height="360"></canvas></div>
+      <div class="read" id="readout">x: 0 · y: 0 · напрям: 90°</div>
+      <div class="row" style="margin-top:8px">
+        <button class="btn pri" id="runBtn">▶ Запустити</button>
+        <button class="btn" id="clrBtn">Очистити сцену</button>
+      </div>
+    </div>
+    <div>
+      <div class="pal" id="palette"></div>
+      <div class="blocks" id="scriptList"></div>
+      <div class="row" style="margin-top:8px">
+        <button class="btn" data-preset="sc1">Скрипт 1</button><button class="btn" data-preset="sc5">Скрипт 5 (трикутник)</button><button class="btn" data-preset="empty">Порожній скрипт</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="sec" id="s4">
+  <header><h2>3. Чому кут повороту дорівнює 120°?</h2><span class="pg">с. 122</span></header>
+  <p>Щоб намалювати правильний багатокутник, спрайт після кожної сторони повертає на однаковий кут. Цей кут дорівнює <b>360 / n</b>, де n — кількість кутів. Для рівностороннього трикутника: 360 / 3 = 120°.</p>
+  <div class="fig">
+    <canvas id="polyC" width="240" height="240" aria-label="Правильний багатокутник"></canvas>
+    <div>
+      <label for="polyN"><b>Кількість кутів n:</b> <span id="polyNv" class="big">3</span></label>
+      <input type="range" id="polyN" min="3" max="12" value="3">
+      <p class="big" id="polyF">360 / 3 = 120°</p>
+    </div>
+  </div>
+  <h3 style="margin-top:14px">Порахуй кут повороту</h3>
+  <div class="angs" id="angs"></div>
+  <h3 style="margin-top:18px">Практичне завдання 5: намалюй фігуру скриптом</h3>
+  <p class="lead">Поверни до майстерні (розділ 2). Обери завдання, збери скрипт і натисни «Перевірити».</p>
+  <div class="tabs" role="tablist" id="modeTabs"></div>
+  <div class="task" id="taskTxt">Вільний режим: експериментуй із блоками.</div>
+  <div class="row"><button class="btn pri" id="chkBtn" disabled>Перевірити</button><button class="btn" id="hintBtn" disabled>Підказка</button><a class="btn" href="#s3" style="text-decoration:none">↑ До майстерні</a></div>
+  <div class="fb" id="taskFb" aria-live="polite"></div>
+</section>
+
+<section class="sec" id="s5">
+  <header><h2>4. Тренувальна вправа</h2><span class="pg">с. 125</span></header>
+  <p>Розгляньте три скрипти. Для кожного нижче показано, що намалює спрайт (кіт стартує ліворуч). Поясніть, чим відрізняються результати.</p>
+  <div class="minis" id="minis"></div>
+  <div class="q"><p>Чим відрізняються результати скриптів 1–3?</p><div class="opts" id="trOpts"></div><div class="fb" id="trFb"></div></div>
+</section>
+
+<section class="sec" id="s6">
+  <header><h2>Гімнастика для очей</h2></header>
+  <p>Сядь рівно, голову не повертай. Стеж очима за помаранчевою точкою. Це займе близько хвилини.</p>
+  <button class="btn pri" id="eyeBtn">Почати гімнастику</button>
+  <div class="eye" id="eyeBox" aria-live="polite"><div class="dot" id="eyeDot"></div><div class="msg" id="eyeMsg">Натисни «Почати гімнастику»</div></div>
+</section>
+
+<section class="sec" id="s7">
+  <header><h2>5. Графічний редактор Скретч</h2><span class="pg">с. 123</span></header>
+  <p>Графічний редактор відкривається на вкладці <b>Образи</b> (для сцени — вкладка <b>Тло</b>). Натискай на частини схеми й читай, для чого вони призначені. Цифри збігаються з підручником.</p>
+  <div class="ed" id="ed">
+    <div class="ed-top">
+      <button class="hot" data-n="1" data-d="Поле для введення імені об'єкта">Образ1</button>
+      <button class="hot" data-n="2" data-d="Скасування останньої дії">↶</button>
+      <button class="hot" data-n="3" data-d="Повернення скасованої дії">↷</button>
+      <button class="hot" data-n="4" data-d="Групування об'єктів (виділи їх із клавішею Ctrl)">Групувати</button>
+      <button class="hot" data-n="5" data-d="Розгрупування об'єктів">Розгрупувати</button>
+      <button class="hot" data-n="6" data-d="Переміщення об'єкта на передній або задній план">⇅</button>
+      <button class="hot sw" data-n="7" data-d="Палітра кольорів для заливки об'єктів" aria-label="Заливка"><span style="display:block;margin:5px;height:18px;border-radius:4px;background:#FFAB19"></span></button>
+      <button class="hot sw" data-n="8" data-d="Колір і товщина контуру" aria-label="Контур"><span style="display:block;margin:5px;height:18px;border-radius:4px;border:3px solid #0B8A67"></span></button>
+      <button class="hot" data-n="9" data-d="Кнопка «Копія»: скопіювати виділений об'єкт">Копія</button>
+      <button class="hot" data-n="10" data-d="Кнопка «Вставити»: вставити скопійований об'єкт">Вставити</button>
+      <button class="hot" data-n="11" data-d="Видалення виділеного об'єкта">🗑</button>
+      <button class="hot" data-n="12" data-d="Віддзеркалення об'єкта за горизонталлю або вертикаллю">⇋</button>
+    </div>
+    <div class="ed-body">
+      <div class="ed-tools"><button class="hot pick" data-n="13" data-d="Панель інструментів (9 інструментів, дивись нижче)" style="grid-column:1/3;font-size:.72rem">Інструменти</button>
+        <button class="hot tool" data-tool="Обрати">↖</button><button class="hot tool" data-tool="Реформувати">⤳</button>
+        <button class="hot tool" data-tool="Пензель">🖌</button><button class="hot tool" data-tool="Гумка">◫</button>
+        <button class="hot tool" data-tool="Заповнення">◐</button><button class="hot tool" data-tool="Текст">T</button>
+        <button class="hot tool" data-tool="Лінія">╱</button><button class="hot tool" data-tool="Коло">○</button>
+        <button class="hot tool" data-tool="Прямокутник">▭</button></div>
+      <div class="ed-canvas">Полотно для малювання</div>
+    </div>
+    <div class="ed-bot">
+      <button class="hot" data-n="14" data-d="Конвертація в растрову або векторну графіку">У растрові</button>
+      <button class="hot" data-n="15" data-d="Змінення масштабу">− = +</button>
+    </div>
+  </div>
+  <div class="desc" id="edDesc" aria-live="polite">Натисни на будь-яку частину схеми.</div>
+  <div class="game" id="game">
+    <h3>Гра «Знайди кнопку»</h3>
+    <p id="gamePrompt">Натисни «Старт», і я назву шість частин редактора по черзі.</p>
+    <div class="row"><button class="btn pri" id="gameBtn">Старт</button><span class="read" id="gameScore"></span></div>
+  </div>
+  <h3 style="margin-top:18px">Який інструмент потрібен?</h3>
+  <p class="lead">Інструменти: Обрати, Реформувати, Пензель, Гумка, Заповнення, Текст, Лінія, Коло, Прямокутник. Для кола й квадрата натискають клавішу Shift.</p>
+  <div id="toolQs"></div>
+  <p><b>Копіювання:</b> виділи об'єкт → «Копія» → «Вставити». <b>Нове тло:</b> натисни «Сцена» в полі об'єктів → вкладка «Тло».</p>
+</section>
+
+<section class="sec" id="s8">
+  <header><h2>6. Практична робота в Скретч</h2><span class="pg">с. 124</span></header>
+  <p><b>Завдання:</b> відпрацювати навички роботи з інструментами графічного редактора.</p>
+  <div class="row card" style="margin:10px 0;justify-content:space-between">
+    <div><div class="timer" id="tmr">25:00</div><div class="read">Час практичної частини</div></div>
+    <div class="row"><button class="btn pri" id="tmrGo">Старт</button><button class="btn" id="tmrRst">Спочатку</button>
+    <a class="btn link" href="https://scratch.mit.edu/projects/editor/" target="_blank" rel="noopener" style="text-decoration:none">Відкрити Скретч ↗</a></div>
+  </div>
+  <div class="two">
+    <div class="card"><h3>Вправа 1. Кілька копій спрайта</h3><ul class="steps" id="ex1"></ul></div>
+    <div class="card"><h3>Вправа 2. Колаж із геометричних фігур</h3><ul class="steps" id="ex2"></ul></div>
+  </div>
+  <div class="card" style="margin-top:14px"><h3>Висновок</h3><p>Запиши одним реченням: як створюють малюнки в графічному редакторі середовища Скретч?</p><textarea id="concl" placeholder="Малюнки в графічному редакторі створюють так: …"></textarea></div>
+  <p class="lead" style="margin-top:10px">Зберегти проєкт: <b>Файл → Зберегти на свій комп'ютер</b>.</p>
+</section>
+
+<section class="sec" id="s9">
+  <header><h2>7. Коротко про головне</h2><span class="pg">с. 124</span></header>
+  <p>Малюнки в середовищі Скретч можна створювати <b>програмним шляхом</b> за допомогою команд групи «Олівець». Водночас Скретч має вбудований <b>графічний редактор</b>, у якому створюють власні образи спрайтів і тла для сцени.</p>
+  <h3 style="margin-top:14px">Запитання для самоконтролю (натисни, щоб побачити відповідь)</h3>
+  <div id="flips"></div>
+  <h3 style="margin-top:18px">Інтелектуальна хвилинка</h3>
+  <div class="q" id="puz">
+    <p>У шкільній виставці беруть участь 26 картин. З них 12 картин виконано аквареллю, 17 є портретами, 13 написано в стилі кубізм. Відомо, що аквареллю виконано 4 портрети і 5 картин у стилі кубізм, окрім того, 9 портретів написано в стилі кубізм. Скільки портретів виконано аквареллю в стилі кубізм?</p>
+    <p class="read">Вважаємо, що кожна картина належить хоча б до одного з трьох видів, а числа 4, 5 і 9 враховують усі картини з відповідною парою ознак. Підказка: намалюй три кола Ейлера.</p>
+    <div class="row"><input class="num" type="number" id="puzIn" aria-label="Відповідь"><button class="btn pri" id="puzBtn">Перевірити</button></div>
+    <div class="fb" id="puzFb"></div>
+  </div>
+</section>
+
+<section class="sec" id="s10">
+  <header><h2>Домашнє завдання і рефлексія</h2></header>
+  <div class="card"><h3>Домашнє завдання</h3>
+    <ul>
+      <li><b>Практичне:</b> якщо не встигли, створи скрипти для малювання квадрата, правильного п'ятикутника й шестикутника.</li>
+      <li><b>Творче:</b> намалюй у графічному редакторі новий спрайт і нове тло. Скопіюй образ (контекстне меню → «дублювати») і відредагуй кожну копію.</li>
+      <li><b>Дослідницьке:</b> дізнайся, чи є художній музей у місці, де ти живеш, і які виставки там працюють.</li>
+    </ul>
+    <p class="lead">Збережи проєкт на комп'ютері й надішли файл учителю так, як домовились у класі.</p></div>
+  <h3 style="margin-top:18px">Світлофор: як я засвоїв(ла) тему?</h3>
+  <div class="tl" id="tl"><button data-v="g">🟢 Усе зрозуміло, можу пояснити</button><button data-v="y">🟡 Потрібна ще практика</button><button data-v="r">🔴 Потрібна допомога</button></div>
+  <div class="say" id="tlSay" aria-live="polite" style="margin-top:6px"></div>
+  <h3 style="margin-top:18px">Що вдалося сьогодні?</h3>
+  <div class="chips" id="chipsR"></div>
+  <h3 style="margin-top:18px">Закінчи речення</h3>
+  <label for="r1">Сьогодні я дізнався(лася)…</label><textarea id="r1"></textarea>
+  <label for="r2" style="display:block;margin-top:8px">Найскладнішим було…</label><textarea id="r2"></textarea>
+  <label for="r3" style="display:block;margin-top:8px">Наступного разу я хочу спробувати…</label><textarea id="r3"></textarea>
+  <h3 style="margin-top:18px">Який настрій тепер?</h3>
+  <div class="moods" id="moodOut"></div><div class="say" id="moodOutSay" aria-live="polite"></div>
+</section>
+</div>
+<div class="slidenav"><div class="in"><button class="btn" id="prevSl">◀ Назад</button><span id="slCount" aria-live="polite"></span><button class="btn pri" id="nextSl">Далі ▶</button></div></div>
+
+<script>
+(function(){
+const $=(s,r=document)=>r.querySelector(s), $$=(s,r=document)=>[...r.querySelectorAll(s)];
+const reduce=matchMedia('(prefers-reduced-motion: reduce)').matches;
+const cssv=n=>getComputedStyle(document.documentElement).getPropertyValue(n).trim();
+
+/* ---------- score ---------- */
+const Score={all:new Set(),done:new Set(),
+  reg(id){this.all.add(id);this.upd()},
+  ok(id){if(!this.done.has(id)){this.done.add(id);this.upd()}},
+  upd(){$('#score').textContent='★ '+this.done.size+'/'+this.all.size;$('#bar').style.width=(this.all.size?100*this.done.size/this.all.size:0)+'%'}};
+
+/* ---------- mood ---------- */
+const MOODS=[['😸','Радісний','Чудово! Енергію радості спрямуємо на малювання.'],['😺','Спокійний','Спокій допоможе бути уважним до кожної команди.'],['😼','Цікавий','З цікавості починається програмування.'],['😿','Втомлений','Зробимо гімнастику для очей і розбудимо мозок.'],['🙀','Схвильований','Нічого страшного: працюємо крок за кроком.']];
+function moods(box,say){MOODS.forEach(m=>{const b=document.createElement('button');b.className='mood';b.setAttribute('aria-pressed','false');b.innerHTML=m[0]+'<small>'+m[1]+'</small>';
+  b.onclick=()=>{$$('.mood',box).forEach(x=>x.setAttribute('aria-pressed','false'));b.setAttribute('aria-pressed','true');$(say).textContent=m[2]};box.appendChild(b)})}
+moods($('#moodIn'),'#moodInSay');moods($('#moodOut'),'#moodOutSay');
+
+/* ---------- decorative algorithmic art ---------- */
+let artAngle=137.508;
+function art(){const c=$('#art'),x=c.getContext('2d');x.clearRect(0,0,c.width,c.height);x.fillStyle=cssv('--surface');x.fillRect(0,0,c.width,c.height);
+  for(let i=0;i<900;i++){const a=i*artAngle*Math.PI/180,r=7.2*Math.sqrt(i);x.beginPath();x.fillStyle='hsl('+((i*0.4)%360)+' 85% 55%)';x.arc(220+r*Math.cos(a),220+r*Math.sin(a),2+i/260,0,7);x.fill()}
+  $('#artcap').textContent='кут повороту: '+artAngle.toFixed(1)+'° · точок: 900'}
+$('#artBtn').onclick=()=>{artAngle=[137.508,99.5,222.5,151.1,180.8,90.2,137.3][Math.floor(Math.random()*7)];art()};
+
+/* ---------- generic MC helper ---------- */
+function mc(boxSel,fbSel,id,opts,right,okMsg,noMsg){Score.reg(id);const box=$(boxSel),fb=$(fbSel);
+  opts.forEach((t,i)=>{const b=document.createElement('button');b.className='opt';b.textContent=t;
+    b.onclick=()=>{if(i===right){b.classList.add('good');fb.className='fb ok';fb.textContent=okMsg;Score.ok(id);$$('.opt',box).forEach(o=>o.disabled=true)}
+      else{b.classList.add('bad');b.disabled=true;fb.className='fb no';fb.textContent=noMsg}};box.appendChild(b)})}
+
+/* ---------- true / false ---------- */
+[['Фрактальна графіка створюється за математичними формулами.',true,'Так, це «математичне мистецтво».'],
+ ['Комп\'ютерну графіку використовують лише в комп\'ютерних іграх.',false,'Ні: ще в кінематографі, рекламі, поліграфії та інтернеті.'],
+ ['Малюнки в Скретч можна створювати програмно, командами групи «Олівець».',true,'Так, і це ми зараз потренуємо.'],
+ ['Графічний редактор Скретч відкривається на вкладці «Код».',false,'Ні, на вкладці «Образи» (для сцени — «Тло»).'],
+ ['Команда «Очистити все» видаляє зі сцени малюнок олівця.',true,'Так, а об\'єкти й тло залишаються.']].forEach((q,i)=>{
+  const id='tf'+i;Score.reg(id);const d=document.createElement('div');d.className='q';
+  d.innerHTML='<p>'+q[0]+'</p><div class="row"><button class="opt" data-a="1">Так</button><button class="opt" data-a="0">Ні</button></div><div class="fb"></div>';
+  $$('.opt',d).forEach(b=>b.onclick=()=>{const ok=(b.dataset.a==='1')===q[1],fb=$('.fb',d);fb.className='fb '+(ok?'ok':'no');fb.textContent=(ok?'Вірно! ':'Спробуй ще. ')+(ok?q[2]:'');if(ok){Score.ok(id);$$('.opt',d).forEach(o=>o.disabled=true);b.classList.add('good')}else b.classList.add('bad')});
+  $('#tf').appendChild(d)});
+
+/* ================= TURTLE ENGINE ================= */
+const W=480,H=360;
+const COLORS={'червоний':{h:0,s:100,l:50},'помаранчевий':{h:8,s:100,l:50},'жовтий':{h:16,s:100,l:48},'зелений':{h:33,s:100,l:38},'синій':{h:66,s:100,l:50},'фіолетовий':{h:75,s:100,l:50},'чорний':{h:0,s:0,l:12}};
+const css=c=>'hsl('+(c.h*3.6)+' '+c.s+'% '+c.l+'%)';
+const BD={clear:{cat:'pen',label:'очистити все'},down:{cat:'pen',label:'опустити олівець'},up:{cat:'pen',label:'підняти олівець'},
+ setcolor:{cat:'pen',label:'надати олівцю колір',sel:1,def:'червоний'},chcolor:{cat:'pen',label:'змінити колір олівця на',num:1,def:10},
+ size:{cat:'pen',label:'змінити розмір олівця на',num:1,def:1},stamp:{cat:'pen',label:'штамп'},
+ move:{cat:'motion',label:'перемістити на',num:1,unit:'кроків',def:100},turn:{cat:'motion',label:'поворот ↻ на',num:1,unit:'градусів',def:90}};
+const B=(t,v)=>({t,v:v===undefined?BD[t].def:v});
+function compile(script,start){
+  const s={x:(start&&start.x)||0,y:(start&&start.y)||0,dir:90,down:false,col:{h:66,s:100,l:50},size:1},steps=[];
+  for(const b of script){const v=+b.v||0;
+    switch(b.t){
+      case 'clear':steps.push({k:'clear'});break;
+      case 'down':s.down=true;break;case 'up':s.down=false;break;
+      case 'setcolor':s.col={...(COLORS[b.v]||COLORS['синій'])};break;
+      case 'chcolor':s.col={...s.col,h:(((s.col.h+v)%100)+100)%100};break;
+      case 'size':s.size=Math.max(1,Math.min(40,s.size+v));break;
+      case 'stamp':steps.push({k:'stamp',x:s.x,y:s.y});break;
+      case 'move':{const r=s.dir*Math.PI/180,nx=s.x+v*Math.sin(r),ny=s.y+v*Math.cos(r);
+        steps.push({k:'move',x0:s.x,y0:s.y,x1:nx,y1:ny,dir:s.dir,down:s.down,col:css(s.col),size:s.size,len:Math.abs(v)});s.x=nx;s.y=ny;break}
+      case 'turn':steps.push({k:'turn',d0:s.dir,d1:s.dir+v,x:s.x,y:s.y});s.dir+=v;break}}
+  return steps}
+const px=(x,W_)=>W_/2+x, py=(y,H_)=>H_/2-y;
+function line(ctx,st,a,b,Wd,Hd){ctx.strokeStyle=st.col;ctx.lineWidth=st.size;ctx.lineCap='round';ctx.beginPath();ctx.moveTo(px(a[0],Wd),py(a[1],Hd));ctx.lineTo(px(b[0],Wd),py(b[1],Hd));ctx.stroke()}
+function drawStatic(canvas,script,start){const ctx=canvas.getContext('2d'),w=canvas.width,h=canvas.height;ctx.clearRect(0,0,w,h);
+  const segs=[];compile(script,start).forEach(st=>{if(st.k==='move'&&st.down&&st.len>0){line(ctx,st,[st.x0,st.y0],[st.x1,st.y1],w,h);segs.push(st)}});return segs}
+
+/* ---------- block rendering ---------- */
+function blockHTML(b,editable){const d=BD[b.t];let h='<span>'+d.label+'</span>';
+  if(d.sel){h+=editable?'<select data-f="v">'+Object.keys(COLORS).map(n=>'<option'+(n===b.v?' selected':'')+'>'+n+'</option>').join('')+'</select>':'<span class="chip" style="color:#1B2140;background:#fff;padding:0 8px">'+b.v+'</span>'}
+  if(d.num){h+=editable?'<input type="number" data-f="v" value="'+b.v+'" aria-label="'+d.label+'">':'<span class="chip" style="color:#1B2140;background:#fff;padding:0 8px">'+b.v+'</span>'}
+  if(d.unit)h+='<span>'+d.unit+'</span>';
+  if(editable)h+='<span class="ctl"><button data-a="dup" title="Дублювати" aria-label="Дублювати">⧉</button><button data-a="up" title="Вгору" aria-label="Вгору">↑</button><button data-a="dn" title="Вниз" aria-label="Вниз">↓</button><button data-a="del" title="Видалити" aria-label="Видалити">✕</button></span>';
+  return '<div class="blk '+d.cat+'" data-i="">'+h+'</div>'}
+const hatHTML='<div class="blk hat">коли 🏁 натиснуто</div>';
+
+/* ---------- simulator ---------- */
+const pen=$('#penC').getContext('2d'),spr=$('#spC').getContext('2d');
+const sim={script:[],sp:{x:0,y:0,dir:90},busy:false,segs:[],ran:false,mode:'free'};
+const PRESETS={
+  sc1:()=>[B('down'),B('setcolor','червоний'),B('move',100),B('up')],
+  sc5:()=>[B('clear'),B('down'),B('setcolor','червоний'),B('size',5),B('move',150),B('turn',120),B('move',150),B('turn',120),B('move',150),B('turn',120),B('up')],
+  empty:()=>[]};
+function drawSprite(){spr.clearRect(0,0,W,H);const s=sim.sp,X=px(s.x,W),Y=py(s.y,H),r=s.dir*Math.PI/180;
+  spr.font='30px serif';spr.textAlign='center';spr.textBaseline='middle';spr.fillText('🐱',X,Y);
+  const ax=X+26*Math.sin(r),ay=Y-26*Math.cos(r);spr.strokeStyle='#C77A00';spr.lineWidth=3;spr.beginPath();spr.moveTo(X+14*Math.sin(r),Y-14*Math.cos(r));spr.lineTo(ax,ay);spr.stroke();
+  spr.fillStyle='#C77A00';spr.beginPath();spr.arc(ax,ay,4,0,7);spr.fill();
+  $('#readout').textContent='x: '+Math.round(s.x)+' · y: '+Math.round(s.y)+' · напрям: '+(((Math.round(s.dir)%360)+360)%360)+'°'}
+function anim(ms,fn){return new Promise(res=>{if(reduce)ms=1;const t0=performance.now();(function f(t){const p=Math.min(1,(t-t0)/ms);fn(p);p<1?requestAnimationFrame(f):res()})(t0)})}
+async function run(){if(sim.busy)return;sim.busy=true;$('#runBtn').disabled=true;sim.segs=[];sim.sp={x:0,y:0,dir:90};drawSprite();
+  const steps=compile(sim.script);
+  for(const st of steps){
+    if(st.k==='clear'){pen.clearRect(0,0,W,H)}
+    else if(st.k==='stamp'){pen.font='34px serif';pen.textAlign='center';pen.textBaseline='middle';pen.fillText('🐱',px(st.x,W),py(st.y,H))}
+    else if(st.k==='turn'){await anim(160,p=>{sim.sp.dir=st.d0+(st.d1-st.d0)*p;drawSprite()});sim.sp.dir=st.d1}
+    else if(st.k==='move'){let prev=[st.x0,st.y0];await anim(Math.max(90,st.len*3.2),p=>{const cur=[st.x0+(st.x1-st.x0)*p,st.y0+(st.y1-st.y0)*p];
+        if(st.down&&st.len>0)line(pen,st,prev,cur,W,H);prev=cur;sim.sp.x=cur[0];sim.sp.y=cur[1];drawSprite()});
+      if(st.down&&st.len>0)sim.segs.push(st)}
+  }
+  drawSprite();sim.busy=false;sim.ran=true;$('#runBtn').disabled=false;
+  ['chkBtn','hintBtn'].forEach(i=>$('#'+i).disabled=sim.mode==='free')}
+function renderScript(){const L=$('#scriptList');L.innerHTML=hatHTML;
+  sim.script.forEach((b,i)=>{L.insertAdjacentHTML('beforeend',blockHTML(b,true));L.lastElementChild.dataset.i=i});
+  if(!sim.script.length)L.insertAdjacentHTML('beforeend','<p class="read">Додай блоки з палітри зверху.</p>')}
+(function pal(){const P=$('#palette');P.innerHTML='<div class="grp">Олівець</div>';
+  ['clear','down','up','setcolor','chcolor','size','stamp'].forEach(t=>P.insertAdjacentHTML('beforeend','<button class="pb pen" data-t="'+t+'">'+BD[t].label+'</button>'));
+  P.insertAdjacentHTML('beforeend','<div class="grp">Рух</div>');['move','turn'].forEach(t=>P.insertAdjacentHTML('beforeend','<button class="pb motion" data-t="'+t+'">'+BD[t].label+'</button>'));
+  P.onclick=e=>{const b=e.target.closest('.pb');if(!b)return;sim.script.push(B(b.dataset.t));renderScript()}})();
+$('#scriptList').addEventListener('click',e=>{const a=e.target.closest('[data-a]');if(!a)return;const i=+a.closest('.blk').dataset.i,S=sim.script;
+  if(a.dataset.a==='del')S.splice(i,1);else if(a.dataset.a==='dup')S.splice(i+1,0,{...S[i]});
+  else if(a.dataset.a==='up'&&i>0)[S[i-1],S[i]]=[S[i],S[i-1]];else if(a.dataset.a==='dn'&&i<S.length-1)[S[i+1],S[i]]=[S[i],S[i+1]];
+  renderScript()});
+$('#scriptList').addEventListener('input',e=>{const f=e.target.dataset.f;if(!f)return;const i=+e.target.closest('.blk').dataset.i;sim.script[i].v=e.target.tagName==='SELECT'?e.target.value:e.target.value})
+$('#runBtn').onclick=run;
+$('#clrBtn').onclick=()=>{if(sim.busy)return;pen.clearRect(0,0,W,H);sim.sp={x:0,y:0,dir:90};drawSprite()};
+$$('[data-preset]').forEach(b=>b.onclick=()=>{sim.script=PRESETS[b.dataset.preset]();renderScript()});
+
+/* predict */
+mc('#predOpts','#predFb','pred',['Червона лінія довжиною 100 кроків, яка залишиться на сцені','Нічого не з\'явиться, бо наприкінці олівець піднято','Спрайт перемістився, але лінії немає','Червоне коло'],0,'Так! Олівець опущено, тому слід залишається. Піднятий олівець лише припиняє малювання далі. Запусти скрипт у майстерні й перевір.','Подумай: що робить опущений олівець під час руху?');
+
+/* modes / challenges */
+const MODES={free:{n:0,t:'Вільний режим: експериментуй із блоками.'},sq:{n:4,name:'Квадрат',t:'Створи скрипт для малювання квадрата.'},pent:{n:5,name:'П\'ятикутник',t:'Створи скрипт для малювання правильного п\'ятикутника.'},hex:{n:6,name:'Шестикутник',t:'Створи скрипт для малювання правильного шестикутника.'}};
+Score.reg('ch-sq');Score.reg('ch-pent');Score.reg('ch-hex');
+const TT=$('#modeTabs');Object.entries({free:'Вільний режим',sq:'Квадрат',pent:'П\'ятикутник',hex:'Шестикутник'}).forEach(([k,v])=>{const b=document.createElement('button');b.className='tab';b.role='tab';b.textContent=v;b.dataset.m=k;b.setAttribute('aria-selected',k==='free');
+  b.onclick=()=>{if(sim.busy)return;sim.mode=k;sim.ran=false;sim.segs=[];$$('.tab',TT).forEach(x=>x.setAttribute('aria-selected',x===b));$('#taskTxt').textContent=MODES[k].t+(k==='free'?'':' Скористайся дублюванням блоків ⧉. Сторона — до 120 кроків.');
+    $('#taskFb').className='fb';$('#taskFb').textContent='';['chkBtn','hintBtn'].forEach(i=>$('#'+i).disabled=true);
+    if(k!=='free'){sim.script=[B('clear'),B('down')];renderScript();pen.clearRect(0,0,W,H);sim.sp={x:0,y:0,dir:90};drawSprite();go(3)}};TT.appendChild(b)});
+$('#hintBtn').onclick=()=>{const n=MODES[sim.mode].n;if(!n)return;const f=$('#taskFb');f.className='fb ok';f.textContent='Підказка: повтори n = '+n+' разів пару «перемістити на …» і «поворот ↻ на 360 / '+n+' градусів». Не забудь опустити олівець.'};
+$('#chkBtn').onclick=()=>{const m=MODES[sim.mode],n=m.n,f=$('#taskFb');if(!n)return;const S=sim.segs;
+  const bad=t=>{f.className='fb no';f.textContent=t};
+  if(!sim.ran)return bad('Спочатку запусти скрипт кнопкою «▶ Запустити».');
+  if(!S.length)return bad('Малюнка немає. Перевір, чи опущено олівець перед рухом.');
+  if(S.length!==n)return bad('Потрібно сторін: '+n+', а намальовано: '+S.length+'.');
+  if(S.some(s=>Math.abs(s.len-S[0].len)>0.5))return bad('Сторони мають бути однакової довжини.');
+  const want=360/n;for(let i=1;i<n;i++){const d=(((S[i].dir-S[i-1].dir)%360)+360)%360;if(Math.abs(d-want)>0.5&&Math.abs(d-want-360)>0.5)return bad('Кут повороту між сторонами має дорівнювати 360 / '+n+' = '+want+'°, а в тебе '+Math.round(d)+'°.')}
+  const e=S[n-1];if(Math.hypot(e.x1-S[0].x0,e.y1-S[0].y0)>1)return bad('Фігура не замкнулась. Перевір кількість сторін і поворотів.');
+  f.className='fb ok';f.textContent='Відмінно! '+m.name+' намальовано правильно. Кут повороту — '+want+'°.';Score.ok('ch-'+sim.mode)};
+
+/* polygon explorer + angle inputs */
+function drawPoly(n){const R=100,side=2*R*Math.sin(Math.PI/n),sc=[B('down'),B('setcolor','фіолетовий'),B('size',2)];for(let i=0;i<n;i++){sc.push(B('move',side));sc.push(B('turn',360/n))}
+  drawStatic($('#polyC'),sc,{x:-side/2,y:R*Math.cos(Math.PI/n)});const a=360/n;$('#polyNv').textContent=n;$('#polyF').textContent='360 / '+n+' = '+(Math.round(a*100)/100)+'°'}
+$('#polyN').oninput=e=>drawPoly(+e.target.value);
+[[4,90,'квадрата'],[5,72,'правильного п\'ятикутника'],[6,60,'правильного шестикутника']].forEach(([n,a,nm])=>{const id='ang'+n;Score.reg(id);
+  const r=document.createElement('div');r.className='r';r.innerHTML='<label for="'+id+'">Кут повороту для '+nm+':</label><input class="num" type="number" id="'+id+'"> °<button class="btn">Перевірити</button><span class="fb" style="margin:0"></span>';
+  $('button',r).onclick=()=>{const v=+$('#'+id).value,fb=$('.fb',r);if(v===a){fb.className='fb ok';fb.textContent='Вірно! 360 / '+n+' = '+a+'°';Score.ok(id)}else{fb.className='fb no';fb.textContent='Спробуй: 360 / '+n}};$('#angs').appendChild(r)});
+
+/* training exercise 4 */
+const TR=[[B('down'),B('setcolor','жовтий'),B('size',5),B('move',70),B('up')],[B('down'),B('chcolor',50),B('size',5),B('move',70),B('up')],[B('down'),B('chcolor',50),B('size',5),B('move',50),B('up')]];
+TR.forEach((sc,i)=>{const d=document.createElement('div');d.className='mini';d.innerHTML='<b>Скрипт '+(i+1)+'</b><div class="blocks" style="margin-top:6px">'+hatHTML+sc.map(b=>blockHTML(b,false)).join('')+'</div><canvas width="240" height="60"></canvas>';$('#minis').appendChild(d);drawStatic($('canvas',d),sc,{x:-100,y:0})});
+mc('#trOpts','#trFb','tr',['Усі три скрипти малюють однакові лінії','У скрипті 1 колір задано конкретно (жовтий), а в скриптах 2 і 3 колір змінюється на 50 від поточного. Скрипти 1 і 2 малюють лінію в 70 кроків, скрипт 3 — у 50','Скрипт 3 не малює лінії, бо в ньому немає блока «надати олівцю колір»','Скрипти 2 і 3 відрізняються кольором, а довжина ліній у них однакова'],1,'Правильно! «Надати колір» задає колір, а «змінити колір на» зсуває поточний. Довжину лінії задає число в блоці «перемістити».','Порівняй блоки по черзі: колір, розмір, кількість кроків.');
+
+/* ---------- eye gymnastics ---------- */
+const EY=[['Стеж за точкою: ліворуч — праворуч',7000,p=>[.5+.4*Math.sin(p*6.283*2),.5]],['Вгору — вниз',7000,p=>[.5,.5+.35*Math.sin(p*6.283*2)]],['По колу за годинниковою стрілкою',7000,p=>[.5+.3*Math.sin(p*6.283*1.5),.5-.35*Math.cos(p*6.283*1.5)]],['По колу проти годинникової стрілки',7000,p=>[.5-.3*Math.sin(p*6.283*1.5),.5-.35*Math.cos(p*6.283*1.5)]],['Малюй очима вісімку',9000,p=>[.5+.38*Math.sin(p*6.283*2),.5+.3*Math.sin(p*6.283*4)/1.2]],['Швидко поморгай 10 разів',5000,p=>[.5,.5]],['Подивись удалину, у вікно',5000,p=>[.5,.5]]];
+let eyeBusy=false;$('#eyeBtn').onclick=async()=>{if(eyeBusy)return;eyeBusy=true;$('#eyeBtn').disabled=true;const dot=$('#eyeDot'),box=$('#eyeBox');
+  for(let k=0;k<EY.length;k++){const [t,ms,fn]=EY[k];$('#eyeMsg').textContent=t;dot.style.opacity=1;dot.style.width=dot.style.height='26px';
+    await anim(reduce?1500:ms,p=>{const [x,y]=fn(p);dot.style.left=(x*100)+'%';dot.style.top=(y*100)+'%';
+      if(k===5)dot.style.opacity=(Math.floor(p*20)%2)?0.1:1;if(k===6){dot.style.width=dot.style.height='8px'}})}
+  $('#eyeMsg').textContent='Готово! Очі відпочили.';dot.style.left=dot.style.top='50%';dot.style.opacity=1;dot.style.width=dot.style.height='26px';eyeBusy=false;$('#eyeBtn').disabled=false;$('#eyeBtn').textContent='Ще раз'};
+
+/* ---------- graphic editor ---------- */
+const edDesc=$('#edDesc');let game=null;
+const GP=[[9,'Копія'],[10,'Вставити'],[4,'Групувати'],[11,'Видалення виділеного об\'єкта'],[7,'Палітра кольорів для заливки'],[15,'Змінення масштабу'],[1,'Поле для введення імені об\'єкта'],[12,'Віддзеркалення об\'єкта'],[5,'Розгрупувати'],[2,'Скасування останньої дії']];
+for(let i=0;i<6;i++)Score.reg('gm'+i);
+function gameNext(){const g=game;if(g.i>=6){$('#gamePrompt').textContent='Гру завершено! Правильно з першої спроби: '+g.right+' із 6.';$('#gameBtn').textContent='Ще раз';$('#gameBtn').disabled=false;game=null;return}
+  $('#gamePrompt').innerHTML='Де на схемі <b>'+g.q[g.i][1]+'</b>? Натисни на неї.';$('#gameScore').textContent='Питання '+(g.i+1)+' із 6'}
+$('#gameBtn').onclick=()=>{const q=[...GP].sort(()=>Math.random()-.5).slice(0,6);game={q,i:0,right:0,miss:false};$('#gameBtn').disabled=true;$$('.hot').forEach(h=>h.classList.remove('good','bad'));gameNext()};
+$('#ed').addEventListener('click',e=>{const t=e.target.closest('.tool');
+  if(t){$$('.tool').forEach(x=>x.classList.remove('pick'));t.classList.add('pick');edDesc.textContent='Інструмент «'+t.dataset.tool+'»';return}
+  const h=e.target.closest('.hot[data-n]');if(!h)return;
+  if(game){const need=game.q[game.i][0],ok=+h.dataset.n===need;
+    if(ok){h.classList.add('good');if(!game.miss){game.right++;Score.ok('gm'+game.i)}game.i++;game.miss=false;setTimeout(()=>{h.classList.remove('good');if(game)gameNext();else{}},500);edDesc.textContent=h.dataset.n+'. '+h.dataset.d}
+    else{h.classList.add('bad');game.miss=true;setTimeout(()=>h.classList.remove('bad'),500)}return}
+  $$('.hot[data-n]').forEach(x=>x.classList.remove('pick'));h.classList.add('pick');edDesc.textContent=h.dataset.n+'. '+h.dataset.d});
+const TOOLS=['Обрати','Реформувати','Пензель','Гумка','Заповнення','Текст','Лінія','Коло','Прямокутник'];
+[['Потрібно видалити частину накреслених ліній','Гумка'],['Потрібно залити фігуру кольором','Заповнення'],['Потрібно підписати малюнок','Текст'],['Потрібно намалювати коло','Коло']].forEach(([q,a],i)=>{const id='tool'+i;Score.reg(id);
+  const d=document.createElement('div');d.className='tq';d.innerHTML='<span>'+q+'</span><select id="'+id+'" aria-label="'+q+'"><option value="">Обери…</option>'+TOOLS.map(t=>'<option>'+t+'</option>').join('')+'</select>';
+  $('select',d).onchange=e=>{const ok=e.target.value===a;d.classList.remove('good','bad');d.classList.add(ok?'good':'bad');if(ok)Score.ok(id)};$('#toolQs').appendChild(d)});
+
+/* ---------- practice ---------- */
+const E1=['Додай готовий спрайт із бібліотеки та перейди на вкладку «Образи».','Скопіюй спрайт кнопками «Копія» та «Вставити».','Перетягни скопійований спрайт у потрібне місце.'];
+const E2=['У полі спрайтів обери «Обрати спрайт → Малювати».','Інструментами «Пензель» і «Лінія» намалюй кілька ліній різної товщини й кольору.','Інструментами «Коло» і «Прямокутник» намалюй кілька геометричних фігур різного кольору (для кола й квадрата тримай Shift).','Інструментом «Гумка» видали частину накреслених ліній.','Інструментом «Заповнення» залий фігури різними кольорами.','Інструментом «Текст» підпиши малюнок.','Зроби висновок і запиши його нижче.'];
+[['#ex1',E1],['#ex2',E2]].forEach(([s,L])=>L.forEach(t=>{$(s).insertAdjacentHTML('beforeend','<li><label><input type="checkbox"><span>'+t+'</span></label></li>')}));
+let tsec=25*60,tint=null;const showT=()=>{$('#tmr').textContent=String(Math.floor(tsec/60)).padStart(2,'0')+':'+String(tsec%60).padStart(2,'0')};
+$('#tmrGo').onclick=()=>{if(tint){clearInterval(tint);tint=null;$('#tmrGo').textContent='Далі';return}$('#tmrGo').textContent='Пауза';tint=setInterval(()=>{if(tsec>0){tsec--;showT()}else{clearInterval(tint);tint=null;$('#tmrGo').textContent='Час вийшов'}},1000)};
+$('#tmrRst').onclick=()=>{clearInterval(tint);tint=null;tsec=25*60;showT();$('#tmrGo').textContent='Старт'};
+
+/* ---------- summary ---------- */
+[['Для чого призначені команди групи «Олівець»? Команди «Очистити все» і «Штамп»?','Команди «Олівець» налаштовують олівець (колір, товщина, розмір) і керують ним (опустити, підняти). «Очистити все» видаляє зі сцени малюнок олівця, тло й об\'єкти не чіпає. «Штамп» залишає відбиток спрайта.'],
+ ['Як відкрити графічний редактор середовища Скретч?','Перейти на вкладку «Образи» (для сцени — «Тло»).'],
+ ['Як створити власний образ спрайта чи тло сцени?','Намалювати інструментами графічного редактора на вкладці «Образи». Для нового тла натиснути «Сцена» в полі об\'єктів і перейти на вкладку «Тло».']].forEach(([q,a])=>{
+  const b=document.createElement('button');b.className='flip';b.setAttribute('aria-expanded','false');b.innerHTML='<b>'+q+'</b><div class="a">'+a+'</div>';b.onclick=()=>b.setAttribute('aria-expanded',b.getAttribute('aria-expanded')==='true'?'false':'true');$('#flips').appendChild(b)});
+Score.reg('puz');$('#puzBtn').onclick=()=>{const v=+$('#puzIn').value,f=$('#puzFb');
+  if(v===2){f.className='fb ok';f.textContent='Вірно! 12 + 17 + 13 − 4 − 5 − 9 + x = 26, звідси x = 2.';Score.ok('puz')}else{f.className='fb no';f.textContent='Спробуй ще. Додай усі картини за видами, відніми парні перетини й порівняй із 26.'}};
+
+/* ---------- reflection ---------- */
+$$('#tl button').forEach(b=>b.onclick=()=>{$$('#tl button').forEach(x=>x.setAttribute('aria-pressed','false'));b.setAttribute('aria-pressed','true');
+  $('#tlSay').textContent={g:'Чудово! Допоможи сусідові, якому ще складно.',y:'Нормально: ще кілька вправ, і вийде.',r:'Добре, що ти це помітив(ла). Скажи вчителю, з чого почати.'}[b.dataset.v]});
+['Команди «Олівець»','Кут повороту 360 / n','Графічний редактор','Копіювання образів','Інструменти малювання','Створення скриптів'].forEach(t=>{const b=document.createElement('button');b.className='chip';b.setAttribute('aria-pressed','false');b.textContent=t;b.onclick=()=>b.setAttribute('aria-pressed',b.getAttribute('aria-pressed')==='true'?'false':'true');$('#chipsR').appendChild(b)});
+
+/* ---------- init ---------- */
+art();sim.script=PRESETS.sc1();renderScript();drawSprite();drawPoly(3);
+/* ---------- slides: one step per screen ---------- */
+const IDS=['s0','s1','s2','s3','s4','s5','s6','s7','s8','s9','s10'];
+const SL=IDS.map(id=>id==='s0'?[$('.hero'),$('#s0')]:[$('#'+id)]);let cur=-1;
+function go(i){i=Math.max(0,Math.min(SL.length-1,i));SL.forEach((g,k)=>g.forEach(el=>el.hidden=k!==i));cur=i;
+  $('#slCount').textContent=(i+1)+' / '+SL.length;$('#prevSl').disabled=i===0;$('#nextSl').disabled=i===SL.length-1;$('#nextSl').textContent=i===SL.length-1?'Кінець':'Далі ▶';
+  let act=null;$$('.nav a').forEach(a=>{const on=a.getAttribute('href')==='#'+IDS[i];a.setAttribute('aria-current',on);if(on)act=a});
+  try{if(location.hash.slice(1)!==IDS[i])location.hash=IDS[i]}catch(e){}
+  window.scrollTo(0,0);if(act)act.scrollIntoView({block:'nearest',inline:'center'});window.scrollTo(0,0)}
+$('#prevSl').onclick=()=>go(cur-1);$('#nextSl').onclick=()=>go(cur+1);
+$$('.nav a,a[href^="#s"]').forEach(a=>a.addEventListener('click',e=>{const i=IDS.indexOf(a.getAttribute('href').slice(1));if(i>=0){e.preventDefault();go(i)}}));
+addEventListener('hashchange',()=>{const i=IDS.indexOf(location.hash.slice(1));if(i>=0&&i!==cur)go(i)});
+addEventListener('keydown',e=>{if(/INPUT|TEXTAREA|SELECT/.test(e.target.tagName))return;if(e.key==='ArrowRight')go(cur+1);if(e.key==='ArrowLeft')go(cur-1)});
+go(Math.max(0,IDS.indexOf(location.hash.slice(1))));
+matchMedia('(prefers-color-scheme: dark)').addEventListener&&matchMedia('(prefers-color-scheme: dark)').addEventListener('change',()=>{art();});
+})();
+</script>
+
+</body></html>

@@ -1,0 +1,153 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>Конспект: Графіка в Скретч</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;700;800&family=Unbounded:wght@500;700&display=swap">
+<style>
+/* Layout: a printable teacher's document on a single column; tables carry the lesson flow. Print rules force light colors, A4, avoid splitting rows. */
+:root{--bg:#F3F5FB;--paper:#fff;--ink:#1B2140;--muted:#566089;--line:#D8DDEE;--head:#EBEEF9;--accent:#5B3FD6;--accent-ink:#fff;--good:#0B7D5C;
+--f-display:"Unbounded","Manrope","DejaVu Sans",sans-serif;--f-body:"Manrope","DejaVu Sans","Liberation Sans",system-ui,sans-serif}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0F1224;--paper:#181C34;--ink:#E7EAFB;--muted:#A0A9D0;--line:#2D3560;--head:#20264A;--accent:#A58BFF;--accent-ink:#14102B;--good:#5FE0B6;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#0F1224;--paper:#181C34;--ink:#E7EAFB;--muted:#A0A9D0;--line:#2D3560;--head:#20264A;--accent:#A58BFF;--accent-ink:#14102B;--good:#5FE0B6;color-scheme:dark}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font:15px/1.55 var(--f-body)}
+.page{max-width:900px;margin:0 auto;background:var(--paper);padding:36px max(20px,env(safe-area-inset-right,0px)) 48px max(20px,env(safe-area-inset-left,0px))}
+@media(min-width:960px){.page{margin-block:20px;border:1px solid var(--line);border-radius:12px;padding-inline:44px}}
+h1,h2,h3{font-family:var(--f-display);line-height:1.25;text-wrap:balance;margin:0}
+h1{font-size:1.5rem}h2{font-size:1.05rem;margin-top:28px;padding-bottom:6px;border-bottom:2px solid var(--accent)}h3{font:800 .95rem var(--f-body);margin-top:16px}
+.sub{color:var(--muted);margin:8px 0 14px}
+.fields{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin:14px 0}@media(max-width:640px){.fields{grid-template-columns:1fr}}
+.fields div{border-bottom:1px solid var(--ink);padding:14px 0 2px;font-size:.78rem;color:var(--muted)}
+.note{background:var(--head);border-radius:8px;padding:10px 14px;font-size:.88rem;margin:14px 0}
+.tw{overflow-x:auto;margin-top:10px}
+table{border-collapse:collapse;width:100%;font-size:.88rem}
+th,td{border:1px solid var(--line);padding:6px 9px;text-align:left;vertical-align:top}
+th{background:var(--head);font-weight:800}
+td.t,td.s{white-space:nowrap;font-weight:700}
+.kv th{width:22%}
+ul,ol{margin:6px 0;padding-left:1.3em}li{margin:2px 0}
+a{color:var(--accent);font-weight:700}
+.tot td{font-weight:800;background:var(--head)}
+.foot{margin-top:30px;color:var(--muted);font-size:.8rem;border-top:1px solid var(--line);padding-top:8px}
+@page{size:A4;margin:14mm 13mm}
+@media print{
+  html:root:root:root{--bg:#fff;--paper:#fff;--ink:#111827;--muted:#4B5563;--line:#9CA3AF;--head:#E5E7EB;--accent:#3B28A8;--good:#065F46;color-scheme:light}
+  body{font-size:10pt;background:#fff}.page{margin:0;border:0;border-radius:0;padding:0;max-width:none}
+  .noprint{display:none!important}
+  h2{break-after:avoid;margin-top:18px}h3{break-after:avoid}
+  table{font-size:9pt}tr,.note{break-inside:avoid}thead{display:table-header-group}
+  a{color:#111827;text-decoration:none}a[href^="http"]::after{content:" (" attr(href) ")";font-weight:400;font-size:8pt;color:#4B5563;word-break:break-all}
+  *{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+}
+</style>
+<div class="page">
+  <h1>Графіка в середовищі Скретч</h1>
+  <p class="sub">Конспект здвоєного уроку інформатики · 5 клас (НУШ) · § 23 підручника, с. 121–125 · 2 × 45 хвилин</p>
+  <div class="fields"><div>Школа</div><div>Вчитель</div><div>Дата</div></div>
+  <div class="note noprint">Щоб зберегти конспект у PDF: відкрийте цю сторінку в окремій вкладці браузера, натисніть Ctrl+P (на Mac — Cmd+P) і виберіть «Зберегти як PDF». Готовий PDF-файл також надіслано окремо.</div>
+
+  <h2>Паспорт уроку</h2>
+  <div class="tw"><table class="kv">
+    <tr><th>Тема</th><td>§ 23. Графіка в середовищі Скретч</td></tr>
+    <tr><th>Попередні теми</th><td>Створюємо моделі. Дії над об'єктами в середовищі Скретч. Проєктуємо діяльність робота-художника. Типи алгоритмів. Лінійні алгоритми</td></tr>
+    <tr><th>Мета</th><td>Учні дізнаються про графічні можливості Скретч, розглядають графічний редактор і вчаться створювати зображення командами групи «Олівець» та інструментами редактора</td></tr>
+    <tr><th>Очікувані результати</th><td>Учень/учениця пояснює, що таке комп'ютерна й фрактальна графіка; використовує команди «Олівець», «Очистити все», «Штамп»; обчислює кут повороту для правильного багатокутника (360 / n); відкриває графічний редактор і користується його інструментами; копіює об'єкти й створює колаж</td></tr>
+    <tr><th>Ключові слова</th><td>комп'ютерна графіка, графічний редактор, інструменти, налаштування інструментів, фрактальна графіка, олівець, образ, тло</td></tr>
+    <tr><th>Обладнання</th><td>комп'ютери зі Скретч, проєктор, інтерактивний урок (слайди), інтерактивний тест, практична робота</td></tr>
+    <tr><th>Компетентності НУШ</th><td>інформаційно-цифрова, математична (кути, багатокутники), творчість, співпраця, уміння вчитися</td></tr>
+    <tr><th>Безпека</th><td>коротке нагадування правил роботи за комп'ютером перед практичною частиною; повний інструктаж з БЖД проводиться за планом курсу</td></tr>
+    <tr><th>Матеріали</th><td><a href="https://claude.ai/artifact/6gGA3CGrWsAKLouyKifbuQ">Інтерактивний урок</a> · <a href="https://claude.ai/artifact/9kVYvBCSZE54GLe4uc1QDa">Інтерактивний тест</a> · <a href="https://claude.ai/artifact/JiqRN3jf2zaJ7HxHEhsHov">Практична робота</a></td></tr>
+  </table></div>
+
+  <h2>Урок 1 (45 хв): комп'ютерна графіка й команди «Олівець»</h2>
+  <div class="tw"><table>
+    <thead><tr><th>Час</th><th>Етап</th><th>Діяльність учителя</th><th>Діяльність учнів</th><th>Слайд</th></tr></thead>
+    <tr><td class="t">4 хв</td><td>Організація. Гра «Який у тебе сьогодні настрій»</td><td>Показує п'ять котів-настроїв, коментує вибір учнів</td><td>Обирають кота, 2–3 учні пояснюють</td><td class="s">1</td></tr>
+    <tr><td class="t">4 хв</td><td>Актуалізація</td><td>Бліц: що таке спрайт, скрипт, блок? Який блок рухає спрайт? Що таке лінійний алгоритм?</td><td>Відповідають усно, пригадують попередні уроки</td><td class="s">1</td></tr>
+    <tr><td class="t">3 хв</td><td>Цілі й словничок</td><td>Читає цілі зі слайда, учні називають слова, які вже знають</td><td>Формулюють очікування</td><td class="s">2</td></tr>
+    <tr><td class="t">7 хв</td><td>Комп'ютерна графіка</td><td>Показує малюнок, створений алгоритмом, кнопка «Інший кут повороту». Питання: людина чи комп'ютер створили цей малюнок? Пояснює фрактальну графіку, де застосовують комп'ютерну графіку</td><td>Висловлюють гіпотези, виконують «Правда чи ні» (5 тверджень)</td><td class="s">3</td></tr>
+    <tr><td class="t">12 хв</td><td>Команди «Олівець»</td><td>Пояснює опустити/підняти олівець, колір, розмір, «Очистити все», «Штамп». Питання про скрипт 1. Організовує роботу в майстерні: скрипти 1 і 5 (трикутник)</td><td>У парах збирають і запускають скрипти, помічають, що малюнок лишається, доки не виконано «Очистити все»</td><td class="s">4</td></tr>
+    <tr><td class="t">8 хв</td><td>Кут повороту 360 / n</td><td>Питання: чому для трикутника 120°? Повзунок з багатокутниками. Завдання 5: квадрат, п'ятикутник, шестикутник у майстерні</td><td>Обчислюють кути, будують скрипти, перевіряють автоматично</td><td class="s">5</td></tr>
+    <tr><td class="t">4 хв</td><td>Тренувальна вправа 4</td><td>Три скрипти на слайді. Акцент на різниці між «надати колір» і «змінити колір на»</td><td>Обирають відповідь, обґрунтовують</td><td class="s">6</td></tr>
+    <tr><td class="t">3 хв</td><td>Гімнастика для очей</td><td>Запускає вправу зі слайда</td><td>Стежать очима за точкою</td><td class="s">7</td></tr>
+    <tr class="tot"><td class="t">45 хв</td><td colspan="4">Разом, урок 1</td></tr>
+  </table></div>
+
+  <h2>Урок 2 (45 хв): графічний редактор і практична робота</h2>
+  <div class="tw"><table>
+    <thead><tr><th>Час</th><th>Етап</th><th>Діяльність учителя</th><th>Діяльність учнів</th><th>Слайд</th></tr></thead>
+    <tr><td class="t">3 хв</td><td>Організація, гра «Який настрій»</td><td>Вітає, цікавиться настроєм після перерви</td><td>Обирають кота</td><td class="s">1</td></tr>
+    <tr><td class="t">5 хв</td><td>Актуалізація</td><td>Що робить «Очистити все»? Чому для шестикутника 60°? Різниця між «надати колір» і «змінити колір»?</td><td>Усні відповіді</td><td class="s">4–6</td></tr>
+    <tr><td class="t">8 хв</td><td>Графічний редактор</td><td>Схема редактора з 15 частин. Гра «Знайди кнопку». Вкладки «Образи» й «Тло», копіювання, групування, нове тло сцени</td><td>Вивчають схему, грають, обирають інструмент під завдання</td><td class="s">8</td></tr>
+    <tr><td class="t">2 хв</td><td>Нагадування правил безпеки</td><td>Правила роботи за комп'ютером, розподіл вправ</td><td>Слухають, готують Скретч</td><td class="s">9</td></tr>
+    <tr><td class="t">25 хв</td><td><b>Практична робота</b></td><td>Ходить класом, ставить навідні запитання, допомагає. За 5 хв до кінця оголошує взаємоперевірку</td><td>Вправа 1, вправа 2, завдання 5, творче завдання за бажанням; взаємоперевірка в парі</td><td class="s">Практична робота</td></tr>
+    <tr><td class="t">5 хв</td><td>Тест</td><td>Запускає інтерактивний тест (12 запитань)</td><td>Проходять тест самостійно</td><td class="s">Тест</td></tr>
+    <tr><td class="t">3 хв</td><td>Підсумок</td><td>Повертається до цілей, зачитує «Коротко про головне», запитання для самоконтролю</td><td>Відповідають усно</td><td class="s">10</td></tr>
+    <tr><td class="t">4 хв</td><td>Рефлексія</td><td>«Світлофор», фрази для завершення, настрій на виході</td><td>Обирають, коротко записують</td><td class="s">11</td></tr>
+    <tr class="tot"><td class="t">45 хв</td><td colspan="4">Разом, урок 2</td></tr>
+  </table></div>
+
+  <h2>Практична частина (25 хв)</h2>
+  <div class="tw"><table>
+    <thead><tr><th>Завдання</th><th>Зміст</th><th>Очікуваний результат</th></tr></thead>
+    <tr><td><b>Вправа 1</b></td><td>Додати спрайт із бібліотеки, на вкладці «Образи» скопіювати кнопками «Копія» та «Вставити», перетягнути копії</td><td>Кілька однакових спрайтів на сцені</td></tr>
+    <tr><td><b>Вправа 2</b></td><td>«Малювати» → пензель і лінія → коло й прямокутник (Shift) → гумка → заповнення → текст</td><td>Колаж із підписом, письмовий висновок</td></tr>
+    <tr><td><b>Завдання 5</b></td><td>Скрипти для квадрата, п'ятикутника й шестикутника без блока повторення</td><td>Правильні фігури; кути 90°, 72°, 60°</td></tr>
+    <tr><td><b>Творче</b></td><td>Новий спрайт і нове тло, дублювання й редагування образів</td><td>Власний проєкт, збережений на комп'ютері</td></tr>
+  </table></div>
+  <div class="tw"><table>
+    <thead><tr><th>Фігура</th><th>n</th><th>Кут повороту 360 / n</th></tr></thead>
+    <tr><td>Рівносторонній трикутник</td><td>3</td><td>120°</td></tr>
+    <tr><td>Квадрат</td><td>4</td><td>90°</td></tr>
+    <tr><td>Правильний п'ятикутник</td><td>5</td><td>72°</td></tr>
+    <tr><td>Правильний шестикутник</td><td>6</td><td>60°</td></tr>
+  </table></div>
+
+  <h2>Типові помилки учнів</h2>
+  <ul>
+    <li>Не підключено розширення «Олівець», тому блоків малювання немає.</li>
+    <li>Забули «опустити олівець»: спрайт рухається, а лінії немає.</li>
+    <li>Для трикутника беруть 60° замість 120°. Робот повертає на зовнішній кут, а внутрішній кут дорівнює 180° мінус кут повороту.</li>
+    <li>Забули «очистити все»: на сцені лишаються малюнки з минулих запусків.</li>
+    <li>Плутають «надати олівцю колір» (задає колір) і «змінити колір олівця на» (зсуває поточний).</li>
+    <li>У графічному редакторі малюють коло й квадрат без Shift, і вони виходять неправильними.</li>
+  </ul>
+
+  <h2>Оцінювання</h2>
+  <p>Формувальне: бали в інтерактивному уроці та спостереження вчителя під час практики. Підсумкове: інтерактивний тест (12 запитань, 12 балів) і практична робота.</p>
+  <div class="tw"><table>
+    <thead><tr><th>Рівень</th><th>Тест</th><th>Практична робота</th></tr></thead>
+    <tr><td><b>Високий</b></td><td>10–12 балів</td><td>Вправи 1–2 і завдання 5 виконано без помилок, є творча частина</td></tr>
+    <tr><td><b>Достатній</b></td><td>7–9 балів</td><td>Вправи 1–2 виконано; завдання 5 — для однієї-двох фігур або з підказкою</td></tr>
+    <tr><td><b>Середній</b></td><td>4–6 балів</td><td>Виконано лише вправу 1 або 2, потрібна допомога</td></tr>
+    <tr><td><b>Початковий</b></td><td>0–3 бали</td><td>Робота виконана частково під керівництвом учителя</td></tr>
+  </table></div>
+
+  <h2>Домашнє завдання</h2>
+  <ul>
+    <li><b>Практичне:</b> скрипти для квадрата, правильного п'ятикутника й шестикутника (якщо не встигли).</li>
+    <li><b>Творче:</b> намалювати в графічному редакторі новий спрайт і нове тло, скопіювати образ («дублювати») і відредагувати кожну копію.</li>
+    <li><b>Дослідницьке:</b> дізнатися, чи є художній музей у місці проживання і які виставки в ньому працюють.</li>
+    <li><b>Інтелектуальна хвилинка (за бажанням):</b> задача про 26 картин на виставці, відповідь 2.</li>
+  </ul>
+
+  <h2>Додатки</h2>
+  <h3>Гра «Який у тебе сьогодні настрій»</h3>
+  <table><thead><tr><th>Кіт</th><th>Настрій</th><th>Репліка вчителя</th></tr></thead>
+    <tr><td>😸</td><td>Радісний</td><td>Чудово! Енергію радості спрямуємо на малювання</td></tr>
+    <tr><td>😺</td><td>Спокійний</td><td>Спокій допоможе бути уважним до кожної команди</td></tr>
+    <tr><td>😼</td><td>Цікавий</td><td>З цікавості починається програмування</td></tr>
+    <tr><td>😿</td><td>Втомлений</td><td>Зробимо гімнастику для очей і розбудимо мозок</td></tr>
+    <tr><td>🙀</td><td>Схвильований</td><td>Нічого страшного: працюємо крок за кроком</td></tr></table>
+  <h3>Гімнастика для очей (близько хвилини)</h3>
+  <ol><li>Стежити очима за точкою: ліворуч — праворуч.</li><li>Вгору — вниз.</li><li>По колу за годинниковою стрілкою, потім проти.</li><li>«Намалювати» очима вісімку.</li><li>Швидко поморгати 10 разів.</li><li>Подивитися вдалину, у вікно.</li></ol>
+  <h3>Рефлексія</h3>
+  <ul><li><b>Світлофор:</b> зелений — усе зрозуміло, можу пояснити; жовтий — потрібна ще практика; червоний — потрібна допомога.</li>
+    <li><b>Фрази:</b> «Сьогодні я дізнався(лася)…», «Найскладнішим було…», «Наступного разу я хочу спробувати…».</li>
+    <li><b>Настрій на виході:</b> учні знову обирають кота й порівнюють із початком уроку.</li></ul>
+
+  <h2>Зв'язок з наступними темами</h2>
+  <p>Урок готує перехід до орнаментів і команд повторення. Квадрат і шестикутник у завданні 5 учні будують без блока повторення, тому відчувають незручність однакових блоків, і наступні уроки дають їм розв'язок. Наступні теми: «Створюємо орнамент. Закономірності навколо нас», «Створюємо орнамент. Побудова орнаментів у Скретч», «Складаємо алгоритми. Складання алгоритмів із командами повторення», «Поєднання команд повторення», «Добір кращої стратегії для створення алгоритму».</p>
+  <div class="foot">Джерело: підручник інформатики для 5 класу, § 23 «Графіка в середовищі Скретч», с. 121–125.</div>
+</div>
+
+</body></html>
