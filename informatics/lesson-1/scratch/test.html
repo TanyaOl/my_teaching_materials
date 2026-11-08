@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="uk"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Тест: Робот-художник (Скретч, 5 клас)</title>
+<style>
+:root{--bg:#fffaf3;--fg:#2b2b3a;--card:#fff;--bd:#e6dccb;--mut:#6b6b7a;--or:#ff8c1a;--gr:#2fa84f;--ok:#d9f5df;--no:#fde0e0;--ac:#fff1dc;
+box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#1c1c26;--fg:#f1f1f6;--card:#272735;--bd:#3d3d50;--mut:#a9a9bb;--ok:#1f4a2b;--no:#552a2a;--ac:#3a2f1f}}
+:root[data-theme="dark"]{--bg:#1c1c26;--fg:#f1f1f6;--card:#272735;--bd:#3d3d50;--mut:#a9a9bb;--ok:#1f4a2b;--no:#552a2a;--ac:#3a2f1f}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;background:var(--bg);color:var(--fg);font:17px/1.5 system-ui,"Segoe UI",Roboto,sans-serif}
+main{max-width:860px;margin:0 auto;padding:16px 16px 110px}
+.s[hidden]{display:none}
+h1{font-size:30px;margin:.2em 0}h2{font-size:24px;margin:.2em 0 .5em;color:var(--or)}h3{margin:.8em 0 .3em}
+.card{background:var(--card);border:1px solid var(--bd);border-radius:14px;padding:14px 16px;margin:12px 0}
+.tag{display:inline-block;background:var(--ac);border:1px solid var(--bd);border-radius:20px;padding:1px 10px;font-size:14px;color:var(--mut)}
+button,select,input{font:inherit;color:var(--fg)}
+button{background:var(--card);border:1.5px solid var(--bd);border-radius:10px;padding:8px 14px;margin:3px;cursor:pointer}
+button:hover{border-color:var(--or)}button.ok{background:var(--ok);border-color:var(--gr)}button.no{background:var(--no);border-color:#e05555}
+button.pri,.run,.lnk{background:var(--or);border-color:var(--or);color:#fff;font-weight:600}
+.lnk{display:inline-block;padding:10px 18px;border-radius:10px;text-decoration:none;margin:6px 0}
+select,input{background:var(--card);border:1.5px solid var(--bd);border-radius:8px;padding:7px}input[type=number]{width:80px}
+.big{display:flex;flex-wrap:wrap;justify-content:center;gap:10px}.big button{font-size:84px;line-height:1.1;padding:14px 22px;border-radius:20px}@media(max-width:640px){.big button{font-size:60px;padding:10px 14px}}
+.fb{min-height:1.4em;font-weight:600;margin:6px 0 0}
+.row{display:flex;flex-wrap:wrap;gap:4px;align-items:center}
+.blk{display:block;width:fit-content;color:#fff;padding:5px 12px;border-radius:8px;margin:2px 0;font-size:15px;font-weight:600}
+.ev{background:#ffab19}.mo{background:#4c97ff}.pn{background:#0fbd8c}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:12px}@media(max-width:640px){.two{grid-template-columns:1fr}}
+table{border-collapse:collapse;width:100%;font-size:15px}td,th{border:1px solid var(--bd);padding:5px 8px;text-align:left}
+canvas{background:#fff;border:2px solid var(--bd);border-radius:12px;max-width:100%;height:auto}
+.pen{display:grid;grid-template-columns:auto 1fr;gap:12px}@media(max-width:720px){.pen{grid-template-columns:1fr}}
+.pen ol{background:var(--card);border:1px dashed var(--bd);border-radius:10px;min-height:60px;padding:8px 8px 8px 30px;margin:8px 0;max-height:210px;overflow:auto;font-size:15px}
+.ans li{font-weight:600}.chips button{border-style:dashed}
+nav{position:fixed;left:0;right:0;bottom:0;background:var(--card);border-top:1px solid var(--bd);padding:8px 10px calc(8px + env(safe-area-inset-bottom,0px));display:flex;gap:6px;align-items:center;justify-content:center;flex-wrap:wrap;z-index:5}
+nav span{min-width:64px;text-align:center;color:var(--mut)}
+.t{color:var(--mut)}.tm{font-size:34px;font-weight:700;color:var(--or)}
+.fx{display:block;background:none;border:0;border-radius:0;width:100%;height:240px;max-width:none}.refl button{font-size:20px}
+.st{border:2px solid var(--bd);border-radius:10px;padding:8px 14px;margin:4px auto;width:fit-content;max-width:100%;background:var(--card);transition:.25s}.st.on{background:var(--or);color:#fff;border-color:var(--or);transform:scale(1.06)}.st.cond{background:#ffe08a;color:#2b2b3a;font-weight:700}.ar{text-align:center;color:var(--mut)}
+.gal{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:8px;margin:8px 0}.gal2{grid-template-columns:repeat(auto-fit,minmax(240px,1fr))}.gal img{width:100%;height:auto;border-radius:10px;border:1px solid var(--bd)}
+label.sp{display:block;margin:4px 0}
+#eo{position:fixed;inset:0;z-index:50;background:#1b1464}#eo canvas{display:block;background:none;border:0;border-radius:0;width:100vw;height:100vh;max-width:none}
+#et{position:absolute;left:0;right:0;top:calc(env(safe-area-inset-top,0px) + 16px);text-align:center;color:#fff;font-size:clamp(22px,4vw,42px);font-weight:700;text-shadow:0 2px 8px #000;padding:0 14px}
+#ex2{position:absolute;right:14px;bottom:calc(env(safe-area-inset-bottom,0px) + 14px);background:#ffffff22;color:#fff;border-color:#fff8}
+
+.bar{height:12px;background:var(--bd);border-radius:8px;overflow:hidden}.bar i{display:block;height:100%;background:var(--or);width:0;transition:.3s}
+#op button{display:block;width:100%;text-align:left;font-size:18px;margin:6px 0;padding:12px 14px}
+input.nm{width:100%;max-width:380px;margin:8px 0}.sc{font-size:56px;font-weight:800;color:var(--or)}</style></head><body><main>
+<section id="st"><span class="tag">Інформатика · 5 клас · §23</span>
+<h1>📝 Тест: Робот-художник</h1>
+<p>Олівець у Скретч, типи алгоритмів, лінійні алгоритми, кут повороту, графічний редактор. <b>15 запитань</b>, одна правильна відповідь. Після кожної відповіді буде пояснення.</p>
+<input class="nm" id="nm" placeholder="Прізвище та ім’я"><br><button class="pri" id="go" style="font-size:20px;padding:12px 24px">▶ Почати тест</button></section>
+<section id="qq" hidden><div class="bar"><i id="pb"></i></div><p class="t" id="cnt"></p>
+<div class="card"><h2 id="qt" style="color:var(--fg);font-size:21px"></h2><div id="op"></div><p class="fb" id="fb"></p><button class="pri" id="nx" hidden>Далі ▶</button></div></section>
+<section id="rs" hidden><div class="card" style="text-align:center"><div id="who" class="t"></div><div class="sc" id="sc"></div><h2 id="gr"></h2><p id="msg"></p>
+<button class="pri" id="again">↺ Пройти ще раз</button><button id="fix" hidden>🔁 Повторити лише помилки</button></div><div id="rv"></div></section>
+<script>const $=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)],sleep=t=>new Promise(r=>setTimeout(r,t));
+
+const Q=[
+['Що відбувається, якщо олівець опущено і спрайт рухається сценою?',['Спрайт залишає слід','Слід не залишається','Сцена очищується','Змінюється колір спрайта'],0,'Якщо олівець опущено, спрайт під час руху залишає слід. Піднятий олівець не малює.'],
+['Як додати до Скретч команди групи Олівець?',['Кнопка «Додати розширення» → Олівець','Вкладка «Звуки»','Вкладка «Образи»','Кнопка «Сцена»'],0,'Група Олівець — це розширення: унизу ліворуч «Додати розширення», потім «Олівець».'],
+['Яка команда видаляє зі сцени малюнок, створений олівцем?',['очистити все','штамп','підняти олівець','опустити олівець'],0,'«Очистити все» видаляє малюнок олівця. На тло сцени й об’єкти вона не впливає.'],
+['Що робить команда «штамп»?',['Залишає відбиток спрайта в місці сцени','Малює квадрат','Стирає тло сцени','Піднімає олівець'],0,'Штамп залишає у відповідному місці сцени відбиток спрайта.'],
+['Яка команда задає колір олівця за кодом (номером)?',['надати колір ▾ олівця значення 0','надати олівцю колір (палітра)','змінити колір олівця на 5','змінити розмір олівця на 5'],0,'Три способи: палітра, код (номер) кольору, зміна поточного коду на число.'],
+['Що робить команда «змінити колір олівця на 5»?',['Зсуває поточний колір на 5','Задає колір з номером 5','Змінює розмір олівця на 5','Піднімає олівець'],0,'Вона змінює поточний код кольору на деяке число — тут на 5.'],
+['Лінійний алгоритм — це алгоритм, у якому…',['команди виконуються одна за одною в заданому порядку','виконавець вибирає дію за умовою','команди повторюються кілька разів','є лише одна команда'],0,'У лінійному алгоритмі немає ні вибору, ні повторень.'],
+['«Якщо йде дощ — узяти парасольку, інакше — окуляри». Який це алгоритм?',['Розгалужений','Лінійний','Циклічний','Такого типу не існує'],0,'Вибір дії залежно від умови — розгалуження.'],
+['«Повторити 4 рази: перемістити на 80 кроків, повернути на 90°». Який це алгоритм?',['Циклічний','Лінійний','Розгалужений','Жоден із наведених'],0,'Команди повторюються — це цикл. Так малюють квадрат.'],
+['На який кут повертається спрайт, щоб намалювати рівносторонній трикутник?',['120°','60°','90°','180°'],0,'Кути трикутника по 60°, але поворот — зовнішній кут: 180° − 60° = 120°, або 360 / 3.'],
+['Яка формула кута повороту для правильного многокутника з n кутами?',['360 / n','180 / n','360 · n','n / 360'],0,'Кут повороту дорівнює 360/n.'],
+['Який кут повороту для правильного п’ятикутника?',['72°','60°','108°','90°'],0,'360 / 5 = 72°. (Для квадрата 90°, для шестикутника 60°.)'],
+['Як відкрити вбудований графічний редактор Скретч?',['Вкладка «Образи» (для сцени — «Тло»)','Вкладка «Код»','Вкладка «Звуки»','Кнопка «Додати розширення»'],0,'У вкладці «Образи» (або «Тло» для сцени) відкривається графічний редактор.'],
+['Яка клавіша допомагає накреслити коло й квадрат у графічному редакторі?',['Shift','Ctrl','Alt','Tab'],0,'Із натиснутою клавішею Shift виходять коло й квадрат (а не еліпс і прямокутник).'],
+['Фрактальна графіка — це зображення, які створюються…',['за математичними формулами','вручну пензлем','фотоапаратом','лише в Скретч'],0,'У фрактальній графіці зображення створюються за математичними формулами; її називають математичним мистецтвом.']];
+let order,i,ans;const sh=a=>a.map(x=>[Math.random(),x]).sort((p,q)=>p[0]-q[0]).map(x=>x[1]);
+function start(o){order=sh(o||Q.map((_,k)=>k));i=0;ans=[];$('#st').hidden=1;$('#rs').hidden=1;$('#qq').hidden=0;show()}
+function show(){const k=order[i],q=Q[k],o=sh(q[1].map((t,j)=>({t,ok:j==q[2]}))),box=$('#op');$('#pb').style.width=(i/order.length*100)+'%';$('#cnt').textContent='Запитання '+(i+1)+' з '+order.length;$('#qt').textContent=q[0];box.innerHTML='';$('#fb').textContent='';$('#nx').hidden=1;
+o.forEach(x=>{const b=document.createElement('button');b.textContent=x.t;b.onclick=()=>{[...box.children].forEach(c=>c.disabled=1);const g=o.find(y=>y.ok).t;b.classList.add(x.ok?'ok':'no');if(!x.ok)[...box.children].find(c=>c.textContent==g).classList.add('ok');ans.push({k,got:x.t,right:g,ok:x.ok});$('#fb').textContent=(x.ok?'✅ Правильно! ':'❌ Неправильно. ')+q[3];$('#nx').hidden=0;$('#nx').textContent=i==order.length-1?'Результат ▶':'Далі ▶'};box.append(b)})}
+$('#nx').onclick=()=>{i++;i<order.length?show():fin()};
+function fin(){$('#qq').hidden=1;$('#rs').hidden=0;const c=ans.filter(a=>a.ok).length,n=ans.length,g=Math.max(1,Math.round(c/n*12)),bad=ans.filter(a=>!a.ok);
+$('#who').textContent=($('#nm').value.trim()||'Учень(ця)');$('#sc').textContent=c+' / '+n;$('#gr').textContent='Оцінка: '+g+' з 12';
+$('#msg').textContent=g>=10?'🌟 Чудово! Ти справжній робот-художник!':g>=7?'👍 Добре! Подивись помилки нижче.':'💪 Потрібно ще потренуватись — переглянь пояснення нижче.';
+$('#fix').hidden=!bad.length;$('#fix').onclick=()=>start(bad.map(a=>a.k));
+$('#rv').innerHTML='';bad.forEach(a=>{const d=document.createElement('div');d.className='card';d.innerHTML='<b></b><p></p><p></p>';const p=d.querySelectorAll('b,p');p[0].textContent=Q[a.k][0];p[1].textContent='❌ Твоя відповідь: '+a.got;p[2].textContent='✅ Правильно: '+a.right+'. '+Q[a.k][3];$('#rv').append(d)});scrollTo(0,0)}
+$('#go').onclick=()=>start();$('#again').onclick=()=>start();
+</script></main></body></html>

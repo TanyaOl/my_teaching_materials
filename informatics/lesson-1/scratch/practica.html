@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="uk"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Практичне завдання: Робот-художник (Скретч, 5 клас)</title>
+<style>
+:root{--bg:#fffaf3;--fg:#2b2b3a;--card:#fff;--bd:#e6dccb;--mut:#6b6b7a;--or:#ff8c1a;--gr:#2fa84f;--ok:#d9f5df;--no:#fde0e0;--ac:#fff1dc;
+box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#1c1c26;--fg:#f1f1f6;--card:#272735;--bd:#3d3d50;--mut:#a9a9bb;--ok:#1f4a2b;--no:#552a2a;--ac:#3a2f1f}}
+:root[data-theme="dark"]{--bg:#1c1c26;--fg:#f1f1f6;--card:#272735;--bd:#3d3d50;--mut:#a9a9bb;--ok:#1f4a2b;--no:#552a2a;--ac:#3a2f1f}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;background:var(--bg);color:var(--fg);font:17px/1.5 system-ui,"Segoe UI",Roboto,sans-serif}
+main{max-width:860px;margin:0 auto;padding:16px 16px 110px}
+.s[hidden]{display:none}
+h1{font-size:30px;margin:.2em 0}h2{font-size:24px;margin:.2em 0 .5em;color:var(--or)}h3{margin:.8em 0 .3em}
+.card{background:var(--card);border:1px solid var(--bd);border-radius:14px;padding:14px 16px;margin:12px 0}
+.tag{display:inline-block;background:var(--ac);border:1px solid var(--bd);border-radius:20px;padding:1px 10px;font-size:14px;color:var(--mut)}
+button,select,input{font:inherit;color:var(--fg)}
+button{background:var(--card);border:1.5px solid var(--bd);border-radius:10px;padding:8px 14px;margin:3px;cursor:pointer}
+button:hover{border-color:var(--or)}button.ok{background:var(--ok);border-color:var(--gr)}button.no{background:var(--no);border-color:#e05555}
+button.pri,.run,.lnk{background:var(--or);border-color:var(--or);color:#fff;font-weight:600}
+.lnk{display:inline-block;padding:10px 18px;border-radius:10px;text-decoration:none;margin:6px 0}
+select,input{background:var(--card);border:1.5px solid var(--bd);border-radius:8px;padding:7px}input[type=number]{width:80px}
+.big{display:flex;flex-wrap:wrap;justify-content:center;gap:10px}.big button{font-size:84px;line-height:1.1;padding:14px 22px;border-radius:20px}@media(max-width:640px){.big button{font-size:60px;padding:10px 14px}}
+.fb{min-height:1.4em;font-weight:600;margin:6px 0 0}
+.row{display:flex;flex-wrap:wrap;gap:4px;align-items:center}
+.blk{display:block;width:fit-content;color:#fff;padding:5px 12px;border-radius:8px;margin:2px 0;font-size:15px;font-weight:600}
+.ev{background:#ffab19}.mo{background:#4c97ff}.pn{background:#0fbd8c}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:12px}@media(max-width:640px){.two{grid-template-columns:1fr}}
+table{border-collapse:collapse;width:100%;font-size:15px}td,th{border:1px solid var(--bd);padding:5px 8px;text-align:left}
+canvas{background:#fff;border:2px solid var(--bd);border-radius:12px;max-width:100%;height:auto}
+.pen{display:grid;grid-template-columns:auto 1fr;gap:12px}@media(max-width:720px){.pen{grid-template-columns:1fr}}
+.pen ol{background:var(--card);border:1px dashed var(--bd);border-radius:10px;min-height:60px;padding:8px 8px 8px 30px;margin:8px 0;max-height:210px;overflow:auto;font-size:15px}
+.ans li{font-weight:600}.chips button{border-style:dashed}
+nav{position:fixed;left:0;right:0;bottom:0;background:var(--card);border-top:1px solid var(--bd);padding:8px 10px calc(8px + env(safe-area-inset-bottom,0px));display:flex;gap:6px;align-items:center;justify-content:center;flex-wrap:wrap;z-index:5}
+nav span{min-width:64px;text-align:center;color:var(--mut)}
+.t{color:var(--mut)}.tm{font-size:34px;font-weight:700;color:var(--or)}
+.fx{display:block;background:none;border:0;border-radius:0;width:100%;height:240px;max-width:none}.refl button{font-size:20px}
+.st{border:2px solid var(--bd);border-radius:10px;padding:8px 14px;margin:4px auto;width:fit-content;max-width:100%;background:var(--card);transition:.25s}.st.on{background:var(--or);color:#fff;border-color:var(--or);transform:scale(1.06)}.st.cond{background:#ffe08a;color:#2b2b3a;font-weight:700}.ar{text-align:center;color:var(--mut)}
+.gal{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:8px;margin:8px 0}.gal2{grid-template-columns:repeat(auto-fit,minmax(240px,1fr))}.gal img{width:100%;height:auto;border-radius:10px;border:1px solid var(--bd)}
+label.sp{display:block;margin:4px 0}
+#eo{position:fixed;inset:0;z-index:50;background:#1b1464}#eo canvas{display:block;background:none;border:0;border-radius:0;width:100vw;height:100vh;max-width:none}
+#et{position:absolute;left:0;right:0;top:calc(env(safe-area-inset-top,0px) + 16px);text-align:center;color:#fff;font-size:clamp(22px,4vw,42px);font-weight:700;text-shadow:0 2px 8px #000;padding:0 14px}
+#ex2{position:absolute;right:14px;bottom:calc(env(safe-area-inset-bottom,0px) + 14px);background:#ffffff22;color:#fff;border-color:#fff8}
+
+.bar{height:12px;background:var(--bd);border-radius:8px;overflow:hidden}.bar i{display:block;height:100%;background:var(--or);width:0;transition:.3s}
+#op button{display:block;width:100%;text-align:left;font-size:18px;margin:6px 0;padding:12px 14px}
+input.nm{width:100%;max-width:380px;margin:8px 0}.sc{font-size:56px;font-weight:800;color:var(--or)}</style></head><body><main>
+<span class="tag">Інформатика · 5 клас · §23 · с. 124–125</span>
+<h1>🖥️ Практична робота: робот-художник</h1>
+<div class="card"><b>🛡️ БЖД:</b> сидимо рівно, відстань до екрана 50–70 см, гімнастика для очей, не чіпаємо розетки й дроти.<br><a class="lnk" href="https://scratch.mit.edu/projects/editor/" target="_blank" rel="noopener">▶ Відкрити Скретч ↗</a><br><span class="t">Збережи проєкт: Файл → Зберегти на свій комп’ютер.</span></div>
+<div class="card"><b>Твій прогрес</b><div class="bar"><i id="pg"></i></div><p id="pt" style="font-size:20px;margin:6px 0 0"></p></div>
+
+<h2>Частина 1. Завдання 5 (с. 125): правильні многокутники</h2>
+<div class="card"><b>Умова:</b> створи скрипти для малювання квадрата, правильного п’ятикутника й шестикутника (сторона 80 кроків).<br>
+<b>Алгоритм:</b> опустити олівець → (перемістити на 80 + повернути на кут) × <i>n</i> → підняти олівець.<br><span class="t">Спершу додай розширення «Олівець». Підказка: кут повороту = 360 / n.</span></div>
+<div class="card"><b>Знайди кути повороту:</b><br>
+Квадрат (4 сторони): <input type="number" class="ang" data-a="90" placeholder="?">° <span></span><br>
+П’ятикутник (5 сторін): <input type="number" class="ang" data-a="72" placeholder="?">° <span></span><br>
+Шестикутник (6 сторін): <input type="number" class="ang" data-a="60" placeholder="?">° <span></span></div>
+<h3>🧪 Тренажер: перевір скрипт, потім збери його у Скретч</h3>
+<div class="prac"><div class="pen" data-ex="d,w3,m80,t90,c10,m80,t90,c10,m80,t90,c10,m80,t90,u"></div></div>
+<div class="card"><b>Самоперевірка:</b><br><label class="sp"><input type="checkbox"> Намалював(ла) квадрат</label><label class="sp"><input type="checkbox"> Намалював(ла) правильний п’ятикутник</label><label class="sp"><input type="checkbox"> Намалював(ла) правильний шестикутник</label><label class="sp"><input type="checkbox"> Фігури замкнені, усі сторони рівні</label><label class="sp"><input type="checkbox"> Олівець піднято в кінці скрипта</label><label class="sp"><input type="checkbox"> Проєкт збережено</label></div>
+
+<h2>Частина 2. Практичне завдання (с. 124): графічний редактор</h2>
+<p><b>Завдання:</b> відпрацювати навички роботи з інструментами графічного редактора Скретч (вкладка «Образи»).</p>
+<div class="card"><h3>Вправа 1. Створити декілька копій образу спрайта</h3>
+<label class="sp"><input type="checkbox"> 1. Додай готовий спрайт із бібліотеки та перейди на вкладку <b>Образи</b>.</label><label class="sp"><input type="checkbox"> 2. Скопіюй спрайт кнопками <b>Копія</b> та <b>Вставити</b>.</label><label class="sp"><input type="checkbox"> 3. Перетягни скопійований спрайт у потрібне місце.</label></div>
+<div class="card"><h3>Вправа 2. Створити колаж із геометричних фігур</h3>
+<label class="sp"><input type="checkbox"> 1. У полі спрайтів: <b>Обрати спрайт → Малювати</b>.</label><label class="sp"><input type="checkbox"> 2. Інструменти <b>Пензель</b>, <b>Лінія</b>: декілька ліній різної товщини й кольору.</label><label class="sp"><input type="checkbox"> 3. <b>Коло</b>, <b>Прямокутник</b>: декілька фігур різного кольору (для кола й квадрата тримай <b>Shift</b>).</label><label class="sp"><input type="checkbox"> 4. <b>Гумка</b>: видали частину накреслених ліній.</label><label class="sp"><input type="checkbox"> 5. <b>Заповнення</b>: залий фігури різними кольорами.</label><label class="sp"><input type="checkbox"> 6. <b>Текст</b>: підпиши малюнок.</label><label class="sp"><input type="checkbox"> 7. Зроби висновок: як створювати малюнки в графічному редакторі Скретч.</label></div>
+<div class="card"><h3>⭐ Для швидких (не впливає на оцінку)</h3><label class="sp"><input type="checkbox"  data-b="1"> Творче завдання 6 (с. 125): намалюй новий спрайт і нове тло; скопіюй образ («дублювати») і відредагуй кожний</label><label class="sp"><input type="checkbox" data-b="1"> Намалюй правильний восьмикутник (кут 360 / 8 = 45°)</label></div>
+<div class="card"><h2 style="margin-top:0">Самооцінка</h2><p>Орієнтовна оцінка за виконані кроки: <b id="gr" style="font-size:26px"></b></p><p class="t">Остаточну оцінку виставляє вчитель за скриптами й малюнком.</p></div>
+<script>const $=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)],sleep=t=>new Promise(r=>setTimeout(r,t));
+
+const T={d:'опустити олівець',u:'підняти олівець',m:'перемістити на N кроків',t:'повернути ↻ на N градусів',l:'повернути ↺ на N градусів',c:'змінити колір олівця на N',w:'змінити розмір олівця на N',p:'надати олівцю колір N',k:'надати колір олівця значення N'};
+$$('.pen').forEach(el=>{let L=[],busy=0;
+el.innerHTML='<div><canvas width="360" height="300"></canvas></div><div><div class="row"><select>'+Object.keys(T).map(k=>`<option value="${k}">${T[k].replace(' N','')}</option>`).join('')+'</select><input type="number" value="100" min="1" max="360"><input type="color" value="#e53935" hidden style="width:54px;height:38px;padding:2px"><button class="add">+ Додати</button></div><ol></ol><div class="row"><button class="run">▶ Виконати</button><button class="un">↩ Видалити останню</button><button class="cl">🗑 Очистити</button><button class="ex">💡 Приклад</button></div></div>';
+const cv=el.querySelector('canvas'),c=cv.getContext('2d'),ol=el.querySelector('ol'),sel=el.querySelector('select'),inp=el.querySelector('input'),cp=el.querySelector('input[type=color]');
+const draw=()=>{ol.innerHTML=L.map(([k,n])=>'<li>'+(k=='p'?'надати олівцю колір <span style="background:'+n+';display:inline-block;width:16px;height:16px;border-radius:4px;border:1px solid #888;vertical-align:middle"></span>':T[k].replace('N',n))+'</li>').join('')};
+const X0=100,Y0=140,clr=()=>{c.clearRect(0,0,360,300);c.fillStyle='#888';c.beginPath();c.arc(X0,Y0,4,0,7);c.fill();c.font='13px sans-serif';c.textAlign='start';c.textBaseline='alphabetic';c.fillText('старт',X0-14,Y0-10)};clr();
+sel.onchange=()=>{inp.hidden=/[dup]/.test(sel.value);cp.hidden=sel.value!='p';inp.max=sel.value=='k'?100:360};
+el.querySelector('.add').onclick=()=>{L.push([sel.value,/[du]/.test(sel.value)?0:sel.value=='p'?cp.value:+inp.value||0]);draw()};
+el.querySelector('.un').onclick=()=>{L.pop();draw()};
+el.querySelector('.cl').onclick=()=>{L=[];draw();clr()};
+el.querySelector('.ex').onclick=()=>{L=el.dataset.ex.split(',').map(t=>[t[0],+t.slice(1)||0]);draw()};
+if(!el.closest('.prac'))el.querySelector('.ex').click();
+el.querySelector('.run').onclick=async()=>{if(busy)return;busy=1;const hu=h=>{const r=parseInt(h.slice(1,3),16)/255,gg=parseInt(h.slice(3,5),16)/255,b=parseInt(h.slice(5,7),16)/255,M=Math.max(r,gg,b),d=M-Math.min(r,gg,b);if(!d)return 0;const z=M==r?((gg-b)/d)%6:M==gg?(b-r)/d+2:(r-gg)/d+4;return (z*60+360)%360};clr();let x=X0,y=Y0,a=0,dn=0,col=0,sz=1,pc=null;
+for(const [k,n] of L){if(k=='d')dn=1;else if(k=='u')dn=0;else if(k=='t')a+=n;else if(k=='l')a-=n;else if(k=='c'){pc=null;col=(col+n)%100}else if(k=='k'){pc=null;col=n%100}else if(k=='p'){pc=n;col=hu(n)/3.6}else if(k=='w')sz+=n;
+else if(k=='m'){const st=Math.max(1,Math.ceil(n/6)),dx=Math.cos(a*Math.PI/180)*n/st,dy=Math.sin(a*Math.PI/180)*n/st;for(let i=0;i<st;i++){if(dn){c.beginPath();c.moveTo(x,y);c.lineTo(x+dx,y+dy);c.strokeStyle=pc||'hsl('+col*3.6+',85%,48%)';c.lineWidth=Math.max(1,sz);c.lineCap='round';c.stroke()}x+=dx;y+=dy;await sleep(12)}}}
+c.font='28px serif';c.textAlign='center';c.textBaseline='middle';c.fillText('🐱',x,y);busy=0}});
+
+let ok=0;const all=()=>$$('input[type=checkbox]:not([data-b])');
+function upd(){const a=all(),d=a.filter(x=>x.checked).length+ok,t=a.length+3;$('#pg').style.width=d/t*100+'%';$('#pt').textContent='Виконано '+d+' з '+t+' пунктів';$('#gr').textContent=Math.round(d/t*12)+' з 12'}
+$$('input[type=checkbox]').forEach(x=>x.onchange=upd);
+$$('.ang').forEach(x=>x.oninput=()=>{const s=x.nextElementSibling,r=+x.value==+x.dataset.a;s.textContent=x.value?(r?'✅ вірно':'❌ ще раз: 360 / n'):'';x.dataset.ok=r?1:'';ok=$$('.ang').filter(y=>y.dataset.ok).length;upd()});
+upd();
+</script></main></body></html>
