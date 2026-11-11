@@ -1,0 +1,574 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Урок 1. Кодування символів — інтерактивний урок</title>
+<style>
+:root{--bg:#f7fbfc;--ink:#1b2a4a;--muted:#5b6b7d;--line:#d3e2e8;--teal:#0e8a9b;--blue:#2457a6;--violet:#6a4bc4;--amber:#f2a93b;--red:#e5575b;--green:#2e9e6b;--tealL:#e6f5f7;--violetL:#f0ecfb;--card:#fff}
+*{box-sizing:border-box}
+html,body{margin:0;height:100%;overflow:hidden;background:#dfeaee;font-family:Arial,Helvetica,sans-serif;color:var(--ink)}
+#wrap{position:fixed;inset:0;display:flex;flex-direction:column}
+#main{flex:1;display:flex;min-height:0}
+#viewport{flex:1;position:relative;overflow:hidden}
+#stage{position:absolute;left:50%;top:50%;width:1280px;height:720px;transform-origin:center;background:var(--bg);box-shadow:0 10px 40px rgba(27,42,74,.18);overflow:hidden;border-radius:6px}
+#notes{width:0;overflow:hidden;background:#fff;border-left:1px solid var(--line);transition:width .3s}
+#notes.open{width:340px}
+#notes .in{width:340px;padding:18px;overflow:auto;height:100%;font-size:15px;line-height:1.5}
+#notes h4{margin:0 0 8px;color:var(--violet)}
+#notes .time{display:inline-block;background:var(--violetL);color:var(--violet);padding:2px 10px;border-radius:99px;font-size:13px;font-weight:bold;margin-bottom:10px}
+
+/* слайди */
+.slide{position:absolute;inset:0;padding:44px 64px 40px;opacity:0;visibility:hidden;transform:translateX(50px);transition:opacity .5s,transform .5s,visibility 0s .5s}
+.slide.on{opacity:1;visibility:visible;transform:none;transition:opacity .5s,transform .5s}
+.slide.past{transform:translateX(-50px)}
+h2.t{margin:0 0 24px;font-size:44px;line-height:1.1}
+.card{background:var(--card);border:1px solid var(--line);border-radius:18px;box-shadow:0 3px 12px rgba(27,42,74,.07)}
+.tint{background:var(--tealL);border-radius:16px}
+.tintv{background:var(--violetL);border:1px solid #d8cdf3;border-radius:16px}
+.muted{color:var(--muted)}
+sub{font-size:.6em}sup{font-size:.6em}
+.disc{display:inline-flex;align-items:center;justify-content:center;border-radius:50%;color:#fff;font-weight:bold}
+
+/* кроки */
+.rv{opacity:0;transform:translateY(22px) scale(.97);transition:opacity .55s,transform .55s;pointer-events:none}
+.rv.in{opacity:1;transform:none;pointer-events:auto;transition-delay:calc(var(--i,0)*.13s)}
+.grow{opacity:1;transform:scaleX(0);transform-origin:left;transition:transform .8s cubic-bezier(.2,.8,.2,1)}
+.grow.in{transform:none;pointer-events:auto}
+.view{display:none}
+.view.on{display:block;animation:fadeUp .5s}
+@keyframes fadeUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:none}}
+@keyframes pop{0%{opacity:0;transform:scale(.6) translateY(20px)}70%{transform:scale(1.06)}100%{opacity:1;transform:none}}
+@keyframes flipin{0%{transform:rotateX(90deg);opacity:0}100%{transform:none;opacity:1}}
+@keyframes pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.07)}}
+.slide.on .pop{animation:pop .7s both;animation-delay:var(--d,0s)}
+
+/* таблиці */
+table{border-collapse:collapse;width:100%;font-size:22px}
+th{background:var(--teal);color:#fff;padding:12px 14px;font-size:20px}
+td{border:1px solid var(--line);padding:12px 14px;background:#fff}
+td.rl{background:var(--tealL);font-weight:bold}
+.flip{cursor:pointer;color:var(--violet);font-weight:bold;text-align:center;font-size:26px;user-select:none}
+.flip.open{color:var(--ink);font-size:20px;background:#eaf7f0;animation:flipin .5s}
+.mono{font-family:Consolas,Menlo,monospace}
+.kt td{padding:5px 12px}.kt th{padding:8px 12px}
+.ctl{white-space:nowrap}#bar{flex-wrap:nowrap}
+
+/* керування всередині слайдів */
+input[type=text],select{font:inherit;font-size:24px;padding:8px 12px;border:2px solid #b9cbd3;border-radius:12px;background:#fff;color:var(--ink)}
+input[type=text]:focus,select:focus{outline:none;border-color:var(--teal)}
+.btn{font:inherit;font-weight:bold;font-size:18px;padding:8px 16px;border-radius:12px;border:2px solid var(--blue);background:#fff;color:var(--blue);cursor:pointer}
+.btn:hover{background:var(--blue);color:#fff}
+.btn.on{background:var(--teal);border-color:var(--teal);color:#fff}
+.tabs{position:absolute;right:64px;top:44px;display:flex;gap:8px}
+.tabs .btn{font-size:16px;padding:6px 12px}
+
+/* таймер-віджет */
+.mt{display:inline-flex;align-items:center;gap:12px;background:#fff;border:1px solid var(--line);border-radius:14px;padding:8px 14px}
+.mt b{font-size:34px;font-family:Consolas,Menlo,monospace;min-width:92px;color:var(--ink)}
+.mt .l{font-size:16px;color:var(--violet);font-weight:bold;max-width:380px}
+.mt.end b{color:var(--red);animation:pulse .6s infinite}
+.mt button{font:inherit;font-size:18px;border:1px solid var(--line);background:var(--tealL);border-radius:10px;padding:6px 12px;cursor:pointer}
+
+/* нижня панель */
+#bar{background:#fff;border-top:1px solid var(--line);padding:8px 14px;display:flex;gap:14px;align-items:center;font-size:14px}
+#tl{flex:1;position:relative;display:flex;gap:3px;height:34px}
+#tl .seg{border-radius:8px;background:#e8f0f3;display:flex;align-items:center;justify-content:center;font-size:12px;color:var(--muted);white-space:nowrap;overflow:hidden;position:relative;transition:background .3s,color .3s;cursor:default}
+#tl .seg.on{background:var(--teal);color:#fff;font-weight:bold}
+#tl .seg.done{background:#bfe3e8;color:#2c6a74}
+#clock{position:absolute;top:-3px;bottom:-3px;width:3px;background:var(--violet);border-radius:3px;left:0;transition:left 1s linear}
+.ctl button{font:inherit;font-size:15px;border:1px solid var(--line);background:#fff;border-radius:10px;padding:6px 11px;cursor:pointer;color:var(--ink)}
+.ctl button:hover{background:var(--tealL)}
+#sched{min-width:130px;text-align:center;font-weight:bold}
+#cnt{min-width:70px;text-align:center;color:var(--muted)}
+#over,#help{position:fixed;inset:0;background:rgba(27,42,74,.82);display:none;align-items:center;justify-content:center;z-index:20}
+#over.on,#help.on{display:flex}
+#over .g{display:grid;grid-template-columns:repeat(4,230px);gap:12px;max-height:88vh;overflow:auto;padding:10px}
+#over .g div{background:#fff;border-radius:12px;padding:12px 14px;cursor:pointer;font-size:15px}
+#over .g div:hover{outline:3px solid var(--teal)}
+#over .g b{color:var(--teal)}
+#help .box{background:#fff;border-radius:18px;padding:26px 34px;max-width:560px;font-size:17px;line-height:1.8}
+kbd{background:#eef3f5;border:1px solid var(--line);border-radius:6px;padding:1px 8px;font-family:inherit;font-weight:bold}
+@media (prefers-reduced-motion:reduce){.rv,.slide,.grow{transition:none!important}.slide.on .pop{animation:none}}
+</style>
+</head>
+<body>
+<div id="wrap">
+ <div id="main">
+  <div id="viewport">
+   <div id="stage">
+
+<!-- 1. ТИТУЛ -->
+<section class="slide" data-steps="0">
+  <div style="position:absolute;right:-180px;top:-200px;width:620px;height:620px;border-radius:50%;background:#eaf4f6"></div>
+  <div style="position:absolute;left:64px;top:70px;width:620px">
+    <div style="color:var(--teal);font-weight:bold;letter-spacing:.06em;font-size:18px" class="pop">ІНФОРМАТИКА · 10 КЛАС</div>
+    <h1 class="pop" style="--d:.15s;font-size:84px;line-height:1.02;margin:18px 0 20px">Кодування символів</h1>
+    <div class="pop" style="--d:.3s;font-size:28px;color:var(--blue)">Від цифрового коду до графічного світу</div>
+    <div style="display:flex;gap:12px;margin-top:46px">
+      <span class="pop" style="--d:.5s;padding:9px 22px;border-radius:99px;border:2px solid #b9cbd3;font-weight:bold;color:var(--muted)">КОД</span>
+      <span class="pop" style="--d:.6s;padding:9px 22px;border-radius:99px;background:var(--teal);color:#fff;font-weight:bold">СИМВОЛ</span>
+      <span class="pop" style="--d:.7s;padding:9px 22px;border-radius:99px;border:2px solid #b9cbd3;font-weight:bold;color:var(--muted)">ПІКСЕЛЬ</span>
+      <span class="pop" style="--d:.8s;padding:9px 22px;border-radius:99px;border:2px solid #b9cbd3;font-weight:bold;color:var(--muted)">КОЛІР</span>
+    </div>
+    <div class="muted pop" style="--d:.9s;margin-top:60px;font-size:22px">23.11.2026</div>
+  </div>
+  <div style="position:absolute;right:90px;top:70px;width:360px;display:flex;flex-direction:column;align-items:center;gap:6px">
+    <div class="pop" style="--d:.5s;width:360px;height:100px;border-radius:18px;background:var(--teal);color:#fff;font-size:56px;font-weight:bold;display:flex;align-items:center;justify-content:center;box-shadow:0 6px 16px rgba(0,0,0,.12)">A</div>
+    <div class="pop muted" style="--d:.8s;font-size:26px">↓</div>
+    <div class="pop" style="--d:1.1s;width:360px;height:100px;border-radius:18px;background:var(--blue);color:#fff;font-size:56px;font-weight:bold;display:flex;align-items:center;justify-content:center;box-shadow:0 6px 16px rgba(0,0,0,.12)">65</div>
+    <div class="pop muted" style="--d:1.4s;font-size:26px">↓</div>
+    <div class="pop" style="--d:1.7s;width:360px;height:100px;border-radius:18px;background:var(--violet);color:#fff;font-size:44px;font-weight:bold;display:flex;align-items:center;justify-content:center;box-shadow:0 6px 16px rgba(0,0,0,.12)">01000001</div>
+    <div class="pop muted" style="--d:2s;font-size:26px">↓</div>
+    <div class="pop" style="--d:2.3s;width:360px;height:100px;border-radius:18px;background:var(--ink);color:#fff;font-size:56px;font-weight:bold;display:flex;align-items:center;justify-content:center;box-shadow:0 6px 16px rgba(0,0,0,.12)">41<sub>16</sub></div>
+  </div>
+</section>
+
+<!-- 2. ПРОБЛЕМА -->
+<section class="slide" data-steps="3">
+  <h2 class="t">Що сталося з текстом?</h2>
+  <div style="display:flex;gap:40px;align-items:center">
+    <div class="card" style="flex:1;padding:26px 34px">
+      <div class="muted" style="font-size:20px">Повідомлення від друга</div>
+      <div style="font-size:92px;font-weight:bold;color:var(--violet);margin-top:12px;white-space:nowrap">Ïðèâ³ò, êëàñ!</div>
+    </div>
+    <div class="rv disc" data-s="1" style="width:220px;height:220px;background:var(--violet);font-size:150px">?</div>
+  </div>
+  <div class="rv tint" data-s="2" style="margin-top:34px;padding:22px 32px;font-size:32px"><b>Файл ніхто не змінював.</b> Чому текст «зіпсувався»? Запиши свою гіпотезу.</div>
+  <div class="rv" data-s="3" style="margin-top:26px;display:flex;align-items:center;gap:26px">
+    <div class="mt" data-sec="60" data-phases="0:Подумай сам(а) (20 с)|20:Обговори з партнером (20 с)|40:Поділися з класом"><b>01:00</b><button data-a="go">▶</button><button data-a="reset">⟲</button><span class="l"></span></div>
+    <div class="muted" style="font-size:22px">Подумай — обговори — поділися</div>
+  </div>
+</section>
+
+<!-- 3. БЛІЦ -->
+<section class="slide" data-steps="7">
+  <h2 class="t">Згадаймо: біти й коди</h2>
+  <div style="display:flex;gap:26px">
+    <div class="card rv" data-s="1" style="flex:1;padding:22px;height:290px">
+      <span class="disc" style="width:48px;height:48px;background:var(--teal);font-size:24px">1</span>
+      <div style="font-size:26px;margin-top:14px">Скільки різних кодів можна утворити з <b>8 бітів</b>?</div>
+      <div class="rv" data-s="4" style="margin-top:18px;font-size:44px;font-weight:bold;color:var(--teal)">2<sup>8</sup> = 256</div>
+    </div>
+    <div class="card rv" data-s="2" style="flex:1;padding:22px;height:290px">
+      <span class="disc" style="width:48px;height:48px;background:var(--blue);font-size:24px">2</span>
+      <div style="font-size:26px;margin-top:14px">А скільки з <b>16 бітів</b>?</div>
+      <div class="rv" data-s="5" style="margin-top:18px;font-size:44px;font-weight:bold;color:var(--blue)">2<sup>16</sup> = 65 536</div>
+    </div>
+    <div class="card rv" data-s="3" style="flex:1;padding:22px;height:290px">
+      <span class="disc" style="width:48px;height:48px;background:var(--violet);font-size:24px">3</span>
+      <div style="font-size:26px;margin-top:14px">Скільки бітів потрібно, щоб розрізнити <b>100 символів</b>?</div>
+      <div class="rv" data-s="6" style="margin-top:12px;font-size:30px;font-weight:bold;color:var(--violet)">7 бітів<div style="font-size:19px;color:var(--muted);font-weight:normal">2<sup>6</sup> = 64 &lt; 100 ≤ 128 = 2<sup>7</sup></div></div>
+    </div>
+  </div>
+  <div class="rv tint" data-s="7" style="margin-top:28px;padding:18px 26px;font-size:26px;display:flex;gap:26px;flex-wrap:wrap;justify-content:center">
+    <span>2<sup>1</sup>=2</span><span>2<sup>2</sup>=4</span><span>2<sup>3</sup>=8</span><span>2<sup>4</sup>=16</span><span>2<sup>5</sup>=32</span><span>2<sup>6</sup>=64</span><span>2<sup>7</sup>=128</span><span>2<sup>8</sup>=256</span>
+  </div>
+</section>
+
+<!-- 4. МАПА -->
+<section class="slide" data-steps="5">
+  <h2 class="t">План на 45 хвилин</h2>
+  <div style="display:flex;gap:24px">
+    <div class="card rv" data-s="1" style="flex:1;padding:28px 18px;text-align:center;height:330px"><div class="disc" style="width:96px;height:96px;background:var(--teal);font-size:48px">📖</div><div style="font-size:28px;font-weight:bold;margin:18px 0 10px">Дізнаємося</div><div class="muted" style="font-size:21px">ASCII, кодові таблиці, Юнікод</div></div>
+    <div class="card rv" data-s="2" style="flex:1;padding:28px 18px;text-align:center;height:330px"><div class="disc" style="width:96px;height:96px;background:var(--blue);font-size:48px">🔬</div><div style="font-size:28px;font-weight:bold;margin:18px 0 10px">Дослідимо</div><div class="muted" style="font-size:21px">Один і той самий символ у різних таблицях</div></div>
+    <div class="card rv" data-s="3" style="flex:1;padding:28px 18px;text-align:center;height:330px"><div class="disc" style="width:96px;height:96px;background:var(--violet);font-size:48px">🔑</div><div style="font-size:28px;font-weight:bold;margin:18px 0 10px">Закодуємо</div><div class="muted" style="font-size:21px">Девіз для власного знака</div></div>
+    <div class="card rv" data-s="4" style="flex:1;padding:28px 18px;text-align:center;height:330px"><div class="disc" style="width:96px;height:96px;background:var(--ink);font-size:48px">✓</div><div style="font-size:28px;font-weight:bold;margin:18px 0 10px">Перевіримо себе</div><div class="muted" style="font-size:21px">Що зрозуміли, що було складно</div></div>
+  </div>
+  <div class="rv tintv" data-s="5" style="margin-top:30px;padding:22px 30px;font-size:30px"><b style="color:var(--violet)">Результат уроку:</b> Паспорт цифрового знака, розділ 1 «Код мого девізу»</div>
+</section>
+
+<!-- 5. ВІД ЛІТЕРИ ДО КОДУ -->
+<section class="slide" data-steps="7">
+  <h2 class="t">Від літери до коду</h2>
+  <div style="display:flex;align-items:center;gap:10px">
+    <div class="card rv" data-s="1" style="width:250px;height:190px;text-align:center;padding-top:16px"><div class="muted" style="font-size:19px">літера</div><div style="font-size:96px;font-weight:bold;color:var(--teal);line-height:1.2">A</div></div>
+    <div class="rv muted" data-s="2" style="font-size:46px;width:50px;text-align:center">→</div>
+    <div class="card rv" data-s="2" style="width:250px;height:190px;text-align:center;padding-top:16px"><div class="muted" style="font-size:19px">номер у таблиці</div><div style="font-size:96px;font-weight:bold;color:var(--blue);line-height:1.2">65</div></div>
+    <div class="rv muted" data-s="3" style="font-size:46px;width:50px;text-align:center">→</div>
+    <div class="card rv" data-s="3" style="width:290px;height:190px;text-align:center;padding-top:16px"><div class="muted" style="font-size:19px">двійковий код</div><div style="font-size:54px;font-weight:bold;color:var(--violet);line-height:2;font-family:Consolas,monospace">01000001</div></div>
+    <div class="rv muted" data-s="4" style="font-size:46px;width:50px;text-align:center">→</div>
+    <div class="card rv" data-s="4" style="width:250px;height:190px;text-align:center;padding-top:16px"><div class="muted" style="font-size:19px">шістнадцятковий код</div><div style="font-size:96px;font-weight:bold;line-height:1.2">41<sub>16</sub></div></div>
+  </div>
+  <div style="display:flex;gap:30px;margin-top:34px">
+    <div class="rv tint" data-s="5" style="flex:1;padding:26px 30px;font-size:42px;font-weight:bold;display:flex;align-items:center">41<sub>16</sub>&nbsp;=&nbsp;4 · 16 + 1 = 65</div>
+    <div class="rv tintv" data-s="6" style="flex:1;padding:26px 30px;font-size:34px;font-weight:bold;color:var(--violet);display:flex;align-items:center">А яким буде код літери B?</div>
+  </div>
+  <div class="rv card" data-s="7" style="margin-top:22px;padding:16px 30px;font-size:34px;font-weight:bold;text-align:center">B → <span style="color:var(--blue)">66</span> → <span style="color:var(--violet);font-family:Consolas,monospace">01000010</span> → 42<sub>16</sub></div>
+</section>
+
+<!-- 6. ASCII -->
+<section class="slide" data-steps="3">
+  <h2 class="t">ASCII: перша кодова таблиця</h2>
+  <div style="display:flex;justify-content:space-between;font-size:21px;font-weight:bold;margin-bottom:10px"><span style="color:var(--teal)">базова частина: 0–127 (7 бітів)</span><span style="color:var(--blue)">розширена частина: 128–255 (8 бітів)</span></div>
+  <div style="position:relative;height:84px;background:#e3edf0;border-radius:12px;overflow:hidden">
+    <div class="grow" data-s="1" style="position:absolute;left:0;width:12.5%;top:0;bottom:0;background:var(--violet);color:#fff;font-size:24px;font-weight:bold;display:flex;align-items:center;justify-content:center;border-right:3px solid #fff">0–31</div>
+    <div class="grow" data-s="2" style="position:absolute;left:12.5%;width:37.5%;top:0;bottom:0;background:var(--teal);color:#fff;font-size:24px;font-weight:bold;display:flex;align-items:center;justify-content:center;border-right:3px solid #fff">32–127</div>
+    <div class="grow" data-s="3" style="position:absolute;left:50%;width:50%;top:0;bottom:0;background:var(--blue);color:#fff;font-size:24px;font-weight:bold;display:flex;align-items:center;justify-content:center">128–255</div>
+  </div>
+  <div style="display:flex;gap:24px;margin-top:30px">
+    <div class="card rv" data-s="1" style="flex:1;padding:24px;height:310px"><div style="font-size:26px;font-weight:bold;color:var(--violet)">● 0–31 · керувальні</div><div style="font-size:23px;margin-top:16px;line-height:1.45">Enter, звуковий сигнал, видалення — це не літери, а <b>команди</b></div></div>
+    <div class="card rv" data-s="2" style="flex:1;padding:24px;height:310px"><div style="font-size:26px;font-weight:bold;color:var(--teal)">● 32–127 · друковані</div><div style="font-size:23px;margin-top:16px;line-height:1.45">пробіл, цифри, знаки, латинські літери. <b>Однакові на всіх комп’ютерах</b></div></div>
+    <div class="card rv" data-s="3" style="flex:1;padding:24px;height:310px"><div style="font-size:26px;font-weight:bold;color:var(--blue)">● 128–255 · національні</div><div style="font-size:23px;margin-top:16px;line-height:1.45">літери національних алфавітів і псевдографіка. <b>У різних країнах різні</b></div></div>
+  </div>
+</section>
+
+<!-- 7. ОДИН КОД — РІЗНІ СИМВОЛИ -->
+<section class="slide" data-steps="5">
+  <h2 class="t">Один код — різні символи</h2>
+  <div style="display:flex;justify-content:center"><div class="rv" data-s="1" style="background:var(--ink);color:#fff;border-radius:18px;padding:14px 60px;text-align:center"><div style="font-size:38px;font-weight:bold">байт DF</div><div style="font-size:22px;color:#bfd0e0;font-family:Consolas,monospace">11011111 · 223</div></div></div>
+  <div style="display:flex;gap:30px;margin-top:20px">
+    <div class="rv" data-s="2" style="flex:1;text-align:center"><div style="font-size:34px;color:var(--muted)">↓</div><div class="card" style="padding:14px;height:280px"><div style="font-size:23px;font-weight:bold;color:var(--teal)">Windows-1251</div><div style="font-size:150px;font-weight:bold;line-height:1.25">Я</div></div></div>
+    <div class="rv" data-s="3" style="flex:1;text-align:center"><div style="font-size:34px;color:var(--muted)">↓</div><div class="card" style="padding:14px;height:280px"><div style="font-size:23px;font-weight:bold;color:var(--blue)">ISO 8859-1</div><div style="font-size:150px;font-weight:bold;line-height:1.25">ß</div></div></div>
+    <div class="rv" data-s="4" style="flex:1;text-align:center"><div style="font-size:34px;color:var(--muted)">↓</div><div class="card" style="padding:14px;height:280px"><div style="font-size:23px;font-weight:bold;color:var(--violet)">KOI8-R</div><div style="font-size:150px;font-weight:bold;line-height:1.25">ъ</div></div></div>
+  </div>
+  <div class="rv" data-s="5" style="text-align:center;margin-top:18px;font-size:30px;font-weight:bold;color:var(--violet)">Той самий байт, але різні таблиці — і різні символи</div>
+</section>
+
+<!-- 8. ЮНІКОД -->
+<section class="slide" data-steps="4">
+  <h2 class="t">Юнікод: одна таблиця для всіх</h2>
+  <div style="display:flex;gap:34px">
+    <div class="card" style="width:430px;padding:24px;text-align:center;height:470px">
+      <div class="muted" style="font-size:20px">код у Юнікоді</div>
+      <div style="font-size:64px;font-weight:bold;color:var(--violet);margin:8px 0">U+042F</div>
+      <div class="muted" style="font-size:40px">↓</div>
+      <div class="rv" data-s="1" style="font-size:220px;font-weight:bold;color:var(--teal);line-height:1.1">Я</div>
+    </div>
+    <div style="flex:1;display:flex;flex-direction:column;gap:22px">
+      <div class="card rv" data-s="2" style="padding:26px;display:flex;gap:22px;align-items:center;height:140px"><span class="disc" style="width:80px;height:80px;background:var(--teal);font-size:40px;flex:none">🌍</span><span style="font-size:28px">Єдина таблиця для символів усіх мов</span></div>
+      <div class="card rv" data-s="3" style="padding:26px;display:flex;gap:22px;align-items:center;height:140px"><span class="disc" style="width:80px;height:80px;background:var(--blue);font-size:30px;flex:none">16</span><span style="font-size:28px">У нашій моделі: 16 бітів → 65 536 кодів</span></div>
+      <div class="card rv" data-s="4" style="padding:26px;display:flex;gap:22px;align-items:center;height:140px"><span class="disc" style="width:80px;height:80px;background:var(--violet);font-size:24px;flex:none">UTF</span><span style="font-size:28px">UTF — формат, у якому текст передають інтернетом</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- 9. ЛАБОРАТОРІЯ КОДІВ -->
+<section class="slide" data-steps="3">
+  <h2 class="t">Лабораторія кодів</h2>
+  <div class="tabs" id="labtabs"><button class="btn" data-g="0">Завдання</button><button class="btn" data-g="1">Пошук коду</button><button class="btn" data-g="2">Ключ</button><button class="btn" data-g="3">Кракозябри</button></div>
+
+  <div class="view" data-v="0">
+    <div style="background:var(--teal);color:#fff;border-radius:16px;padding:20px 30px;font-size:34px;font-weight:bold">Чи однаковий код має один символ у різних таблицях?</div>
+    <div style="display:flex;gap:24px;margin-top:22px">
+      <div class="card" style="flex:1;padding:20px;display:flex;gap:18px;align-items:center"><span class="disc" style="width:70px;height:70px;background:var(--blue);font-size:34px;flex:none">🔍</span><div><div style="font-size:28px;font-weight:bold">Дослідник</div><div class="muted" style="font-size:21px">знаходить коди й заповнює таблицю</div></div></div>
+      <div class="card" style="flex:1;padding:20px;display:flex;gap:18px;align-items:center"><span class="disc" style="width:70px;height:70px;background:var(--violet);font-size:34px;flex:none">✓</span><div><div style="font-size:28px;font-weight:bold">Аудитор</div><div class="muted" style="font-size:21px">перевіряє два рядки: код → десятковий</div></div></div>
+    </div>
+    <div style="display:flex;gap:24px;margin-top:22px;align-items:stretch">
+      <div class="tint" style="flex:1;padding:18px 24px;font-size:23px;line-height:1.7"><b>Частина А:</b> A, a, D, 7<br><b>Частина Б:</b> Я, я, Д, Є<br><b>Потім:</b> висновок за власною таблицею</div>
+      <div class="tintv" style="flex:1;padding:18px 24px;font-size:23px;line-height:1.7"><b style="color:var(--violet)">Зразок:</b> Z → ASCII 5A · Win-1251 5A · Юнікод 005A<br>Перевірка: 5A<sub>16</sub> = 5 · 16 + 10 = 90</div>
+    </div>
+    <div style="margin-top:18px"><div class="mt" data-sec="720" data-phases="0:Частина А — A, a, D, 7|300:Частина Б — Я, я, Д, Є · ЗМІНІТЬ РОЛІ!|600:Пишемо висновок"><b>12:00</b><button data-a="go">▶</button><button data-a="reset">⟲</button><span class="l"></span></div></div>
+  </div>
+
+  <div class="view" data-v="1">
+    <div style="display:flex;gap:18px;align-items:center"><span style="font-size:24px;font-weight:bold">Символ:</span><input type="text" id="lab-ch" maxlength="1" value="Я" style="width:120px;text-align:center;font-size:44px"><span class="muted" style="font-size:20px">введи будь-який символ — коди оновляться</span></div>
+    <div id="lab-out" style="margin-top:16px"></div>
+    <div class="tint" style="margin-top:14px;padding:12px 22px;font-size:20px">«—» означає, що такого символа в таблиці немає. Базова частина ASCII — лише коди 0–127.</div>
+  </div>
+
+  <div class="view" data-v="2">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px"><span class="muted" style="font-size:20px">Натискай на клітинки, щоб відкрити відповіді</span><span><button class="btn" id="key-all">Відкрити все</button> <button class="btn" id="key-none">Закрити</button></span></div>
+    <div id="key-tbl"></div>
+  </div>
+
+  <div class="view" data-v="3">
+    <div style="display:flex;gap:20px;align-items:flex-end;flex-wrap:wrap">
+      <div><div class="muted" style="font-size:18px">Текст</div><input type="text" id="mj-text" value="Привіт, клас!" maxlength="24" style="width:420px"></div>
+      <div><div class="muted" style="font-size:18px">Записано за таблицею</div><select id="mj-w"><option value="w1251">Windows-1251</option><option value="koi8u">KOI8-U</option></select></div>
+      <div><div class="muted" style="font-size:18px">Прочитано за таблицею</div><select id="mj-r"><option value="l1">ISO 8859-1</option><option value="w1251">Windows-1251</option><option value="koi8u">KOI8-U</option></select></div>
+    </div>
+    <div id="mj-bytes" class="mono muted" style="margin-top:18px;font-size:22px;min-height:30px"></div>
+    <div id="mj-out" style="margin-top:12px;font-size:64px;font-weight:bold;color:var(--violet);background:var(--violetL);border-radius:16px;padding:14px 26px;min-height:104px;word-break:break-all"></div>
+    <div class="muted" style="margin-top:14px;font-size:22px">Що буде, якщо таблиці однакові? Чому кома й «!» не змінилися?</div>
+  </div>
+</section>
+
+<!-- 10. ПОРІВНЯННЯ -->
+<section class="slide" data-steps="4">
+  <h2 class="t">Порівнюємо: ASCII і Юнікод</h2>
+  <table>
+    <tr><th style="width:290px">Ознака</th><th>ASCII і 8-бітні таблиці</th><th>Юнікод</th></tr>
+    <tr style="height:92px"><td class="rl">Довжина коду</td><td class="flip" data-s="1" data-a="7 бітів (базова) / 8 бітів (розширена)">?</td><td class="flip" data-s="1" data-a="16 бітів (у нашій моделі)">?</td></tr>
+    <tr style="height:92px"><td class="rl">Кількість різних кодів</td><td class="flip" data-s="2" data-a="128 (базова) / 256 (з розширеною)">?</td><td class="flip" data-s="2" data-a="65 536">?</td></tr>
+    <tr style="height:92px"><td class="rl">Кириличні літери</td><td class="flip" data-s="3" data-a="немає в базовій; у розширеній — залежить від таблиці">?</td><td class="flip" data-s="3" data-a="є, в єдиній таблиці">?</td></tr>
+    <tr style="height:92px"><td class="rl">Однаковість на різних комп’ютерах</td><td class="flip" data-s="4" data-a="базова — так, розширена — ні">?</td><td class="flip" data-s="4" data-a="так, на всіх">?</td></tr>
+  </table>
+  <div style="margin-top:22px;font-size:26px;font-weight:bold;color:var(--violet)">Скажіть: «Ми помітили… Це означає, тому що…»</div>
+  <div class="muted" style="margin-top:6px;font-size:19px">Клацни на «?» — відкриється окрема клітинка; клавіша → відкриває рядок цілком.</div>
+</section>
+
+<!-- 11. РОЗГАДКА -->
+<section class="slide" data-steps="4">
+  <h2 class="t">Розгадка «кракозябр»</h2>
+  <div style="display:flex;gap:18px;align-items:center;margin-bottom:6px"><div style="width:250px;font-size:20px" class="muted">Текст, записаний у Windows-1251</div>
+    <div style="display:flex;gap:14px" id="rz1"></div></div>
+  <div style="display:flex;gap:18px;align-items:center;margin-top:16px"><div style="width:250px;font-size:20px;color:var(--blue);font-weight:bold">Байти у файлі (нічого не змінилося)</div>
+    <div style="display:flex;gap:14px" id="rz2"></div></div>
+  <div style="display:flex;gap:18px;align-items:center;margin-top:16px"><div style="width:250px;font-size:20px;color:var(--red);font-weight:bold">Читаємо за ISO 8859-1</div>
+    <div style="display:flex;gap:14px" id="rz3"></div></div>
+  <div class="rv tintv" data-s="4" style="margin-top:30px;padding:22px 30px;font-size:32px;font-weight:bold;color:var(--violet);text-align:center">Текст записали за однією таблицею, а прочитали за іншою</div>
+</section>
+
+<!-- 12. КОД МОГО ДЕВІЗУ -->
+<section class="slide" data-steps="6">
+  <h2 class="t">Код мого девізу</h2>
+  <div style="display:flex;gap:18px">
+    <div class="card rv" data-s="1" style="flex:1;padding:18px 12px;text-align:center;height:250px"><div class="disc" style="width:70px;height:70px;background:var(--teal);font-size:34px">💡</div><div style="font-size:24px;font-weight:bold;margin:12px 0 6px">1. Вигадай девіз</div><div class="muted" style="font-size:19px">4–6 великих літер</div></div>
+    <div class="card rv" data-s="2" style="flex:1;padding:18px 12px;text-align:center;height:250px"><div class="disc" style="width:70px;height:70px;background:var(--blue);font-size:34px">✏️</div><div style="font-size:24px;font-weight:bold;margin:12px 0 6px">2. Закодуй</div><div class="muted" style="font-size:19px">Юнікод, 4 цифри на літеру</div></div>
+    <div class="card rv" data-s="3" style="flex:1;padding:18px 12px;text-align:center;height:250px"><div class="disc" style="width:70px;height:70px;background:var(--violet);font-size:34px">⇄</div><div style="font-size:24px;font-weight:bold;margin:12px 0 6px">3. Передай код</div><div class="muted" style="font-size:19px">лише код, без девізу</div></div>
+    <div class="card rv" data-s="4" style="flex:1;padding:18px 12px;text-align:center;height:250px"><div class="disc" style="width:70px;height:70px;background:var(--blue);font-size:34px">🔍</div><div style="font-size:24px;font-weight:bold;margin:12px 0 6px">4. Розшифруй</div><div class="muted" style="font-size:19px">код партнера</div></div>
+    <div class="card rv" data-s="5" style="flex:1;padding:18px 12px;text-align:center;height:250px"><div class="disc" style="width:70px;height:70px;background:var(--teal);font-size:34px">✓</div><div style="font-size:24px;font-weight:bold;margin:12px 0 6px">5. Звір і виправ</div><div class="muted" style="font-size:19px">знайди розбіжність</div></div>
+  </div>
+  <div class="rv tintv" data-s="6" style="margin-top:28px;padding:22px 30px;display:flex;align-items:center;gap:24px;font-size:40px;font-weight:bold">
+    <span class="muted" style="font-size:24px;font-weight:normal">Приклад:</span>
+    <span style="color:var(--violet);letter-spacing:.1em">КОД</span><span class="muted">→</span>
+    <span class="rv in mono" style="--i:2;display:inline-block">041A</span><span class="mono">041E</span><span class="mono">0414</span>
+  </div>
+  <div style="margin-top:18px"><div class="mt" data-sec="480" data-phases="0:Вигадай і закодуй девіз|180:Обмін кодом і розшифровка|300:Звірка, виправлення, обсяг"><b>08:00</b><button data-a="go">▶</button><button data-a="reset">⟲</button><span class="l"></span></div></div>
+</section>
+
+<!-- 13. ОБСЯГ -->
+<section class="slide" data-steps="3">
+  <h2 class="t">Скільки місця займає текст?</h2>
+  <div class="rv" data-s="1" style="background:var(--ink);color:#fff;border-radius:18px;padding:24px;text-align:center;font-size:44px;font-weight:bold">обсяг = кількість символів × довжина коду</div>
+  <div class="rv" data-s="2" style="margin-top:24px">
+    <div style="display:flex;align-items:center;gap:16px"><span style="font-size:24px;font-weight:bold">Девіз:</span><input type="text" id="vol-in" value="КОД" maxlength="12" style="width:330px;font-size:34px;letter-spacing:.08em"><span class="muted" style="font-size:19px">введи свій — калькулятор порахує</span></div>
+    <div id="vol-chips" style="display:flex;gap:12px;flex-wrap:wrap;margin-top:18px;min-height:110px"></div>
+    <div id="vol-calc" style="margin-top:16px;display:flex;gap:18px;flex-wrap:wrap;font-size:30px;font-weight:bold"></div>
+  </div>
+  <div class="rv" data-s="3" style="margin-top:20px;font-size:28px;font-weight:bold;color:var(--teal);text-align:center">Твій девіз: ___ × 16 = ___ бітів = ___ байтів</div>
+</section>
+
+<!-- 14. ПЕРЕВІРКА -->
+<section class="slide" data-steps="3">
+  <h2 class="t">Перевіряємо себе</h2>
+  <div style="display:flex;flex-direction:column;gap:20px">
+    <div class="card rv" data-s="1" style="padding:20px 26px;display:flex;gap:22px;align-items:center;height:128px"><span class="disc" style="width:70px;height:70px;background:var(--teal);font-size:34px;flex:none">1</span><span style="font-size:26px;line-height:1.35">«Моя країна — Україна» — це 20 символів. Який обсяг фрази у 8-бітній таблиці? А в Юнікоді (16 бітів на символ)?</span></div>
+    <div class="card rv" data-s="2" style="padding:20px 26px;display:flex;gap:22px;align-items:center;height:128px"><span class="disc" style="width:70px;height:70px;background:var(--blue);font-size:34px;flex:none">2</span><span style="font-size:26px;line-height:1.35">Той самий байт DF на двох комп’ютерах показав «Я» та «ß». Чому так сталося?</span></div>
+    <div class="card rv" data-s="3" style="padding:20px 26px;display:flex;gap:22px;align-items:center;height:128px"><span class="disc" style="width:70px;height:70px;background:var(--violet);font-size:34px;flex:none">3</span><span style="font-size:26px;line-height:1.35">Чи можна записати слово «Україна» в базовій частині ASCII?</span></div>
+  </div>
+  <div style="margin-top:18px"><div class="mt" data-sec="180"><b>03:00</b><button data-a="go">▶</button><button data-a="reset">⟲</button><span class="l"></span></div></div>
+</section>
+
+<!-- 15. ВІДПОВІДІ -->
+<section class="slide" data-steps="3">
+  <h2 class="t">Відповіді для самоперевірки</h2>
+  <div style="display:flex;flex-direction:column;gap:20px">
+    <div class="card rv" data-s="1" style="padding:20px 26px;display:flex;gap:22px;align-items:center;height:132px"><span class="disc" style="width:70px;height:70px;background:var(--teal);font-size:36px;flex:none">✓</span><span style="font-size:26px;line-height:1.4"><b>8-бітна таблиця:</b> 20 × 8 = 160 бітів = <b>20 байтів</b>.<br><b>Юнікод:</b> 20 × 16 = 320 бітів = <b>40 байтів</b>.</span></div>
+    <div class="card rv" data-s="2" style="padding:20px 26px;display:flex;gap:22px;align-items:center;height:132px"><span class="disc" style="width:70px;height:70px;background:var(--blue);font-size:36px;flex:none">✓</span><span style="font-size:26px;line-height:1.4"><b>Різні кодові таблиці</b> (Windows-1251 і ISO 8859-1): той самий код — різні символи.</span></div>
+    <div class="card rv" data-s="3" style="padding:20px 26px;display:flex;gap:22px;align-items:center;height:132px"><span class="disc" style="width:70px;height:70px;background:var(--violet);font-size:36px;flex:none">✓</span><span style="font-size:26px;line-height:1.4"><b>Ні.</b> У базовій частині ASCII лише латиниця, цифри, знаки й керувальні коди; кирилиці там немає.</span></div>
+  </div>
+</section>
+
+<!-- 16. РЕФЛЕКСІЯ -->
+<section class="slide" data-steps="3">
+  <h2 class="t">Рефлексія і домашнє завдання</h2>
+  <div style="display:flex;gap:28px">
+    <div class="card rv" data-s="1" style="flex:1;padding:26px;height:420px"><div style="font-size:28px;font-weight:bold;color:var(--teal)">Оціни себе: 1 · 2 · 3</div>
+      <ul style="font-size:24px;line-height:1.55;padding-left:26px;margin-top:14px"><li>Можу знайти код символу в таблиці</li><li>Можу пояснити, чому виникають «кракозябри»</li><li>Партнер зміг розшифрувати мій код</li></ul>
+      <div class="muted" style="font-size:21px;margin-top:10px">Закінчи: «Найважливіше, що я зрозумів…», «Мені було складно…»</div></div>
+    <div class="tintv rv" data-s="2" style="flex:1;padding:26px;height:420px"><div style="font-size:28px;font-weight:bold;color:var(--violet)">Вдома</div>
+      <ol style="font-size:22px;line-height:1.5;padding-left:28px;margin-top:14px"><li>Чи можуть у тексті бути неправильні коди однотипних літер різних алфавітів? Поясни.</li><li>Як, вводячи однакові літери, отримати інший вигляд («Біт» → значки)?</li><li>Допиши висновок у Паспорті.</li><li>Дізнайся роздільну здатність екрана свого смартфона або монітора.</li></ol></div>
+  </div>
+  <div class="rv" data-s="3" style="margin-top:22px;background:var(--teal);color:#fff;border-radius:14px;padding:14px 26px;font-size:24px;font-weight:bold;text-align:center">Паспорт: розділ 1 ✓ → наступний урок: розділ 2 «Мій знак у пікселях»</div>
+</section>
+
+   </div>
+  </div>
+  <aside id="notes"><div class="in"><h4>Нотатки вчителя</h4><div class="time" id="n-time"></div><div id="n-body"></div></div></aside>
+ </div>
+ <div id="bar">
+  <div class="ctl"><button id="b-prev" title="Назад (←)">◀</button> <button id="b-next" title="Далі (→, Пробіл)">▶</button></div>
+  <div id="cnt"></div>
+  <div id="tl"><div id="clock"></div></div>
+  <div id="sched"></div>
+  <div class="ctl"><button id="b-timer" title="Старт/пауза таймера уроку (T)">⏱ <span id="elapsed">0:00</span> / 45:00</button> <button id="b-notes" title="Нотатки (N)">📝</button> <button id="b-over" title="Огляд слайдів (O)">▦</button> <button id="b-full" title="Повний екран (F)">⛶</button> <button id="b-help" title="Підказка (?)">?</button></div>
+ </div>
+</div>
+<div id="over"><div class="g" id="over-g"></div></div>
+<div id="help" onclick="this.classList.remove('on')"><div class="box"><b>Керування уроком</b><br><kbd>→</kbd> <kbd>Пробіл</kbd> наступний крок або слайд · <kbd>←</kbd> назад<br><kbd>N</kbd> нотатки вчителя · <kbd>T</kbd> таймер уроку (старт/пауза) · <kbd>O</kbd> огляд слайдів<br><kbd>F</kbd> повний екран · <kbd>Esc</kbd> закрити вікна<br>Клацання по порожньому місцю слайда — теж «далі».<br>Усе працює офлайн: збережи файл і відкрий у браузері.</div></div>
+
+<script>
+(function(){
+/* ===== дані етапів і нотаток ===== */
+var STAGES=[[4,'Проблема'],[4,'Актуалізація'],[7,'Пояснення'],[12,'Дослідження'],[4,'Висновок'],[8,'Девіз'],[3,'Перевірка'],[3,'Рефлексія']];
+var SLIDE_STAGE=[0,0,1,1,2,2,2,2,3,4,4,5,5,6,6,7];
+var TITLES=['Титул','Що сталося з текстом?','Згадаймо: біти й коди','План на 45 хвилин','Від літери до коду','ASCII','Один код — різні символи','Юнікод','Лабораторія кодів','Порівнюємо','Розгадка «кракозябр»','Код мого девізу','Обсяг тексту','Перевіряємо себе','Відповіді','Рефлексія і ДЗ'];
+var NOTES=[
+'Привітання, тема, мета. Сьогодні кожен починає розділ 1 «Паспорта цифрового знака». Не затягувати: одразу переходимо до проблемної ситуації.',
+'Показати повідомлення. «Це мало бути “Привіт, клас!”. Файл ніхто не змінював.» Крок 3: запустити таймер (1 хв): подумай — обговори з партнером — поділися. Записати 2–3 гіпотези (дошка / чат Teams) і повернутися до них на слайді «Розгадка».',
+'Три запитання, кроки 1–3. Відповіді відкриваються кроками 4–6: 256; 65 536; 7 бітів (2⁶ = 64 < 100 ≤ 128 = 2⁷). Попросити 1–2 учнів пояснити, як рахували. Teams: відповіді в чат за сигналом. Крок 7 — підказка зі степенями двійки.',
+'Коротко: що робимо. Підкреслити, що кожен учень сьогодні створює перший розділ Паспорта цифрового знака (код девізу).',
+'Кожному символу відповідає номер у кодовій таблиці; номер записують двійково. A → 65 → 01000001 → 41₁₆, де 41₁₆ = 4·16 + 1 = 65. Прогноз до учнів перед кроком 7: код літери B? Відповідь: 66 → 01000010 → 42₁₆.',
+'Базова частина 0–127 (7 бітів) однакова на всіх комп’ютерах. 0–31 керувальні коди; 32–127 цифри, знаки, латиниця. Розширена частина 128–255 — національні символи та псевдографіка, у різних країнах різна. Для вчителя: строго кажучи, код 127 (DEL) керувальний; на слайді дотримуємося спрощення.',
+'Для української мови були різні 8-бітні таблиці: KOI8-U, KOI8-R, Windows-1251, ISO 8859. Байт DF у Windows-1251 — «Я», у ISO 8859-1 — «ß», у KOI8-R — «ъ». Перед кроком 2: «Що побачить користувач, відкривши текст у “чужій” таблиці?»',
+'Юнікод — єдина таблиця для символів усіх мов. У нашій моделі — 16 бітів, 65 536 кодів; «Я» = U+042F. UTF — формат передавання тексту інтернетом. Для сильних учнів (усно): сучасний Юнікод охоплює понад мільйон позицій, UTF-8 записує символ 1–4 байтами.',
+'ДОСЛІДЖЕННЯ 12 хв. Вкладка «Завдання»: ролі Дослідник і Аудитор; запустити таймер ▶ (підписи фаз змінюються самі): частина А — A, a, D, 7 (5 хв); на 5-й хвилині ЗМІНА РОЛЕЙ; частина Б — Я, я, Д, Є (5 хв); висновок (2 хв). Вкладка «Пошук коду» — жива демонстрація для будь-якого символа. Вкладка «Ключ» — після завершення: клацайте клітинки, перевірка десяткових значень. Вкладка «Кракозябри» — повернення до проблеми з живими даними. Без пари — самоперевірка зворотним перетворенням. Швидким: літера Ґ.',
+'Клас заповнює таблицю разом: учні диктують, ви відкриваєте рядок кроком →. Очікувано: 7/8 бітів; 128/256; 16 бітів; 65 536; кирилиці в базовій частині немає; базова частина однакова, розширена — ні. Збираємо 2–3 висновки за схемою «Ми помітили… Це означає, тому що…».',
+'Повернутися до гіпотез зі слайда 2. «Привіт» у Windows-1251: CF F0 E8 E2 B3 F2. Ті самі байти, прочитані за ISO 8859-1, дають «Ïðèâ³ò». Кома й знак оклику — ASCII, тому не змінилися.',
+'0:31–0:39. Пояснення за 1 хв (кроки 1–6). Запустити таймер 8 хв: 0:31–0:34 кодування (самостійно); обмін КОДОМ (не девізом!) і розшифровка; звірка, виправлення, обсяг. Без пари: розшифрувати «запасний» код із картки. Teams: код — у приватний чат партнеру.',
+'Обсяг = кількість символів × довжина коду. У нашій моделі Юнікоду — 16 бітів на символ. 1 байт = 8 бітів. КОД: 3 × 16 = 48 бітів = 6 байтів. Калькулятор працює для будь-якого слова — учні обчислюють обсяг власного девіза в Паспорті.',
+'По одній хвилині на завдання; таймер 3 хв. Учні відповідають письмово на картці, потім відкрийте слайд відповідей і попросіть самоперевірку (0–3 бали).',
+'Відповіді відкриваються по кроках. Примітка: у базовій ASCII кирилиці немає, тому для питання 1 розглядаємо 8-бітну кириличну таблицю (1 байт на символ).',
+'Рефлексія (2 хв): самооцінка трьох тверджень за шкалою 1–3 і одне речення. Домашнє завдання (1 хв): формулювання повністю на картці. Міст до уроку 2: дізнатися роздільну здатність екрана смартфона або монітора.'];
+
+/* ===== кодові таблиці ===== */
+var UK='АБВГҐДЕЄЖЗИІЇЙКЛМНОПРСТУФХЦЧШЩЬЮЯ';
+function buildW(){var e={},d={};for(var b=0xC0;b<=0xFF;b++){var c=String.fromCharCode(0x0410+b-0xC0);d[b]=c;e[c]=b;}
+ [[0xA8,'Ё'],[0xB8,'ё'],[0xAA,'Є'],[0xBA,'є'],[0xB2,'І'],[0xB3,'і'],[0xAF,'Ї'],[0xBF,'ї'],[0xA5,'Ґ'],[0xB4,'ґ']].forEach(function(p){d[p[0]]=p[1];e[p[1]]=p[0];});return{enc:e,dec:d};}
+function buildK(){var lo='юабцдефгхийклмнопярстужвьызшэщчъ',up=lo.toUpperCase(),e={},d={};
+ for(var i=0;i<32;i++){d[0xC0+i]=lo[i];e[lo[i]]=0xC0+i;d[0xE0+i]=up[i];e[up[i]]=0xE0+i;}
+ [[0xA3,'ё'],[0xB3,'Ё'],[0xA4,'є'],[0xB4,'Є'],[0xA6,'і'],[0xB6,'І'],[0xA7,'ї'],[0xB7,'Ї'],[0xAD,'ґ'],[0xBD,'Ґ']].forEach(function(p){d[p[0]]=p[1];e[p[1]]=p[0];});return{enc:e,dec:d};}
+var TB={w1251:buildW(),koi8u:buildK()};
+function byteOf(ch,t){var c=ch.charCodeAt(0);if(c<128)return c;if(t==='l1')return(c>=160&&c<=255)?c:null;var v=TB[t].enc[ch];return v===undefined?null:v;}
+function charOf(b,t){if(b<128)return String.fromCharCode(b);if(t==='l1')return b>=160?String.fromCharCode(b):'?';var v=TB[t].dec[b];return v===undefined?'?':v;}
+function hx(n,w){return n.toString(16).toUpperCase().padStart(w||2,'0');}
+window.__enc={byteOf:byteOf,charOf:charOf};
+
+/* ===== рушій слайдів ===== */
+var slides=[].slice.call(document.querySelectorAll('.slide')),cur=0,step=0;
+var stage=document.getElementById('stage'),vp=document.getElementById('viewport');
+function maxStep(i){return +slides[i].dataset.steps||0;}
+function setFlip(el,on){if(on){el.textContent=el.dataset.a;el.classList.add('open');}else{el.textContent='?';el.classList.remove('open');}}
+function render(){
+ slides.forEach(function(s,i){s.classList.toggle('on',i===cur);s.classList.toggle('past',i<cur);});
+ var s=slides[cur];
+ [].forEach.call(s.querySelectorAll('[data-s]'),function(el){var on=step>=+el.dataset.s;el.classList.toggle('in',on);if(el.classList.contains('flip'))setFlip(el,on);});
+ [].forEach.call(s.querySelectorAll('.view'),function(v){v.classList.toggle('on',+v.dataset.v===step);});
+ [].forEach.call(s.querySelectorAll('#labtabs .btn'),function(b){b.classList.toggle('on',+b.dataset.g===step);});
+ if(cur===10)rzRender(); if(cur===12&&step>=2)volRender(); if(cur===8&&step===1)labRender(); if(cur===8&&step===3)mjRender();
+ document.getElementById('cnt').textContent=(cur+1)+' / '+slides.length+(maxStep(cur)?'  ·  крок '+step+'/'+maxStep(cur):'');
+ location.hash='#'+(cur+1);
+ var st=SLIDE_STAGE[cur];
+ [].forEach.call(document.querySelectorAll('#tl .seg'),function(sg,i){sg.classList.toggle('on',i===st);sg.classList.toggle('done',i<st);});
+ var start=0;for(var i=0;i<st;i++)start+=STAGES[i][0];
+ document.getElementById('n-time').textContent='Етап '+(st+1)+' · '+STAGES[st][1]+' · '+Math.floor(start)+':00–'+(start+STAGES[st][0])+':00 ('+STAGES[st][0]+' хв)';
+ document.getElementById('n-body').textContent=NOTES[cur];
+ sched();
+}
+function next(){if(step<maxStep(cur)){step++;render();}else if(cur<slides.length-1){cur++;step=0;render();}}
+function prev(){if(step>0){step--;render();}else if(cur>0){cur--;step=maxStep(cur);render();}}
+function go(i){cur=Math.max(0,Math.min(slides.length-1,i));step=0;render();}
+function setStep(n){step=Math.max(0,Math.min(maxStep(cur),n));render();}
+window.__nav={next:next,prev:prev,go:go,setStep:setStep,state:function(){return{cur:cur,step:step};}};
+
+/* ===== масштаб ===== */
+function fit(){var k=Math.min(vp.clientWidth/1280,vp.clientHeight/720);stage.style.transform='translate(-50%,-50%) scale('+k+')';}
+window.addEventListener('resize',fit);
+
+/* ===== нижня панель і таймер уроку ===== */
+var tl=document.getElementById('tl');
+STAGES.forEach(function(s,i){var d=document.createElement('div');d.className='seg';d.style.flex=s[0]+' 1 0';d.textContent=s[0]>=7?(i+1)+' · '+s[1]+' · '+s[0]+'′':String(i+1);d.title=(i+1)+'. '+s[1]+' · '+s[0]+' хв';tl.insertBefore(d,document.getElementById('clock'));});
+var elapsed=0,running=false,iv=null;
+function fmt(s){s=Math.max(0,Math.round(s));return Math.floor(s/60)+':'+String(s%60).padStart(2,'0');}
+function sched(){
+ var el=document.getElementById('sched'),st=SLIDE_STAGE[cur],start=0;for(var i=0;i<st;i++)start+=STAGES[i][0];
+ document.getElementById('elapsed').textContent=fmt(elapsed);
+ document.getElementById('clock').style.left=Math.min(100,elapsed/2700*100)+'%';
+ if(!elapsed){el.textContent='';return;}
+ var d=elapsed-start*60;
+ if(Math.abs(d)<30){el.textContent='за графіком';el.style.color='var(--green)';}
+ else if(d>0){el.textContent='запізнення '+fmt(d);el.style.color='var(--red)';}
+ else{el.textContent='попереду '+fmt(-d);el.style.color='var(--teal)';}
+}
+function toggleClock(){running=!running;document.getElementById('b-timer').classList.toggle('on',running);
+ if(running){iv=setInterval(function(){elapsed++;sched();},1000);}else{clearInterval(iv);}}
+document.getElementById('b-timer').addEventListener('click',toggleClock);
+document.getElementById('b-timer').addEventListener('dblclick',function(){if(running)toggleClock();elapsed=0;sched();});
+
+/* ===== міні-таймери ===== */
+function beep(){try{var a=new (window.AudioContext||window.webkitAudioContext)(),o=a.createOscillator(),g=a.createGain();o.connect(g);g.connect(a.destination);o.frequency.value=880;g.gain.value=.15;o.start();o.stop(a.currentTime+.4);}catch(e){}}
+[].forEach.call(document.querySelectorAll('.mt'),function(w){
+ var total=+w.dataset.sec,left=total,t=null,disp=w.querySelector('b'),lab=w.querySelector('.l');
+ var ph=(w.dataset.phases||'').split('|').filter(Boolean).map(function(x){var i=x.indexOf(':');return[+x.slice(0,i),x.slice(i+1)];});
+ function draw(){disp.textContent=String(Math.floor(left/60)).padStart(2,'0')+':'+String(left%60).padStart(2,'0');var e=total-left,l='';ph.forEach(function(p){if(e>=p[0])l=p[1];});lab.textContent=l;w.classList.toggle('end',left===0);}
+ w.querySelector('[data-a=go]').addEventListener('click',function(){if(t){clearInterval(t);t=null;this.textContent='▶';return;}if(left===0)left=total;this.textContent='⏸';var b=this;t=setInterval(function(){left--;draw();if(left<=0){clearInterval(t);t=null;b.textContent='▶';beep();}},1000);});
+ w.querySelector('[data-a=reset]').addEventListener('click',function(){clearInterval(t);t=null;left=total;w.querySelector('[data-a=go]').textContent='▶';draw();});
+ draw();
+});
+
+/* ===== слайд 9: лабораторія ===== */
+function labRender(){
+ var v=document.getElementById('lab-ch').value,out=document.getElementById('lab-out');
+ if(!v){out.innerHTML='';return;}
+ var ch=v[0],u=ch.charCodeAt(0),a=u<128?u:null,w=u<128?u:(TB.w1251.enc[ch]===undefined?null:TB.w1251.enc[ch]),k=u<128?u:(TB.koi8u.enc[ch]===undefined?null:TB.koi8u.enc[ch]);
+ function c(n,wd){return n===null?'—':'<b>'+hx(n,wd||2)+'</b> <span class="muted">('+n+')</span>';}
+ function b(n,l){return n===null?'—':n.toString(2).padStart(l||8,'0');}
+ out.innerHTML='<table><tr><th>Таблиця</th><th>Код (hex, десятковий)</th><th>Двійковий код</th></tr>'+
+ '<tr><td class="rl">ASCII (базова)</td><td class="mono">'+c(a)+'</td><td class="mono">'+b(a)+'</td></tr>'+
+ '<tr><td class="rl">Windows-1251</td><td class="mono">'+c(w)+'</td><td class="mono">'+b(w)+'</td></tr>'+
+ '<tr><td class="rl">KOI8-U</td><td class="mono">'+c(k)+'</td><td class="mono">'+b(k)+'</td></tr>'+
+ '<tr><td class="rl">Юнікод (16 бітів)</td><td class="mono"><b>'+hx(u,4)+'</b> <span class="muted">('+u+')</span></td><td class="mono">'+b(u,16)+'</td></tr></table>';
+}
+document.getElementById('lab-ch').addEventListener('input',labRender);
+(function keyTable(){
+ var syms=['A','a','D','7','Я','я','Д','Є','Ґ'],h='<table style="font-size:19px" class="kt"><tr><th>Символ</th><th>ASCII</th><th>Win-1251</th><th>Юнікод</th><th>Перевірка (десятковий)</th></tr>';
+ syms.forEach(function(ch){var u=ch.charCodeAt(0),a=u<128?hx(u):'—',w=hx(byteOf(ch,'w1251')),n=u<128?u:byteOf(ch,'w1251'),chk=Math.floor(n/16)+'·16 + '+(n%16)+' = '+n;
+  h+='<tr style="height:40px"><td class="rl" style="text-align:center;font-size:26px">'+ch+(ch==='Ґ'?' <span class="muted" style="font-size:14px">(додатково)</span>':'')+'</td>'+
+  '<td class="flip" data-a="'+a+'">?</td><td class="flip" data-a="'+w+'">?</td><td class="flip" data-a="'+hx(u,4)+'">?</td><td class="flip" data-a="'+chk+'">?</td></tr>';});
+ document.getElementById('key-tbl').innerHTML=h+'</table>';
+})();
+document.getElementById('key-all').addEventListener('click',function(){[].forEach.call(document.querySelectorAll('#key-tbl .flip'),function(e){setFlip(e,true);});});
+document.getElementById('key-none').addEventListener('click',function(){[].forEach.call(document.querySelectorAll('#key-tbl .flip'),function(e){setFlip(e,false);});});
+document.addEventListener('click',function(e){var f=e.target.closest&&e.target.closest('.flip');if(f&&!f.hasAttribute('data-s')){setFlip(f,!f.classList.contains('open'));e.stopPropagation();}else if(f){setFlip(f,!f.classList.contains('open'));e.stopPropagation();}},true);
+[].forEach.call(document.querySelectorAll('#labtabs .btn'),function(b){b.addEventListener('click',function(){setStep(+b.dataset.g);});});
+function mjRender(){
+ var t=document.getElementById('mj-text').value,wt=document.getElementById('mj-w').value,rt=document.getElementById('mj-r').value,bs=[],r='';
+ for(var i=0;i<t.length;i++){var b=byteOf(t[i],wt);if(b===null){bs.push('??');r+='?';}else{bs.push(hx(b));r+=charOf(b,rt);}}
+ document.getElementById('mj-bytes').textContent='Байти: '+bs.join(' ');document.getElementById('mj-out').textContent=r||' ';
+}
+['mj-text','mj-w','mj-r'].forEach(function(id){var e=document.getElementById(id);e.addEventListener('input',mjRender);e.addEventListener('change',mjRender);});
+
+/* ===== слайд 11: розгадка ===== */
+var RZ='Привіт',RZB=[];RZ.split('').forEach(function(c){RZB.push(byteOf(c,'w1251'));});
+(function rzBuild(){
+ var r1=document.getElementById('rz1'),r2=document.getElementById('rz2'),r3=document.getElementById('rz3');
+ function box(txt,col,fs,s,i,mono){return '<div class="rv" data-s="'+s+'" style="--i:'+i+';width:110px;height:100px;border-radius:14px;background:#fff;border:2px solid '+col+';display:flex;align-items:center;justify-content:center;font-size:'+fs+'px;font-weight:bold;color:'+col+(mono?';font-family:Consolas,monospace':'')+'">'+txt+'</div>';}
+ var h1='',h2='',h3='';
+ RZ.split('').forEach(function(c,i){h1+=box(c,'#1b2a4a',56,1,i);h2+=box(hx(RZB[i]),'#2457a6',44,2,i,1);h3+=box(charOf(RZB[i],'l1'),'#e5575b',56,3,i);});
+ r1.innerHTML=h1;r2.innerHTML=h2;r3.innerHTML=h3;
+})();
+function rzRender(){[].forEach.call(slides[10].querySelectorAll('[data-s]'),function(el){el.classList.toggle('in',step>=+el.dataset.s);});}
+
+/* ===== слайд 13: калькулятор обсягу ===== */
+function volRender(){
+ var t=document.getElementById('vol-in').value,ch='',n=0;
+ for(var i=0;i<t.length;i++){var c=t[i];n++;ch+='<div style="text-align:center;background:#fff;border:2px solid #d3e2e8;border-radius:12px;padding:8px 14px;animation:pop .4s both;animation-delay:'+(i*.08)+'s"><div style="font-size:34px;font-weight:bold;color:#6a4bc4">'+(c===' '?'␣':c)+'</div><div class="mono" style="font-size:22px">'+hx(c.charCodeAt(0),4)+'</div></div>';}
+ document.getElementById('vol-chips').innerHTML=ch;
+ var bits=n*16;
+ document.getElementById('vol-calc').innerHTML=n?'<span class="tint" style="padding:12px 20px">'+n+' × 16 = '+bits+' бітів</span><span class="tintv" style="padding:12px 20px">'+bits+' : 8 = '+(bits/8)+' байтів</span>':'';
+}
+document.getElementById('vol-in').addEventListener('input',volRender);
+
+/* ===== огляд, нотатки, повний екран, клавіші ===== */
+var og=document.getElementById('over-g');
+TITLES.forEach(function(t,i){var d=document.createElement('div');d.innerHTML='<b>'+(i+1)+'.</b> '+t;d.addEventListener('click',function(){document.getElementById('over').classList.remove('on');go(i);});og.appendChild(d);});
+function toggleNotes(){document.getElementById('notes').classList.toggle('open');setTimeout(fit,320);}
+function full(){var d=document.documentElement;if(!document.fullscreenElement){(d.requestFullscreen||d.webkitRequestFullscreen||function(){}).call(d);}else{(document.exitFullscreen||function(){}).call(document);}}
+document.getElementById('b-next').addEventListener('click',next);document.getElementById('b-prev').addEventListener('click',prev);
+document.getElementById('b-notes').addEventListener('click',toggleNotes);document.getElementById('b-full').addEventListener('click',full);
+document.getElementById('b-over').addEventListener('click',function(){document.getElementById('over').classList.add('on');});
+document.getElementById('b-help').addEventListener('click',function(){document.getElementById('help').classList.add('on');});
+document.getElementById('over').addEventListener('click',function(e){if(e.target===this)this.classList.remove('on');});
+document.addEventListener('keydown',function(e){
+ var tg=e.target.tagName;if(tg==='INPUT'||tg==='SELECT'||tg==='TEXTAREA')return;
+ var k=e.key;
+ if(k==='ArrowRight'||k===' '||k==='PageDown'||k==='Enter'){e.preventDefault();next();}
+ else if(k==='ArrowLeft'||k==='PageUp'||k==='Backspace'){e.preventDefault();prev();}
+ else if(k==='Home')go(0);else if(k==='End')go(slides.length-1);
+ else if(k==='n'||k==='N'||k==='т'||k==='Т')toggleNotes();
+ else if(k==='t'||k==='T'||k==='е'||k==='Е')toggleClock();
+ else if(k==='o'||k==='O'||k==='щ'||k==='Щ')document.getElementById('over').classList.toggle('on');
+ else if(k==='f'||k==='F'||k==='а'||k==='А')full();
+ else if(k==='?')document.getElementById('help').classList.toggle('on');
+ else if(k==='Escape'){document.getElementById('over').classList.remove('on');document.getElementById('help').classList.remove('on');}
+});
+stage.addEventListener('click',function(e){if(e.target.closest('input,select,button,.flip,.mt,.tabs,table input'))return;if(slides[cur].classList.contains('on')&&(e.target.closest('#key-tbl')))return;next();});
+
+var h=parseInt((location.hash||'').slice(1),10);if(h>=1&&h<=slides.length)cur=h-1;
+fit();render();labRender();mjRender();volRender();
+})();
+</script>
+</body>
+</html>

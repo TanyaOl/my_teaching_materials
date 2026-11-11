@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Урок 1. Кодування символів — інтерактивна картка</title>
+<style>
+:root{--bg:#f7fbfc;--ink:#1b2a4a;--muted:#5b6b7d;--line:#d3e2e8;--teal:#0e8a9b;--blue:#2457a6;--violet:#6a4bc4;--ok:#2e9e6b;--bad:#e5575b;--tealL:#e6f5f7;--violetL:#f0ecfb;--warnL:#fff6dd}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:Arial,Helvetica,sans-serif;line-height:1.5}
+#top{position:sticky;top:0;z-index:5;background:#fff;border-bottom:1px solid var(--line);padding:10px 18px}
+#top .in{max-width:980px;margin:0 auto;display:flex;align-items:center;gap:16px}
+#top b{font-size:15px}
+#prog{flex:1;height:12px;background:#e3edf0;border-radius:99px;overflow:hidden}
+#prog i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--teal),var(--violet));transition:width .4s}
+#pct{font-weight:bold;min-width:46px;text-align:right}
+main{max-width:980px;margin:0 auto;padding:18px 18px 60px}
+h1{margin:6px 0 2px;font-size:28px}
+.sub{color:var(--muted);font-size:14px;margin-bottom:14px}
+h2{font-size:21px;color:var(--teal);margin:0 0 8px}
+section{background:#fff;border:1px solid var(--line);border-radius:16px;padding:18px 20px;margin:16px 0}
+.task{color:var(--muted);font-size:15px;margin:0 0 12px}
+input[type=text],input[type=number],textarea,select{font:inherit;padding:9px 11px;border:2px solid #b9cbd3;border-radius:10px;background:#fff;color:var(--ink);max-width:100%}
+input:focus,textarea:focus,select:focus{outline:none;border-color:var(--teal)}
+textarea{width:100%;min-height:74px;resize:vertical}
+.btn{font:inherit;font-weight:bold;font-size:15px;padding:9px 16px;border-radius:10px;border:2px solid var(--blue);background:#fff;color:var(--blue);cursor:pointer}
+.btn:hover{background:var(--blue);color:#fff}
+.btn.pri{background:var(--teal);border-color:var(--teal);color:#fff}
+.btn.pri:hover{background:#0b6f7d}
+.row{display:flex;gap:14px;flex-wrap:wrap;align-items:flex-end}
+label.l{display:block;font-size:13px;color:var(--muted);font-weight:bold;margin-bottom:3px}
+table{border-collapse:collapse;width:100%;margin:10px 0;font-size:15px}
+th{background:var(--teal);color:#fff;padding:8px;font-size:14px}
+td{border:1px solid var(--line);padding:5px 6px;text-align:center}
+td.s{background:#f5f7fa;font-weight:bold;font-size:20px}
+td input{width:100%;min-width:70px;text-align:center;font-family:Consolas,Menlo,monospace;font-size:16px;padding:6px}
+input.ok,textarea.ok{border-color:var(--ok)!important;background:#eaf7f0}
+input.bad{border-color:var(--bad)!important;background:#fdeeee}
+.msg{font-size:14px;margin-top:6px;min-height:20px}
+.msg.ok{color:var(--ok);font-weight:bold}.msg.bad{color:var(--bad);font-weight:bold}.msg.n{color:var(--muted)}
+.note{background:var(--warnL);border-radius:10px;padding:10px 14px;font-size:14px;margin:10px 0}
+.tint{background:var(--tealL);border-radius:10px;padding:10px 14px;font-size:15px;margin:10px 0}
+.tintv{background:var(--violetL);border-radius:10px;padding:10px 14px;font-size:15px;margin:10px 0}
+details{border:1px solid var(--line);border-radius:12px;padding:8px 14px;margin:8px 0;background:#fafdfe}
+summary{cursor:pointer;font-weight:bold;color:var(--blue)}
+.mono{font-family:Consolas,Menlo,monospace}
+.chips span{display:inline-block;margin:3px;padding:6px 10px;border:2px solid var(--line);border-radius:10px;font-family:Consolas,Menlo,monospace;font-size:17px}
+.chips span.ok{border-color:var(--ok);background:#eaf7f0}.chips span.bad{border-color:var(--bad);background:#fdeeee}
+.opt{display:block;border:2px solid var(--line);border-radius:10px;padding:9px 12px;margin:6px 0;cursor:pointer}
+.opt:hover{border-color:var(--blue)}
+.opt.ok{border-color:var(--ok);background:#eaf7f0}.opt.bad{border-color:var(--bad);background:#fdeeee}
+.tgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(110px,1fr));gap:4px;font-size:14px}
+.tgrid div{border:1px solid var(--line);border-radius:6px;padding:3px 8px}
+.scale label{margin-right:12px;cursor:pointer}
+.seg{display:inline-flex;border:2px solid var(--blue);border-radius:10px;overflow:hidden}
+.seg button{font:inherit;font-weight:bold;border:0;background:#fff;color:var(--blue);padding:8px 14px;cursor:pointer}
+.seg button.on{background:var(--blue);color:#fff}
+#final{position:sticky;bottom:0;background:#fff;border-top:1px solid var(--line);padding:10px 18px;z-index:5}
+#final .in{max-width:980px;margin:0 auto;display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+@media print{#top,#final,.noprint,.btn{display:none!important}section{break-inside:avoid;border-color:#999}}
+@media(max-width:600px){h1{font-size:22px}}
+</style>
+</head>
+<body>
+<div id="top"><div class="in"><b>Урок 1 · Кодування символів</b><div id="prog"><i></i></div><span id="pct">0%</span></div></div>
+<main>
+<h1>Практична картка (інтерактивна)</h1>
+<div class="sub">Для роботи в Microsoft Teams або вдома. Працює без інтернету й реєстрації. Відповіді зберігаються на твоєму пристрої автоматично.</div>
+
+<section>
+  <div class="row">
+    <div><label class="l" for="name">Прізвище, ім’я</label><input type="text" id="name" data-f="name" data-label="Прізвище, ім’я" style="width:260px"></div>
+    <div><label class="l" for="cls">Клас</label><input type="text" id="cls" data-f="cls" data-label="Клас" style="width:90px"></div>
+    <div><label class="l" for="partner">Партнер (якщо є)</label><input type="text" id="partner" data-f="partner" data-label="Партнер" style="width:230px"></div>
+    <div><label class="l">Як працюю</label><div class="seg" id="mode"><button data-m="pair" class="on">У парі</button><button data-m="solo">Самостійно</button></div></div>
+  </div>
+  <div class="tint" style="margin-bottom:0">У парі: Дослідник заповнює таблицю, Аудитор перевіряє два рядки; через 5 хвилин міняєтеся. Самостійно: усі перевірки виконуєш сам(а) зворотним перетворенням. Усі завдання мають індивідуальний варіант.</div>
+</section>
+
+<section>
+  <h2>Опорний конспект</h2>
+  <details><summary>Кодування тексту і ASCII</summary>
+    <p>Кожному символу відповідає номер у кодовій таблиці; номер записують двійковим кодом. Базова частина ASCII: коди <b>0–127</b> (7 бітів): 0–31 — керувальні, далі пробіл, цифри, знаки, латиниця. Приклад: <b>A</b> = 65 = 01000001. Розширена частина: <b>128–255</b> (8 бітів) — національні літери й псевдографіка; у різних країнах різна.</p></details>
+  <details><summary>Скільки кодів? Шістнадцятковий запис</summary>
+    <p>8 бітів → 2⁸ = <b>256</b> кодів; 16 бітів → 2¹⁶ = <b>65 536</b>. Шістнадцяткові цифри: 0–9 і A–F (A=10, B=11, C=12, D=13, E=14, F=15). Приклад: 41₁₆ = 4·16 + 1 = <b>65</b>.</p></details>
+  <details><summary>Кириличні таблиці та Юнікод</summary>
+    <p>Для української й російської були різні 8-бітні таблиці: KOI8-U, KOI8-R, Windows-1251, ISO 8859. Той самий код у різних таблицях — різні символи, звідси «кракозябри». <b>Юнікод</b> — єдина таблиця для символів усіх мов (ISO 10646); у нашій моделі символ має 16 бітів. UTF — формат передавання символів інтернетом.</p></details>
+  <details><summary>Обсяг тексту і формати файлів</summary>
+    <p>обсяг = кількість символів × довжина коду; 1 байт = 8 бітів. TXT — простий текст без форматування; DOC, DOCX — текст із форматуванням.</p></details>
+</section>
+
+<section>
+  <h2>Завдання 1. Гіпотеза</h2>
+  <p class="task">Друг надіслав «Привіт, клас!», а на екрані з’явилося <b>«Ïðèâ³ò, êëàñ!»</b>. Файл ніхто не змінював. Чому так сталося?</p>
+  <textarea data-f="hyp" data-label="Завдання 1. Гіпотеза" placeholder="Моя гіпотеза: …"></textarea>
+</section>
+
+<section>
+  <h2>Завдання 2. Дослідження «Лабораторія кодів»</h2>
+  <p class="task"><b>Запитання:</b> чи однаковий код має один і той самий символ у різних таблицях? Знайди коди в мініатюрній лабораторії нижче й заповни таблицю. Кожна клітинка перевіряється відразу: зелена — правильно, червона — перевір ще раз. Якщо символа немає в таблиці, пиши «—».</p>
+  <div class="tintv"><div class="row"><div><label class="l" for="lab-ch">Лабораторія: введи символ</label><input type="text" id="lab-ch" maxlength="1" value="Я" style="width:80px;text-align:center;font-size:24px"></div><div id="lab-out" style="flex:1;min-width:280px;font-size:15px"></div></div></div>
+  <p class="task"><b>Зразок:</b> Z → ASCII 5A · Win-1251 5A · Юнікод 005A · перевірка: 5·16 + 10 = 90. У колонці «Перевірка» впиши <b>десятковий код</b> (наприклад, 90) — Аудитор переводить шістнадцятковий код у десятковий.</p>
+  <table id="tbl"><tr><th>Символ</th><th>ASCII (hex)</th><th>Win-1251 (hex)</th><th>Юнікод (hex)</th><th>Перевірка (десятковий)</th></tr></table>
+  <div class="msg n" id="tbl-score"></div>
+  <div class="note">Частина А (5 хв): A, a, D, 7 · Частина Б (5 хв): Я, я, Д, Є · потім висновок. Ґ — за бажанням.</div>
+  <h3 style="font-size:17px;margin:12px 0 4px">Мій висновок (спирайся на свою таблицю)</h3>
+  <label class="l">1) Що спільного в кодах латинських літер і цифр у всіх таблицях?</label>
+  <textarea data-f="c1" data-label="Висновок 1 (латиниця)"></textarea>
+  <label class="l" style="margin-top:8px">2) Що з кодами кириличних літер? Чи є вони в базовій частині ASCII?</label>
+  <textarea data-f="c2" data-label="Висновок 2 (кирилиця)"></textarea>
+  <label class="l" style="margin-top:8px">3) Яку проблему розв’язує Юнікод?</label>
+  <textarea data-f="c3" data-label="Висновок 3 (Юнікод)"></textarea>
+  <div class="tint">Скажи вголос або напиши в чат: «Ми помітили… Це означає, тому що…»</div>
+  <details><summary>Довідка: Юнікод-коди великих літер української абетки</summary><div class="tgrid" id="tgrid" style="margin-top:8px"></div><p class="task">Увага: Є, І, Ї, Ґ мають «неалфавітні» коди.</p></details>
+</section>
+
+<section>
+  <h2>Завдання 3. Паспорт цифрового знака · розділ 1 «Код мого девізу»</h2>
+  <p class="task">Вигадай девіз: <b>4–6 великих літер</b> української абетки (наприклад, ЗНАК, КОЛІР, ВОГОНЬ). Закодуй його кодами Юнікоду, по 4 цифри на літеру, через пробіл. Приклад: КОД → 041A 041E 0414.</p>
+  <div class="row">
+    <div><label class="l" for="dev">Мій девіз (не показуй партнеру!)</label><input type="text" id="dev" data-f="dev" data-label="Мій девіз" maxlength="6" style="width:200px;font-size:22px;letter-spacing:.08em"></div>
+    <div style="flex:1;min-width:260px"><label class="l" for="mycode">Мій код</label><input type="text" id="mycode" data-f="mycode" data-label="Мій код" style="width:100%;font-family:Consolas,monospace;font-size:18px" placeholder="041A 041E 0414"></div>
+  </div>
+  <div class="row" style="margin-top:8px"><button class="btn" id="chk-code">Перевірити мій код</button><button class="btn" id="copy-code">Скопіювати лише код</button></div>
+  <div class="chips" id="code-chips"></div><div class="msg n" id="code-msg"></div>
+
+  <div id="pairbox">
+    <div class="tint">Надішли партнеру в чат <b>лише код</b> (не девіз!). Отримаєш його код — розшифруй сам(а) за довідковою таблицею, потім перевір.</div>
+    <div class="row">
+      <div style="flex:1;min-width:240px"><label class="l" for="pcode">Код партнера (вставлю з чату)</label><input type="text" id="pcode" data-f="pcode" data-label="Код партнера" style="width:100%;font-family:Consolas,monospace;font-size:18px"></div>
+      <div><label class="l" for="pdec">Моя розшифровка</label><input type="text" id="pdec" data-f="pdec" data-label="Розшифровка коду партнера" style="width:200px;font-size:22px;letter-spacing:.08em"></div>
+      <button class="btn" id="chk-dec">Перевірити розшифровку</button>
+    </div>
+    <div class="msg n" id="dec-msg"></div>
+    <label class="l">Співпало з тим, що задумав партнер? Якщо ні — де розбіжність і хто помилився?</label>
+    <textarea data-f="match" data-label="Звірка з партнером" style="min-height:56px"></textarea>
+  </div>
+
+  <div id="solobox" style="display:none">
+    <div class="tintv"><b>Індивідуальний варіант.</b> Розшифруй код <b class="mono">041A 041E 041B 0406 0420</b> і перевір.</div>
+    <div class="row"><input type="text" id="sdec" data-f="sdec" data-label="Розшифровка запасного коду" style="width:200px;font-size:22px;letter-spacing:.08em"><button class="btn" id="chk-solo">Перевірити</button></div>
+    <div class="msg n" id="solo-msg"></div>
+  </div>
+
+  <h3 style="font-size:17px;margin:14px 0 4px">Обсяг мого девіза</h3>
+  <div class="row"><div><label class="l" for="v-n">Символів</label><input type="number" id="v-n" data-f="vn" data-label="Обсяг: символів" style="width:90px"></div><span style="padding-bottom:10px">× 16 бітів =</span>
+    <div><label class="l" for="v-b">Бітів</label><input type="number" id="v-b" data-f="vb" data-label="Обсяг: бітів" style="width:110px"></div><span style="padding-bottom:10px">= </span>
+    <div><label class="l" for="v-y">Байтів</label><input type="number" id="v-y" data-f="vy" data-label="Обсяг: байтів" style="width:110px"></div></div>
+  <div class="msg n" id="vol-msg"></div>
+</section>
+
+<section>
+  <h2>Завдання 4. Перевіряю себе</h2>
+  <p class="task"><b>1)</b> «Моя країна — Україна» — це 20 символів (разом із пропусками й тире). Який обсяг фрази в 8-бітній таблиці? А в Юнікоді (16 бітів на символ)?</p>
+  <div class="row"><div><label class="l" for="q1a">8-бітна таблиця, байтів</label><input type="number" id="q1a" data-f="q1a" data-label="4.1: 8-бітна, байтів" style="width:120px"></div><div><label class="l" for="q1b">Юнікод, байтів</label><input type="number" id="q1b" data-f="q1b" data-label="4.1: Юнікод, байтів" style="width:120px"></div></div>
+  <p class="task" style="margin-top:14px"><b>2)</b> Той самий байт DF на двох комп’ютерах показав «Я» та «ß». Чому так сталося?</p>
+  <div id="q2"></div><div class="msg n" id="q2-msg"></div>
+  <p class="task" style="margin-top:14px"><b>3)</b> Чи можна записати слово «Україна» в базовій частині ASCII?</p>
+  <div id="q3"></div><div class="msg n" id="q3-msg"></div>
+  <div class="msg n" id="q-score" style="font-size:16px"></div>
+</section>
+
+<section>
+  <h2>Самооцінювання</h2>
+  <p class="task">1 — потрібна допомога · 2 — майже вмію · 3 — вмію сам(а)</p>
+  <div id="selfbox"></div>
+  <label class="l" style="margin-top:10px">Найважливіше, що я зрозумів(ла):</label><textarea data-f="r1" data-label="Найважливіше, що я зрозумів(ла)" style="min-height:56px"></textarea>
+  <label class="l" style="margin-top:8px">Мені було складно:</label><textarea data-f="r2" data-label="Мені було складно" style="min-height:56px"></textarea>
+  <label class="l" style="margin-top:8px">Мій партнер (познач, що вдалося):</label>
+  <div id="pbox"></div>
+</section>
+
+<section>
+  <h2>Вдома</h2>
+  <p class="task">1) Чи можуть у тексті бути неправильно зазначені коди однотипних літер різних алфавітів? Поясни.</p>
+  <textarea data-f="h1" data-label="ДЗ 1" ></textarea>
+  <p class="task" style="margin-top:10px">2) Як, вводячи з клавіатури однакові літери, отримати зовсім інший вигляд символів (наприклад, «Біт» → значки)?</p>
+  <textarea data-f="h2" data-label="ДЗ 2"></textarea>
+  <p class="task" style="margin-top:10px">3) Роздільна здатність екрана мого смартфона або монітора (знадобиться на наступному уроці):</p>
+  <input type="text" data-f="h3" data-label="ДЗ 3: роздільна здатність" style="width:260px" placeholder="наприклад, 1920 × 1080">
+</section>
+</main>
+
+<div id="final"><div class="in">
+  <button class="btn pri" id="b-save">⬇ Зберегти відповіді (.txt)</button>
+  <button class="btn" id="b-copy">📋 Скопіювати для чату Teams</button>
+  <button class="btn" id="b-print">🖨 Друк / PDF</button>
+  <span class="msg n" id="final-msg" style="margin:0"></span>
+</div></div>
+
+<script>
+(function(){
+var UK='АБВГҐДЕЄЖЗИІЇЙКЛМНОПРСТУФХЦЧШЩЬЮЯ';
+function hx(n,w){return n.toString(16).toUpperCase().padStart(w||2,'0');}
+function w1251(ch){var c=ch.charCodeAt(0);if(c<128)return c;if(c>=0x410&&c<=0x44F)return 0xC0+c-0x410;var m={'Ё':0xA8,'ё':0xB8,'Є':0xAA,'є':0xBA,'І':0xB2,'і':0xB3,'Ї':0xAF,'ї':0xBF,'Ґ':0xA5,'ґ':0xB4};return m[ch]===undefined?null:m[ch];}
+function koi(ch){var c=ch.charCodeAt(0);if(c<128)return c;var lo='юабцдефгхийклмнопярстужвьызшэщчъ',up=lo.toUpperCase(),i=lo.indexOf(ch);if(i>=0)return 0xC0+i;i=up.indexOf(ch);if(i>=0)return 0xE0+i;var m={'ё':0xA3,'Ё':0xB3,'є':0xA4,'Є':0xB4,'і':0xA6,'І':0xB6,'ї':0xA7,'Ї':0xB7,'ґ':0xAD,'Ґ':0xBD};return m[ch]===undefined?null:m[ch];}
+function store(k,v){try{localStorage.setItem('u1.'+k,v);}catch(e){}}
+function load(k){try{return localStorage.getItem('u1.'+k);}catch(e){return null;}}
+
+/* довідка */
+var tg=document.getElementById('tgrid');UK.split('').forEach(function(c){var d=document.createElement('div');d.innerHTML='<b>'+c+'</b> = <span class="mono">'+hx(c.charCodeAt(0),4)+'</span>';tg.appendChild(d);});
+
+/* міні-лабораторія */
+function lab(){var v=document.getElementById('lab-ch').value,o=document.getElementById('lab-out');if(!v){o.textContent='';return;}
+ var ch=v[0],u=ch.charCodeAt(0),a=u<128?hx(u):'—',w=w1251(ch),k=koi(ch);
+ o.innerHTML='<b>'+ch+'</b> · ASCII: <b class="mono">'+a+'</b> · Win-1251: <b class="mono">'+(w===null?'—':hx(w))+'</b> · KOI8-U: <b class="mono">'+(k===null?'—':hx(k))+'</b> · Юнікод: <b class="mono">'+hx(u,4)+'</b> ('+u+')';}
+document.getElementById('lab-ch').addEventListener('input',lab);lab();
+
+/* таблиця дослідження */
+var SY=['A','a','D','7','Я','я','Д','Є','Ґ'],tbl=document.getElementById('tbl'),cells=[];
+SY.forEach(function(ch){
+ var u=ch.charCodeAt(0),ascii=u<128?hx(u):'—',w=hx(w1251(ch)),n=u<128?u:w1251(ch);
+ var exp=[ascii,w,hx(u,4),String(n)],opt=ch==='Ґ',tr=document.createElement('tr');
+ tr.innerHTML='<td class="s">'+ch+(opt?'<div style="font-size:11px;color:#5b6b7d;font-weight:normal">за бажанням</div>':'')+'</td>';
+ exp.forEach(function(e,j){var td=document.createElement('td'),inp=document.createElement('input');inp.type='text';inp.autocomplete='off';
+  inp.dataset.f='t_'+SY.indexOf(ch)+'_'+j;inp.dataset.label='Таблиця: '+ch+' · '+['ASCII','Win-1251','Юнікод','Перевірка'][j];inp.dataset.exp=e;if(opt)inp.dataset.opt='1';
+  inp.addEventListener('input',function(){chkCell(inp);});td.appendChild(inp);tr.appendChild(td);cells.push(inp);});
+ tbl.appendChild(tr);});
+function normHex(s){return s.trim().toUpperCase().replace(/^U\+/,'').replace(/^0X/,'').replace(/\s+/g,'');}
+function chkCell(inp){
+ var v=inp.value.trim(),e=inp.dataset.exp,col=+inp.dataset.f.split('_')[2];
+ if(!v){inp.classList.remove('ok','bad');score();return;}
+ var ok;
+ if(col===3){var m=v.match(/(\d+)\s*$/);ok=m&&m[1]===e;}
+ else if(e==='—'){ok=(v==='—'||v==='-'||v.toLowerCase()==='немає');}
+ else if(col===2){ok=parseInt(normHex(v),16)===parseInt(e,16)&&/^[0-9A-F]+$/.test(normHex(v));}
+ else{ok=/^[0-9A-F]+$/.test(normHex(v))&&parseInt(normHex(v),16)===parseInt(e,16);}
+ inp.classList.toggle('ok',!!ok);inp.classList.toggle('bad',!ok);score();}
+function score(){var req=cells.filter(function(c){return!c.dataset.opt;}),ok=req.filter(function(c){return c.classList.contains('ok');}).length;
+ document.getElementById('tbl-score').textContent='Правильно: '+ok+' з '+req.length+(ok===req.length?' — таблицю заповнено!':'');
+ document.getElementById('tbl-score').className='msg '+(ok===req.length?'ok':'n');progress();}
+
+/* девіз і коди */
+var dev=document.getElementById('dev');
+dev.addEventListener('input',function(){this.value=this.value.toUpperCase().replace(/[^А-ЩЬЮЯҐЄІЇ]/g,'');});
+function encode(w){return w.split('').map(function(c){return hx(c.charCodeAt(0),4);});}
+function tokens(s){return s.trim().toUpperCase().split(/[\s,;]+/).filter(Boolean);}
+document.getElementById('chk-code').addEventListener('click',function(){
+ var w=dev.value,m=document.getElementById('code-msg'),ch=document.getElementById('code-chips');
+ if(w.length<4||w.length>6){m.className='msg bad';m.textContent='Девіз має містити 4–6 великих літер української абетки.';ch.innerHTML='';return;}
+ var exp=encode(w),got=tokens(document.getElementById('mycode').value);ch.innerHTML='';var good=0;
+ exp.forEach(function(e,i){var s=document.createElement('span'),g=got[i]||'';var ok=g.replace(/^U\+/,'').padStart(4,'0')===e;if(ok)good++;s.className=ok?'ok':'bad';s.textContent=(g||'—')+' '+(ok?'✓':'✗');ch.appendChild(s);});
+ if(got.length>exp.length)good=-1;
+ if(good===exp.length&&got.length===exp.length){m.className='msg ok';m.textContent='✓ Усі '+exp.length+' кодів правильні!';}
+ else{m.className='msg bad';m.textContent='Є помилки. Перевір червоні позиції за довідковою таблицею (звір літеру та її код). Кількість кодів має дорівнювати кількості літер.';}
+ progress();});
+document.getElementById('copy-code').addEventListener('click',function(){var v=document.getElementById('mycode').value.trim(),m=document.getElementById('code-msg');
+ if(!v){m.className='msg bad';m.textContent='Спочатку запиши свій код.';return;}
+ copyText(v,function(ok){m.className='msg '+(ok?'ok':'bad');m.textContent=ok?'Код скопійовано. Встав його в чат партнеру (лише код, без девізу).':'Не вдалося скопіювати: виділи код і скопіюй вручну.';});});
+
+function decode(s){var t=tokens(s),out='',bad=-1;t.forEach(function(x,i){var h=x.replace(/^U\+/,'');if(!/^[0-9A-F]{1,4}$/.test(h)){if(bad<0)bad=i+1;return;}out+=String.fromCharCode(parseInt(h,16));});return{w:out,bad:bad,n:t.length};}
+function compare(a,b){if(a===b)return null;var p=[];for(var i=0;i<Math.max(a.length,b.length);i++){if(a[i]!==b[i])p.push(i+1);}return p;}
+document.getElementById('chk-dec').addEventListener('click',function(){
+ var d=decode(document.getElementById('pcode').value),mine=document.getElementById('pdec').value.trim().toUpperCase(),m=document.getElementById('dec-msg');
+ if(!d.n){m.className='msg bad';m.textContent='Встав код партнера.';return;}
+ if(d.bad>0){m.className='msg bad';m.textContent='У коді партнера некоректний запис на позиції '+d.bad+'. Запитай партнера: можливо, помилка в його коді.';return;}
+ if(!mine){m.className='msg bad';m.textContent='Спочатку розшифруй код самостійно й впиши результат.';return;}
+ var p=compare(mine,d.w);
+ if(!p){m.className='msg ok';m.textContent='✓ Твоя розшифровка збігається з кодом партнера: «'+d.w+'». Тепер запитай партнера, чи це його девіз.';}
+ else{m.className='msg bad';m.textContent='Не збігається на позиціях: '+p.join(', ')+'. Перевір ці коди за довідкою й спробуй ще раз.';}
+ progress();});
+document.getElementById('chk-solo').addEventListener('click',function(){var v=document.getElementById('sdec').value.trim().toUpperCase(),m=document.getElementById('solo-msg');
+ if(!v){m.className='msg bad';m.textContent='Впиши розшифровку.';return;}
+ var p=compare(v,'КОЛІР');if(!p){m.className='msg ok';m.textContent='✓ Правильно! Обсяг: 5 × 16 = 80 бітів = 10 байтів.';}else{m.className='msg bad';m.textContent='Не збігається на позиціях: '+p.join(', ')+'. Перевір за довідковою таблицею.';}progress();});
+
+/* обсяг */
+['v-n','v-b','v-y'].forEach(function(id){document.getElementById(id).addEventListener('input',vol);});dev.addEventListener('input',vol);
+function vol(){var n=+document.getElementById('v-n').value,b=document.getElementById('v-b'),y=document.getElementById('v-y'),vn=document.getElementById('v-n'),m=document.getElementById('vol-msg'),len=dev.value.length;
+ [vn,b,y].forEach(function(x){x.classList.remove('ok','bad');});
+ if(!vn.value&&!b.value&&!y.value){m.textContent='';progress();return;}
+ var base=len>=1?len:n;
+ if(vn.value){if(len&&n!==len){vn.classList.add('bad');}else if(len){vn.classList.add('ok');}}
+ if(b.value){(+b.value===n*16&&n>0)?b.classList.add('ok'):b.classList.add('bad');}
+ if(y.value){(+y.value===(+b.value)/8&&b.value)?y.classList.add('ok'):y.classList.add('bad');}
+ var all=vn.classList.contains('ok')||(!len&&n>0);
+ if(all&&b.classList.contains('ok')&&y.classList.contains('ok')){m.className='msg ok';m.textContent='✓ Усе правильно: '+n+' × 16 = '+(n*16)+' бітів = '+(n*2)+' байтів.';}
+ else{m.className='msg n';m.textContent='Підказка: бітів = символів × 16; байтів = бітів : 8. Кількість символів має збігатися з довжиною девіза.';}
+ progress();}
+
+/* тести */
+function quiz(id,msgId,opts,right,explain,key){
+ var box=document.getElementById(id);var saved=load(key);
+ opts.forEach(function(t,i){var l=document.createElement('label');l.className='opt';l.innerHTML='<input type="radio" name="'+id+'" value="'+i+'"> '+t;
+  l.querySelector('input').addEventListener('change',function(){
+   [].forEach.call(box.querySelectorAll('.opt'),function(o){o.classList.remove('ok','bad');});
+   var m=document.getElementById(msgId);store(key,String(i));
+   if(i===right){l.classList.add('ok');m.className='msg ok';m.textContent='✓ Правильно. '+explain;}
+   else{l.classList.add('bad');m.className='msg bad';m.textContent='✗ Ще подумай і спробуй інший варіант.';}
+   progress();});
+  box.appendChild(l);});
+ if(saved!==null){var r=box.querySelectorAll('input')[+saved];if(r){r.checked=true;r.dispatchEvent(new Event('change'));}}
+}
+quiz('q2','q2-msg',['Комп’ютери використали різні кодові таблиці','Файл пошкодився під час передавання','Один із комп’ютерів заражений вірусом','Літера «Я» не вміщується в один байт'],0,'Той самий код у Windows-1251 — «Я», а в ISO 8859-1 — «ß».','q2');
+quiz('q3','q3-msg',['Так, кожна літера займає 1 байт','Ні: у базовій частині ASCII немає кириличних літер','Так, якщо записати їх шістнадцятковими кодами','Так, але лише великі літери'],1,'Базова частина ASCII (0–127) містить лише латиницю, цифри, знаки й керувальні коди.','q3');
+function q1(){var a=document.getElementById('q1a'),b=document.getElementById('q1b');a.classList.remove('ok','bad');b.classList.remove('ok','bad');
+ if(a.value)a.classList.add(+a.value===20?'ok':'bad');if(b.value)b.classList.add(+b.value===40?'ok':'bad');progress();}
+['q1a','q1b'].forEach(function(id){document.getElementById(id).addEventListener('input',q1);});
+function qscore(){var s=0;if(document.getElementById('q1a').classList.contains('ok')&&document.getElementById('q1b').classList.contains('ok'))s++;
+ if(document.querySelector('#q2 .opt.ok'))s++;if(document.querySelector('#q3 .opt.ok'))s++;
+ var m=document.getElementById('q-score');m.textContent='Правильних відповідей: '+s+' з 3';m.className='msg '+(s===3?'ok':'n');return s;}
+
+/* самооцінювання */
+var ST=['Можу знайти код символу в таблиці','Можу пояснити, чому виникають «кракозябри»','Мій код девізу партнер зміг розшифрувати'];
+var sb=document.getElementById('selfbox');
+ST.forEach(function(t,i){var d=document.createElement('div');d.className='scale';d.style.margin='6px 0';d.innerHTML='<span style="display:inline-block;min-width:360px">'+t+'</span>'+[1,2,3].map(function(n){return '<label><input type="radio" name="self'+i+'" value="'+n+'" data-f="self'+i+'" data-label="Самооцінка: '+t+'"> '+n+'</label>';}).join('');sb.appendChild(d);});
+var pb=document.getElementById('pbox');['пояснював(ла) чітко','уважно перевіряв(ла)','допоміг(ла) знайти помилку'].forEach(function(t,i){var l=document.createElement('label');l.style.marginRight='16px';l.innerHTML='<input type="checkbox" data-f="pt'+i+'" data-label="Партнер: '+t+'"> '+t;pb.appendChild(l);});
+
+/* режим пара / сам */
+var mode='pair';
+function setMode(m){mode=m;store('mode',m);[].forEach.call(document.querySelectorAll('#mode button'),function(b){b.classList.toggle('on',b.dataset.m===m);});
+ document.getElementById('pairbox').style.display=m==='pair'?'block':'none';document.getElementById('solobox').style.display=m==='solo'?'block':'none';progress();}
+[].forEach.call(document.querySelectorAll('#mode button'),function(b){b.addEventListener('click',function(){setMode(b.dataset.m);});});
+
+/* автозбереження полів */
+var fields=[].slice.call(document.querySelectorAll('[data-f]'));
+fields.forEach(function(f){
+ var k=f.dataset.f;
+ if(f.type==='radio'){var s=load(k);if(s!==null&&f.value===s)f.checked=true;f.addEventListener('change',function(){store(k,f.value);progress();});}
+ else if(f.type==='checkbox'){var s2=load(k);if(s2==='1')f.checked=true;f.addEventListener('change',function(){store(k,f.checked?'1':'0');progress();});}
+ else{var s3=load(k);if(s3!==null)f.value=s3;f.addEventListener('input',function(){store(k,f.value);progress();});}
+});
+cells.forEach(chkCell);vol();q1();
+var sm=load('mode');setMode(sm==='solo'?'solo':'pair');
+
+/* прогрес */
+function progress(){
+ var req=['name','hyp','c1','c2','c3','dev','mycode','r1','r2'];
+ var n=0,tot=req.length+cells.filter(function(c){return!c.dataset.opt;}).length+3+3;
+ req.forEach(function(id){var e=document.querySelector('[data-f="'+id+'"]');if(e&&e.value.trim())n++;});
+ cells.forEach(function(c){if(!c.dataset.opt&&c.classList.contains('ok'))n++;});
+ n+=qscore();
+ for(var i=0;i<3;i++){if(document.querySelector('input[name="self'+i+'"]:checked'))n++;}
+ var p=Math.min(100,Math.round(n/tot*100));
+ document.querySelector('#prog i').style.width=p+'%';document.getElementById('pct').textContent=p+'%';
+}
+progress();
+
+/* експорт */
+function summary(){
+ var L=['ПРАКТИЧНА КАРТКА · УРОК 1 · КОДУВАННЯ СИМВОЛІВ','Режим: '+(mode==='pair'?'у парі':'самостійно'),''];
+ var seen={};
+ fields.forEach(function(f){var k=f.dataset.f;if(f.type==='radio'){if(!f.checked)return;L.push(f.dataset.label+': '+f.value);return;}
+  if(f.type==='checkbox'){if(f.checked)L.push(f.dataset.label);return;}
+  if(f.value.trim()){var mark=f.classList.contains('ok')?' ✓':(f.classList.contains('bad')?' ✗':'');L.push(f.dataset.label+': '+f.value.trim()+mark);}});
+ L.push('');L.push('Завдання 4: '+qscore()+' з 3 правильних відповідей (самоперевірка)');
+ L.push('Таблиця дослідження: '+document.getElementById('tbl-score').textContent);
+ return L.join('\n');
+}
+function copyText(t,cb){try{if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(t).then(function(){cb(true);},function(){fb();});return;}}catch(e){}fb();
+ function fb(){var a=document.createElement('textarea');a.value=t;document.body.appendChild(a);a.select();var ok=false;try{ok=document.execCommand('copy');}catch(e){}document.body.removeChild(a);cb(ok);}}
+document.getElementById('b-copy').addEventListener('click',function(){var m=document.getElementById('final-msg');copyText(summary(),function(ok){m.className='msg '+(ok?'ok':'bad');m.textContent=ok?'Скопійовано. Встав у чат Teams і надішли вчителю.':'Не вдалося скопіювати — скористайся кнопкою «Зберегти».';});});
+function translit(s){var m={'а':'a','б':'b','в':'v','г':'h','ґ':'g','д':'d','е':'e','є':'ie','ж':'zh','з':'z','и':'y','і':'i','ї':'i','й':'i','к':'k','л':'l','м':'m','н':'n','о':'o','п':'p','р':'r','с':'s','т':'t','у':'u','ф':'f','х':'kh','ц':'ts','ч':'ch','ш':'sh','щ':'shch','ь':'','ю':'iu','я':'ia','ы':'y','э':'e','ъ':'','ё':'io'},o='';
+ s.toLowerCase().split('').forEach(function(c){if(m[c]!==undefined)o+=m[c];else if(/[a-z0-9]/.test(c))o+=c;else if(/\s|-|_/.test(c))o+='_';});
+ o=o.replace(/_+/g,'_').replace(/^_|_$/g,'');return o?o.charAt(0).toUpperCase()+o.slice(1):'uchen';}
+document.getElementById('b-save').addEventListener('click',function(){var name=translit(document.getElementById('name').value);
+ var b=new Blob(['﻿'+summary()],{type:'text/plain;charset=utf-8'}),a=document.createElement('a');a.href=URL.createObjectURL(b);a.download='Urok1_Kodyvannia_'+name+'.txt';document.body.appendChild(a);a.click();document.body.removeChild(a);
+ var m=document.getElementById('final-msg');m.className='msg ok';m.textContent='Файл збережено. Надішли його вчителю в Teams («Завдання» або чат).';});
+document.getElementById('b-print').addEventListener('click',function(){window.print();});
+window.__card={summary:summary,decode:decode,encode:encode};
+})();
+</script>
+</body>
+</html>

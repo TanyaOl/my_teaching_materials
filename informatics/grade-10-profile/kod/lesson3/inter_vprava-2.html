@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Урок 1. Кодування символів — інтерактивні вправи</title>
+<style>
+:root{--bg:#f7fbfc;--card:#fff;--ink:#1b2a4a;--muted:#5b6b7d;--line:#d3e2e8;--teal:#0e8a9b;--blue:#2457a6;--violet:#6a4bc4;--ok:#2e9e6b;--bad:#e5575b;--tealL:#e6f5f7;--violetL:#f0ecfb;--warnL:#fff6dd}
+*{box-sizing:border-box}
+body{margin:0;font-family:Arial,Helvetica,sans-serif;background:var(--bg);color:var(--ink);line-height:1.45}
+header{padding:22px 20px 10px;max-width:980px;margin:0 auto}
+h1{margin:0;font-size:26px}
+.sub{color:var(--muted);font-size:14px;margin-top:4px}
+nav{max-width:980px;margin:10px auto 0;padding:0 20px;display:flex;gap:8px;flex-wrap:wrap}
+nav button{border:1px solid var(--line);background:#fff;color:var(--ink);padding:10px 14px;border-radius:999px;font-size:14px;cursor:pointer;font-weight:bold}
+nav button.on{background:var(--teal);border-color:var(--teal);color:#fff}
+nav button.teacher{margin-left:auto;border-color:var(--violet);color:var(--violet)}
+nav button.teacher.on{background:var(--violet);color:#fff}
+main{max-width:980px;margin:14px auto 40px;padding:0 20px}
+section{display:none;background:var(--card);border:1px solid var(--line);border-radius:16px;padding:20px}
+section.on{display:block}
+h2{margin:0 0 6px;font-size:21px}
+.task{color:var(--muted);margin:0 0 16px;font-size:15px}
+label{font-weight:bold;font-size:14px}
+input[type=text],select,textarea{font:inherit;padding:10px 12px;border:1px solid #b9cbd3;border-radius:10px;background:#fff;color:var(--ink)}
+input[type=text]{width:100%;max-width:340px;font-size:20px}
+table{border-collapse:collapse;width:100%;margin:12px 0;font-size:15px}
+th,td{border:1px solid var(--line);padding:8px 10px;text-align:left}
+th{background:var(--teal);color:#fff}
+td.mono,.mono{font-family:Consolas,Menlo,monospace}
+.pill{display:inline-block;padding:2px 10px;border-radius:999px;font-size:12px;font-weight:bold;background:var(--tealL);color:var(--teal)}
+.row{display:flex;gap:14px;flex-wrap:wrap;align-items:flex-end}
+.note{background:var(--warnL);border-radius:10px;padding:10px 14px;font-size:14px;margin:12px 0}
+.out{font-size:30px;font-weight:bold;color:var(--violet);padding:12px 16px;background:var(--violetL);border-radius:12px;margin-top:10px;word-break:break-all;min-height:56px}
+.stmt{display:flex;gap:10px;align-items:center;justify-content:space-between;flex-wrap:wrap;border:1px solid var(--line);border-radius:12px;padding:10px 14px;margin:8px 0;background:#fff}
+.stmt.ok{border-color:var(--ok);background:#eaf7f0}
+.stmt.bad{border-color:var(--bad);background:#fdeeee}
+.stmt .t{flex:1 1 380px}
+.btns button,.act{border:1px solid var(--blue);background:#fff;color:var(--blue);padding:8px 14px;border-radius:10px;cursor:pointer;font-weight:bold;font-size:14px}
+.btns button:hover,.act:hover{background:var(--blue);color:#fff}
+.fb{font-size:14px;margin-top:4px;flex-basis:100%}
+.score{font-weight:bold;color:var(--teal)}
+.tok{display:inline-block;margin:4px;padding:10px 14px;border:2px solid var(--line);border-radius:10px;font-family:Consolas,Menlo,monospace;font-size:20px;cursor:pointer;background:#fff}
+.tok:hover{border-color:var(--blue)}
+.tok.ok{border-color:var(--ok);background:#eaf7f0}
+.tok.bad{border-color:var(--bad);background:#fdeeee}
+.case{border:1px solid var(--line);border-radius:12px;padding:12px 14px;margin:10px 0}
+.case h3{margin:0 0 4px;font-size:17px}
+details{margin:12px 0}
+summary{cursor:pointer;font-weight:bold;color:var(--blue)}
+.tgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(120px,1fr));gap:4px;font-size:14px;margin-top:8px}
+.tgrid div{border:1px solid var(--line);border-radius:6px;padding:3px 8px;background:#fff}
+.teacher-only{display:none;margin-top:14px;border:2px dashed var(--violet);background:var(--violetL);border-radius:12px;padding:12px 16px;font-size:14px}
+body.t .teacher-only{display:block}
+@media(max-width:600px){h1{font-size:21px}input[type=text]{font-size:18px}}
+</style>
+</head>
+<body>
+<header>
+  <h1>Кодування символів — інтерактивні вправи</h1>
+  <div class="sub">Урок 1 · 10 клас · працює без інтернету й реєстрації: збережи файл і відкрий у браузері</div>
+</header>
+<nav id="nav">
+  <button data-t="lab" class="on">1. Лабораторія кодів</button>
+  <button data-t="cls">2. ASCII чи Юнікод?</button>
+  <button data-t="err">3. Знайди помилку в коді</button>
+  <button class="teacher" id="tbtn">Режим вчителя</button>
+</nav>
+<main>
+
+<section id="lab" class="on">
+  <h2>1. Лабораторія кодів</h2>
+  <p class="task">Введи символ і порівняй його коди в різних таблицях. Заповнюй таблицю дослідження на картці. Усі коди подано в шістнадцятковому та десятковому записі.</p>
+  <div class="row">
+    <div><label for="ch">Символ (один)</label><br><input type="text" id="ch" maxlength="1" value="Я" autocomplete="off"></div>
+    <div class="pill">Юнікод у нашій моделі: 16 бітів</div>
+  </div>
+  <div id="labOut"></div>
+  <div class="note">Порожня клітинка «—» означає, що в цій таблиці такого символа немає. Базова частина ASCII містить лише коди 0–127.</div>
+
+  <h2 style="margin-top:26px">Режим «Кракозябри»</h2>
+  <p class="task">Запиши текст за однією таблицею, а прочитай за іншою — і побачиш, звідки беруться «кракозябри».</p>
+  <div class="row">
+    <div><label for="mtext">Текст</label><br><input type="text" id="mtext" value="Привіт, клас!" maxlength="40" style="max-width:340px"></div>
+    <div><label for="wt">Записано за таблицею</label><br><select id="wt"><option value="w1251">Windows-1251</option><option value="koi8u">KOI8-U</option></select></div>
+    <div><label for="rt">Прочитано за таблицею</label><br><select id="rt"><option value="l1" selected>ISO 8859-1 (західноєвропейська)</option><option value="w1251">Windows-1251</option><option value="koi8u">KOI8-U</option></select></div>
+  </div>
+  <div id="bytes" class="mono" style="margin-top:10px;color:var(--muted)"></div>
+  <div class="out" id="moji"></div>
+  <p class="task" style="margin-top:10px">Запитання: що станеться, якщо таблиці однакові? Чому кома й знак оклику не змінилися?</p>
+  <div class="teacher-only"><b>Відповіді:</b> Якщо таблиці однакові — текст читається правильно. Кома, пробіл і «!» мають коди ASCII (0–127), однакові в усіх цих таблицях, тому не змінюються. Зразок: «Привіт, клас!», Windows-1251 → ISO 8859-1 дає «Ïðèâ³ò, êëàñ!». Байти: CF F0 E8 E2 B3 F2 2C 20 EA EB E0 F1 21.</div>
+</section>
+
+<section id="cls">
+  <h2>2. ASCII чи Юнікод?</h2>
+  <p class="task">До якої системи кодування належить твердження? <b>ASCII і 8-бітні таблиці</b> — це базова та розширена частини ASCII, KOI8, Windows-1251 тощо. Перевірка миттєва.</p>
+  <div id="clsList"></div>
+  <p>Правильно: <span class="score" id="clsScore">0</span> з 8 <button class="act" id="clsReset" style="margin-left:10px">Спробувати знову</button></p>
+  <div class="teacher-only"><b>Відповіді:</b> 1 — ASCII; 2 — ASCII/8-бітні; 3 — Юнікод; 4 — Юнікод; 5 — ASCII/8-бітні; 6 — ASCII/8-бітні; 7 — Юнікод; 8 — Юнікод. Пояснення дивись у відповіді після натискання.</div>
+</section>
+
+<section id="err">
+  <h2>3. Знайди помилку в коді</h2>
+  <p class="task">Три девізи закодовано шістнадцятковими кодами Юнікоду, у кожному — <b>одна</b> помилка. Натисни на код, який вважаєш неправильним. Скористайся довідкою.</p>
+  <details><summary>Довідка: Юнікод-коди великих літер української абетки</summary><div class="tgrid" id="tgrid"></div></details>
+  <div id="errList"></div>
+  <p>Знайдено: <span class="score" id="errScore">0</span> з 3 <button class="act" id="errReset" style="margin-left:10px">Спробувати знову</button></p>
+  <div class="teacher-only"><b>Відповіді:</b> 1) ЗНАК: четвертий код 041B (Л) має бути 041A (К). 2) КОЛІР: четвертий код 0407 (Ї) має бути 0406 (І). 3) ВОГОНЬ: шостий код 042E (Ю) має бути 042C (Ь).</div>
+</section>
+
+</main>
+
+<script>
+(function(){
+/* ---------- таблиці кодування ---------- */
+var UK='АБВГҐДЕЄЖЗИІЇЙКЛМНОПРСТУФХЦЧШЩЬЮЯ';
+var UNI={}; UK.split('').forEach(function(c){UNI[c]=c.charCodeAt(0).toString(16).toUpperCase().padStart(4,'0');});
+
+function buildW1251(){ var enc={},dec={};
+  for(var b=0xC0;b<=0xFF;b++){var u=0x0410+(b-0xC0);dec[b]=String.fromCharCode(u);enc[dec[b]]=b;}
+  [[0xA8,'Ё'],[0xB8,'ё'],[0xAA,'Є'],[0xBA,'є'],[0xB2,'І'],[0xB3,'і'],[0xAF,'Ї'],[0xBF,'ї'],[0xA5,'Ґ'],[0xB4,'ґ']].forEach(function(p){dec[p[0]]=p[1];enc[p[1]]=p[0];});
+  return {enc:enc,dec:dec};}
+function buildKoi(){ var lo='юабцдефгхийклмнопярстужвьызшэщчъ', up=lo.toUpperCase(), enc={},dec={};
+  for(var i=0;i<32;i++){dec[0xC0+i]=lo[i];enc[lo[i]]=0xC0+i;dec[0xE0+i]=up[i];enc[up[i]]=0xE0+i;}
+  [[0xA3,'ё'],[0xB3,'Ё'],[0xA4,'є'],[0xB4,'Є'],[0xA6,'і'],[0xB6,'І'],[0xA7,'ї'],[0xB7,'Ї'],[0xAD,'ґ'],[0xBD,'Ґ']].forEach(function(p){dec[p[0]]=p[1];enc[p[1]]=p[0];});
+  return {enc:enc,dec:dec};}
+var TB={w1251:buildW1251(),koi8u:buildKoi()};
+function byteOf(ch,t){var c=ch.charCodeAt(0); if(c<128)return c; if(t==='l1'){return c>=160&&c<=255?c:null;} var v=TB[t].enc[ch]; return v===undefined?null:v;}
+function charOf(b,t){ if(b<128)return String.fromCharCode(b); if(t==='l1')return b>=160?String.fromCharCode(b):'?'; var v=TB[t].dec[b]; return v===undefined?'?':v;}
+function hex(n,w){return n.toString(16).toUpperCase().padStart(w||2,'0');}
+window.__enc={byteOf:byteOf,charOf:charOf};
+
+/* ---------- вкладки ---------- */
+var navBtns=document.querySelectorAll('nav button[data-t]');
+navBtns.forEach(function(b){b.addEventListener('click',function(){
+  navBtns.forEach(function(x){x.classList.remove('on');}); b.classList.add('on');
+  document.querySelectorAll('section').forEach(function(s){s.classList.remove('on');});
+  document.getElementById(b.dataset.t).classList.add('on');});});
+document.getElementById('tbtn').addEventListener('click',function(){document.body.classList.toggle('t');this.classList.toggle('on');});
+
+/* ---------- 1. лабораторія ---------- */
+function labRender(){
+  var v=document.getElementById('ch').value, out=document.getElementById('labOut');
+  if(!v){out.innerHTML='<p class="task">Введи символ.</p>';return;}
+  var ch=v[0], u=ch.charCodeAt(0), a=u<128?u:null, w=byteOf(ch,'w1251'), k=byteOf(ch,'koi8u');
+  if(u>=128&&TB.w1251.enc[ch]===undefined)w=null; if(u>=128&&TB.koi8u.enc[ch]===undefined)k=null;
+  function cell(n,wd){return n===null?'—':'<b>'+hex(n,wd||2)+'</b> <span style="color:var(--muted)">('+n+')</span>';}
+  out.innerHTML='<table><tr><th>Таблиця</th><th>Код (hex, десятковий)</th><th>Двійковий код</th></tr>'+
+   '<tr><td>ASCII (базова, 0–127)</td><td class="mono">'+cell(a)+'</td><td class="mono">'+(a===null?'—':a.toString(2).padStart(8,'0'))+'</td></tr>'+
+   '<tr><td>Windows-1251</td><td class="mono">'+cell(w)+'</td><td class="mono">'+(w===null?'—':w.toString(2).padStart(8,'0'))+'</td></tr>'+
+   '<tr><td>KOI8-U</td><td class="mono">'+cell(k)+'</td><td class="mono">'+(k===null?'—':k.toString(2).padStart(8,'0'))+'</td></tr>'+
+   '<tr><td>Юнікод (16 бітів)</td><td class="mono"><b>'+hex(u,4)+'</b> <span style="color:var(--muted)">('+u+')</span></td><td class="mono">'+u.toString(2).padStart(16,'0')+'</td></tr></table>';
+}
+document.getElementById('ch').addEventListener('input',labRender); labRender();
+
+function mojiRender(){
+  var t=document.getElementById('mtext').value, wt=document.getElementById('wt').value, rt=document.getElementById('rt').value, bs=[], res='';
+  for(var i=0;i<t.length;i++){var b=byteOf(t[i],wt); if(b===null){bs.push('??');res+='?';} else {bs.push(hex(b)); res+=charOf(b,rt);} }
+  document.getElementById('bytes').textContent='Байти: '+bs.join(' ');
+  document.getElementById('moji').textContent=res||' ';
+}
+['mtext','wt','rt'].forEach(function(id){document.getElementById(id).addEventListener('input',mojiRender);document.getElementById(id).addEventListener('change',mojiRender);}); mojiRender();
+
+/* ---------- 2. класифікація ---------- */
+var S=[
+ ['Базова частина таблиці має коди 0–127 (7 бітів).','A','Це базова частина ASCII.'],
+ ['Для української мови існувало кілька різних таблиць: KOI8-U, Windows-1251, ISO 8859.','A','Це 8-бітні розширення ASCII — кожна країна й система мала свою.'],
+ ['Єдина таблиця для символів усіх мов світу.','U','Саме для цього створено Юнікод (стандарт ISO 10646).'],
+ ['У нашій моделі кожен символ має 16 бітів, тобто 65 536 можливих кодів.','U','2¹⁶ = 65 536 — це Юнікод у нашій моделі.'],
+ ['Розширена частина (коди 128–255) залежить від країни.','A','У розширеній частині ASCII різні країни розміщували різні символи.'],
+ ['Через різні таблиці той самий код може показати різні символи — виникають «кракозябри».','A','Так буває, коли текст записано за однією 8-бітною таблицею, а прочитано за іншою.'],
+ ['Формат UTF використовують для передавання символів інтернетом.','U','UTF — формат передавання символів Юнікоду.'],
+ ['Дає змогу в одному тексті поєднати українські, англійські й японські символи.','U','Одна спільна таблиця вміщує символи різних мов.']
+];
+var clsDone={};
+function clsBuild(){
+  var box=document.getElementById('clsList'); box.innerHTML=''; clsDone={}; document.getElementById('clsScore').textContent='0';
+  S.forEach(function(s,i){
+    var d=document.createElement('div'); d.className='stmt'; d.id='st'+i;
+    d.innerHTML='<div class="t">'+(i+1)+'. '+s[0]+'</div><div class="btns"><button data-a="A">ASCII і 8-бітні таблиці</button> <button data-a="U">Юнікод</button></div><div class="fb"></div>';
+    d.querySelectorAll('button').forEach(function(b){b.addEventListener('click',function(){
+      if(clsDone[i])return; var ok=b.dataset.a===s[1]; var fb=d.querySelector('.fb');
+      if(ok){clsDone[i]=1;d.className='stmt ok';fb.textContent='✓ Правильно. '+s[2];}
+      else{d.className='stmt bad';fb.textContent='✗ Спробуй ще. Подумай: йдеться про одну таблицю для всіх мов чи про кілька національних?';}
+      var n=0;for(var k in clsDone)n++; document.getElementById('clsScore').textContent=n;});});
+    box.appendChild(d);});
+}
+document.getElementById('clsReset').addEventListener('click',clsBuild); clsBuild();
+
+/* ---------- 3. помилка в коді ---------- */
+var tg=document.getElementById('tgrid'); UK.split('').forEach(function(c){var d=document.createElement('div');d.innerHTML='<b>'+c+'</b> = <span class="mono">'+UNI[c]+'</span>';tg.appendChild(d);});
+var E=[
+ {w:'ЗНАК',codes:['0417','041D','0410','041B'],bad:3},
+ {w:'КОЛІР',codes:['041A','041E','041B','0407','0420'],bad:3},
+ {w:'ВОГОНЬ',codes:['0412','041E','0413','041E','041D','042E'],bad:5}
+];
+var errDone={};
+function errBuild(){
+  var box=document.getElementById('errList'); box.innerHTML=''; errDone={}; document.getElementById('errScore').textContent='0';
+  E.forEach(function(e,i){
+    var d=document.createElement('div'); d.className='case';
+    d.innerHTML='<h3>Девіз '+(i+1)+': <span style="color:var(--violet)">'+e.w+'</span></h3><div class="toks"></div><div class="fb" style="min-height:20px"></div>';
+    var toks=d.querySelector('.toks'), fb=d.querySelector('.fb');
+    e.codes.forEach(function(c,j){var t=document.createElement('span');t.className='tok';t.textContent=c;
+      t.addEventListener('click',function(){
+        if(errDone[i])return;
+        if(j===e.bad){errDone[i]=1;t.className='tok bad';
+          var right=UNI[e.w[j]]; fb.innerHTML='✓ Знайдено! Код '+c+' — це літера «'+String.fromCharCode(parseInt(c,16))+'», а в слові тут «'+e.w[j]+'». Правильний код: <b class="mono">'+right+'</b>.';
+          var n=0;for(var k in errDone)n++; document.getElementById('errScore').textContent=n;}
+        else{ fb.textContent='Цей код правильний для літери «'+e.w[j]+'». Перевір інші.'; t.className='tok ok'; setTimeout(function(){t.className='tok';},900);} });
+      toks.appendChild(t);});
+    box.appendChild(d);});
+}
+document.getElementById('errReset').addEventListener('click',errBuild); errBuild();
+})();
+</script>
+</body>
+</html>
