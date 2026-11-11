@@ -1,0 +1,449 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Урок 2. Кодування графічних зображень — інтерактивна картка</title>
+<style>
+:root{--bg:#f7fbfc;--ink:#1b2a4a;--muted:#5b6b7d;--line:#d3e2e8;--teal:#0e8a9b;--blue:#2457a6;--violet:#6a4bc4;--ok:#2e9e6b;--bad:#e5575b;--tealL:#e6f5f7;--violetL:#f0ecfb;--warnL:#fff6dd}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:Arial,Helvetica,sans-serif;line-height:1.5}
+#top{position:sticky;top:0;z-index:5;background:#fff;border-bottom:1px solid var(--line);padding:10px 18px}
+#top .in{max-width:980px;margin:0 auto;display:flex;align-items:center;gap:16px}
+#top b{font-size:15px}
+#prog{flex:1;height:12px;background:#e3edf0;border-radius:99px;overflow:hidden}
+#prog i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--teal),var(--violet));transition:width .4s}
+#pct{font-weight:bold;min-width:46px;text-align:right}
+main{max-width:980px;margin:0 auto;padding:18px 18px 60px}
+h1{margin:6px 0 2px;font-size:28px}
+.sub{color:var(--muted);font-size:14px;margin-bottom:14px}
+h2{font-size:21px;color:var(--teal);margin:0 0 8px}
+section{background:#fff;border:1px solid var(--line);border-radius:16px;padding:18px 20px;margin:16px 0}
+.task{color:var(--muted);font-size:15px;margin:0 0 12px}
+input[type=text],input[type=number],textarea,select{font:inherit;padding:9px 11px;border:2px solid #b9cbd3;border-radius:10px;background:#fff;color:var(--ink);max-width:100%}
+input:focus,textarea:focus,select:focus{outline:none;border-color:var(--teal)}
+textarea{width:100%;min-height:74px;resize:vertical}
+.btn{font:inherit;font-weight:bold;font-size:15px;padding:9px 16px;border-radius:10px;border:2px solid var(--blue);background:#fff;color:var(--blue);cursor:pointer}
+.btn:hover{background:var(--blue);color:#fff}
+.btn.pri{background:var(--teal);border-color:var(--teal);color:#fff}
+.btn.pri:hover{background:#0b6f7d}
+.row{display:flex;gap:14px;flex-wrap:wrap;align-items:flex-end}
+label.l{display:block;font-size:13px;color:var(--muted);font-weight:bold;margin-bottom:3px}
+table{border-collapse:collapse;width:100%;margin:10px 0;font-size:15px}
+th{background:var(--teal);color:#fff;padding:8px;font-size:14px}
+td{border:1px solid var(--line);padding:5px 6px;text-align:center}
+td.s{background:#f5f7fa;font-weight:bold;font-size:20px}
+td input{width:100%;min-width:70px;text-align:center;font-family:Consolas,Menlo,monospace;font-size:16px;padding:6px}
+input.ok,textarea.ok{border-color:var(--ok)!important;background:#eaf7f0}
+input.bad{border-color:var(--bad)!important;background:#fdeeee}
+.msg{font-size:14px;margin-top:6px;min-height:20px}
+.msg.ok{color:var(--ok);font-weight:bold}.msg.bad{color:var(--bad);font-weight:bold}.msg.n{color:var(--muted)}
+.note{background:var(--warnL);border-radius:10px;padding:10px 14px;font-size:14px;margin:10px 0}
+.tint{background:var(--tealL);border-radius:10px;padding:10px 14px;font-size:15px;margin:10px 0}
+.tintv{background:var(--violetL);border-radius:10px;padding:10px 14px;font-size:15px;margin:10px 0}
+details{border:1px solid var(--line);border-radius:12px;padding:8px 14px;margin:8px 0;background:#fafdfe}
+summary{cursor:pointer;font-weight:bold;color:var(--blue)}
+.mono{font-family:Consolas,Menlo,monospace}
+.chips span{display:inline-block;margin:3px;padding:6px 10px;border:2px solid var(--line);border-radius:10px;font-family:Consolas,Menlo,monospace;font-size:17px}
+.chips span.ok{border-color:var(--ok);background:#eaf7f0}.chips span.bad{border-color:var(--bad);background:#fdeeee}
+.opt{display:block;border:2px solid var(--line);border-radius:10px;padding:9px 12px;margin:6px 0;cursor:pointer}
+.opt:hover{border-color:var(--blue)}
+.opt.ok{border-color:var(--ok);background:#eaf7f0}.opt.bad{border-color:var(--bad);background:#fdeeee}
+.tgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(110px,1fr));gap:4px;font-size:14px}
+.tgrid div{border:1px solid var(--line);border-radius:6px;padding:3px 8px}
+.scale label{margin-right:12px;cursor:pointer}
+.seg{display:inline-flex;border:2px solid var(--blue);border-radius:10px;overflow:hidden}
+.seg button{font:inherit;font-weight:bold;border:0;background:#fff;color:var(--blue);padding:8px 14px;cursor:pointer}
+.seg button.on{background:var(--blue);color:#fff}
+#final{position:sticky;bottom:0;background:#fff;border-top:1px solid var(--line);padding:10px 18px;z-index:5}
+#final .in{max-width:980px;margin:0 auto;display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+@media print{#top,#final,.noprint,.btn{display:none!important}section{break-inside:avoid;border-color:#999}}
+@media(max-width:600px){h1{font-size:22px}}
+</style>
+</head>
+<body>
+<div id="top"><div class="in"><b>Урок 2 · Кодування графічних зображень</b><div id="prog"><i></i></div><span id="pct">0%</span></div></div>
+<main>
+<h1>Практична картка (інтерактивна)</h1>
+<div class="sub">Для роботи в Microsoft Teams або вдома. Працює без інтернету й реєстрації. Відповіді зберігаються на твоєму пристрої автоматично.</div>
+
+<section>
+  <div class="row">
+    <div><label class="l" for="name">Прізвище, ім’я</label><input type="text" id="name" data-f="name" data-label="Прізвище, ім’я" style="width:260px"></div>
+    <div><label class="l" for="cls">Клас</label><input type="text" id="cls" data-f="cls" data-label="Клас" style="width:90px"></div>
+    <div><label class="l" for="partner">Партнер (якщо є)</label><input type="text" id="partner" data-f="partner" data-label="Партнер" style="width:230px"></div>
+    <div><label class="l">Як працюю</label><div class="seg" id="mode"><button data-m="pair" class="on">У парі</button><button data-m="solo">Самостійно</button></div></div>
+  </div>
+  <div class="tint" style="margin-bottom:0">У парі: Дослідник виконує вимірювання й записує результати, Аудитор перевіряє розрахунки; через 3 хвилини міняєтеся. Самостійно: усі перевірки в картці виконуються автоматично. Усі завдання мають індивідуальний варіант. Камера в Teams не потрібна.</div>
+</section>
+
+<section>
+  <h2>1. Гіпотеза</h2>
+  <p class="task">Фото зі смартфона займає мегабайти, іконка застосунку — кілобайти. Від чого, на твою думку, залежить обсяг зображення?</p>
+  <textarea data-f="hyp" data-label="Гіпотеза" placeholder="Я думаю, що обсяг залежить від…"></textarea>
+</section>
+
+<section>
+  <h2>2. Піксель, растр, вектор</h2>
+  <p class="task">Обери правильні відповіді.</p>
+  <b>Що відбувається з растровим зображенням при сильному збільшенні?</b><div id="q1"></div><div class="msg n" id="q1-msg"></div>
+  <b style="display:block;margin-top:10px">Що саме зберігається для векторного зображення?</b><div id="q2"></div><div class="msg n" id="q2-msg"></div>
+  <b style="display:block;margin-top:10px">Чорно-біле зображення кодують 1 бітом на піксель. Скільки кольорів можна закодувати 8 бітами?</b>
+  <div class="row" style="margin-top:6px"><input type="text" id="q3" data-f="q3" data-label="Кольорів у 8 бітах" style="width:120px"><span class="msg n" id="q3-msg"></span></div>
+</section>
+
+<section>
+  <h2>3. Інформаційний обсяг зображення</h2>
+  <div class="tint">I = N × M × i, де N × M — кількість пікселів, i — глибина кольору (бітів на піксель), кількість кольорів K = 2<sup>i</sup>. 1 байт = 8 бітів, 1 КБ = 1024 байти.</div>
+  <p class="task">Заповнюй поля — перевірка спрацьовує одразу. Числа можна писати з пробілами.</p>
+  <table>
+    <tr><th style="width:44%">Завдання</th><th>Біт</th><th>Байт</th></tr>
+    <tr><td style="text-align:left">1) Зображення <b>800 × 600</b>, 24 біти на піксель</td><td><input type="text" data-chk="t1b" data-ans="11520000" data-f="t1b" data-label="Завд.1, біт"></td><td><input type="text" data-chk="t1y" data-ans="1440000" data-f="t1y" data-label="Завд.1, байт"></td></tr>
+    <tr><td style="text-align:left">2) Чорно-біле зображення <b>1000 × 1000</b></td><td><input type="text" data-chk="t2b" data-ans="1000000" data-f="t2b" data-label="Завд.2, біт"></td><td><input type="text" data-chk="t2y" data-ans="125000" data-f="t2y" data-label="Завд.2, байт"></td></tr>
+    <tr><td style="text-align:left">3) Зображення <b>64 × 64</b>, у палітрі 16 кольорів (спочатку знайди i)</td><td><input type="text" data-chk="t3b" data-ans="16384" data-f="t3b" data-label="Завд.3, біт"></td><td><input type="text" data-chk="t3y" data-ans="2048" data-f="t3y" data-label="Завд.3, байт"></td></tr>
+  </table>
+  <div class="msg n" id="t-msg"></div>
+  <div class="tintv"><b>Моє завдання (індивідуальне).</b> <button class="btn" id="gen" style="padding:5px 12px;font-size:14px">Нове завдання</button>
+    <div id="gen-t" style="margin:8px 0;font-size:17px"></div>
+    <div class="row"><div><label class="l">Біт</label><input type="text" id="g-b" data-f="g-b" data-label="Своє завд., біт" style="width:150px"></div><div><label class="l">Байт</label><input type="text" id="g-y" data-f="g-y" data-label="Своє завд., байт" style="width:150px"></div></div>
+    <div class="msg n" id="g-msg"></div></div>
+</section>
+
+<section>
+  <h2>4. Паспорт цифрового знака · розділ 2 «Мій знак у пікселях»</h2>
+  <p class="task">Намалюй простий знак 8 × 8: клацай або проводь по клітинках. Можна взяти шаблон і змінити його.</p>
+  <div class="row" style="align-items:flex-start;gap:26px">
+    <div><div id="pe-box"></div><div id="pe-tpl" style="margin-top:10px"></div></div>
+    <div><b>Матриця (рядок за рядком):</b><div id="pe-bits" class="mono" style="font-size:22px;letter-spacing:.12em;line-height:1.3;color:var(--violet);font-weight:bold"></div>
+      <div style="margin-top:8px"><button class="btn" id="pe-clr" style="padding:5px 10px;font-size:14px">Очистити</button> <button class="btn" id="pe-inv" style="padding:5px 10px;font-size:14px">Інвертувати</button></div></div>
+  </div>
+  <label class="l" for="signname" style="margin-top:12px">Як називається мій знак?</label><input type="text" id="signname" data-f="signname" data-label="Назва знака" style="width:260px">
+  <div class="tint">Обсяг знака: 64 пікселі × глибина. Заповни.</div>
+  <div class="row"><div><label class="l">1 біт на піксель, байт</label><input type="text" data-chk="s1" data-ans="8" id="s1" data-f="s1" data-label="Знак 1 біт, байт" style="width:140px"></div>
+    <div><label class="l">8 бітів, байт</label><input type="text" data-chk="s8" data-ans="64" id="s8" data-f="s8" data-label="Знак 8 бітів, байт" style="width:140px"></div>
+    <div><label class="l">24 біти, байт</label><input type="text" data-chk="s24" data-ans="192" id="s24" data-f="s24" data-label="Знак 24 біти, байт" style="width:140px"></div></div>
+  <div class="msg n" id="s-msg"></div>
+  <div class="tintv"><b>Обмін знаками.</b> Надішли партнеру лише матрицю (у чат Teams або на папері). Отриману матрицю встав сюди — знак відновиться.
+   <textarea id="restore" data-f="restore" data-label="Отримана матриця" placeholder="8 рядків по 8 символів 0 і 1" style="min-height:110px;font-family:Consolas,monospace;margin-top:8px"></textarea>
+   <div class="row" style="align-items:flex-start;margin-top:8px"><canvas id="rs-cv" width="160" height="160" style="border:2px solid var(--line);border-radius:8px"></canvas><div class="msg n" id="rs-msg" style="flex:1"></div></div>
+   <label class="l" style="margin-top:8px">Чи збігся відновлений знак із задумом автора?</label><div class="seg" id="rs-ok"><button data-v="так">Так</button><button data-v="ні, є розбіжності">Ні, є розбіжності</button></div></div>
+</section>
+
+<section>
+  <h2>5. Експеримент: теорія і факт</h2>
+  <p class="task"><b>Запитання:</b> чи збігається теоретичний обсяг зображення з розміром файлу? Для кожного рядка: обчисли теорію за формулою (байт), потім натисни «Виміряти» — програма створить справжній файл BMP і покаже його розмір.</p>
+  <table id="ex">
+    <tr><th>№</th><th>Зображення</th><th>Розмір</th><th>Глибина</th><th>Теорія, байт</th><th></th><th>Факт, байт</th><th>Факт − теорія</th></tr>
+  </table>
+  <div class="msg n" id="ex-msg"></div>
+  <details><summary>Додатково: фото 256 × 256, 24 біти — BMP, PNG і JPEG</summary>
+   <p class="task">Натисни «Виміряти» і порівняй три формати.</p>
+   <button class="btn" id="ph-go">Виміряти</button>
+   <table><tr><th>Теорія</th><th>BMP</th><th>PNG</th><th>JPEG (80%)</th></tr><tr id="ph-row"><td>196 608</td><td>—</td><td>—</td><td>—</td></tr></table>
+   <label class="l">Що ти помітив(ла)?</label><textarea data-f="photo" data-label="Фото: спостереження" placeholder="Ми помітили…"></textarea>
+  </details>
+  <details><summary>Вільна лабораторія: змінюй розмір, глибину, формат</summary><div id="lab-root" style="margin-top:10px"></div></details>
+  <p class="task" style="margin-top:14px"><b>Чому факт BMP трохи більший за теорію?</b> Познач усі правильні причини.</p>
+  <div id="why"></div><div class="msg n" id="why-msg"></div>
+  <label class="l" style="margin-top:10px">Висновок за схемою «Ми помітили… Це означає, тому що…»</label>
+  <textarea data-f="concl" data-label="Висновок експерименту" placeholder="Ми помітили… Це означає, тому що…"></textarea>
+</section>
+
+<section>
+  <h2>6. Який формат і параметри обрати?</h2>
+  <div class="note">Формати: <b>BMP</b> — без стиснення, великий файл; <b>JPEG</b> — стиснення з втратами, добрий для фото; <b>PNG</b> — стиснення без втрат, підтримує прозорість; <b>TIFF</b> — висока якість для сканування й друку; <b>PDF</b> — формат документів, може містити і растр, і вектор.</div>
+  <p class="task">Запиши за схемою: <b>Я обираю</b> … (формат, розмір, глибину), <b>бо</b> … <b>Ціна вибору</b> … (що втрачаю).</p>
+  <b>Ситуація А.</b> Фото з екскурсії для шкільного сайту. Сторінка має швидко завантажуватись.
+  <textarea data-f="argA" data-label="Ситуація А" placeholder="Я обираю…, бо… Ціна вибору…"></textarea>
+  <b style="display:block;margin-top:10px">Ситуація Б.</b> Логотип школи з прозорим тлом. Його часто збільшують і розміщують на різних фонах.
+  <textarea data-f="argB" data-label="Ситуація Б" placeholder="Я обираю…, бо… Ціна вибору…"></textarea>
+  <div class="tint" style="margin-top:10px">Перевір себе (познач):
+   <label style="display:block"><input type="checkbox" data-f="k1" data-label="Критерій: є вибір"> є вибір (формат, розмір, глибина)</label>
+   <label style="display:block"><input type="checkbox" data-f="k2" data-label="Критерій: є причина"> є причина (властивість або число)</label>
+   <label style="display:block"><input type="checkbox" data-f="k3" data-label="Критерій: є ціна"> названо ціну або обмеження</label></div>
+</section>
+
+<section>
+  <h2>7. Рефлексія</h2>
+  <p class="task">Оціни себе: 1 — потрібна допомога, 2 — вмію з підказкою, 3 — вмію сам(а).</p>
+  <div class="scale" id="self"></div>
+  <label class="l" style="margin-top:10px">Найважливіше, що я зрозумів(ла) сьогодні…</label><textarea data-f="r1" data-label="Найважливіше" style="min-height:56px"></textarea>
+  <label class="l">Мені було складно…</label><textarea data-f="r2" data-label="Було складно" style="min-height:56px"></textarea>
+  <div class="tintv"><b>Вдома.</b> 1) Допиши висновок і вибір параметрів для двох ситуацій. 2) Як визначити код кольору в зображенні для сайту? Знайди спосіб у своєму редакторі. 3) Подумай: чи однаково виглядає колір на екрані й на папері після друку? (наступний урок — розділ 3 «Колір мого знака»)</div>
+</section>
+</main>
+<div id="final"><div class="in">
+  <button class="btn pri" id="b-save">⬇ Зберегти відповіді (.txt)</button>
+  <button class="btn" id="b-copy">📋 Скопіювати для чату Teams</button>
+  <button class="btn" id="b-print">🖨 Друк / PDF</button>
+  <button class="btn" id="b-reset" style="margin-left:auto">Очистити все</button>
+  <span class="msg n" id="final-msg" style="margin:0"></span>
+</div></div>
+
+<script>
+/* ===== Спільне ядро уроку 2: «Лабораторія зображень» ===== */
+var Img=(function(){
+ function rng(seed){var s=seed>>>0;return function(){s=(Math.imul(s,1664525)+1013904223)>>>0;return s/4294967296;};}
+ function nb(n){return String(Math.round(n*100)/100).replace('.',',').replace(/\B(?=(\d{3})+(?!\d))/g,' ');}
+ function fmt(n){var neg=n<0,s=String(Math.abs(n)),p=s.split('.'),i=p[0].replace(/\B(?=(\d{3})+(?!\d))/g,' ');return (neg?'−':'')+i+(p[1]?','+p[1]:'');}
+ /* тестові зображення: однакові для всіх, не залежать від розміру */
+ function scene(ctx,w,h,kind){
+  var i;
+  if(kind==='logo'){
+   ctx.fillStyle='#ffffff';ctx.fillRect(0,0,w,h);
+   ctx.fillStyle='#0e8a9b';ctx.fillRect(0,0,w,h*0.62);
+   ctx.fillStyle='#f2a93b';ctx.beginPath();ctx.arc(w*0.74,h*0.26,h*0.13,0,7);ctx.fill();
+   ctx.fillStyle='#2457a6';ctx.beginPath();ctx.moveTo(0,h*0.62);ctx.lineTo(w*0.32,h*0.22);ctx.lineTo(w*0.64,h*0.62);ctx.closePath();ctx.fill();
+   ctx.fillStyle='#6a4bc4';ctx.beginPath();ctx.moveTo(w*0.36,h*0.62);ctx.lineTo(w*0.66,h*0.34);ctx.lineTo(w*1,h*0.62);ctx.closePath();ctx.fill();
+   ctx.fillStyle='#1b2a4a';ctx.fillRect(w*0.1,h*0.72,w*0.8,h*0.07);
+   ctx.fillStyle='#e5575b';ctx.fillRect(w*0.1,h*0.85,w*0.5,h*0.07);
+  }else{
+   var g=ctx.createLinearGradient(0,0,0,h*0.7);g.addColorStop(0,'#2f6fc4');g.addColorStop(0.55,'#9ccfe8');g.addColorStop(1,'#f6dfb0');
+   ctx.fillStyle=g;ctx.fillRect(0,0,w,h);
+   var rg=ctx.createRadialGradient(w*0.74,h*0.24,0,w*0.74,h*0.24,h*0.3);rg.addColorStop(0,'rgba(255,245,200,1)');rg.addColorStop(0.35,'rgba(255,210,120,.85)');rg.addColorStop(1,'rgba(255,200,100,0)');
+   ctx.fillStyle=rg;ctx.fillRect(0,0,w,h);
+   var hg=ctx.createLinearGradient(0,h*0.5,0,h);hg.addColorStop(0,'#5c8a4a');hg.addColorStop(1,'#1f3d27');
+   ctx.fillStyle=hg;ctx.beginPath();ctx.moveTo(0,h*0.72);
+   for(i=0;i<=20;i++){ctx.lineTo(w*i/20,h*(0.62+0.08*Math.sin(i*0.7)+0.05*Math.sin(i*1.9)));}
+   ctx.lineTo(w,h);ctx.lineTo(0,h);ctx.closePath();ctx.fill();
+   var g2=ctx.createLinearGradient(0,h*0.8,0,h);g2.addColorStop(0,'#3b6a3a');g2.addColorStop(1,'#14291a');
+   ctx.fillStyle=g2;ctx.beginPath();ctx.moveTo(0,h*0.86);
+   for(i=0;i<=20;i++){ctx.lineTo(w*i/20,h*(0.82+0.05*Math.sin(i*1.3+1)));}
+   ctx.lineTo(w,h);ctx.lineTo(0,h);ctx.closePath();ctx.fill();
+   var im=ctx.getImageData(0,0,w,h),d=im.data,r=rng(2026+w*7+h),n;
+   for(i=0;i<d.length;i+=4){n=(r()-0.5)*26;d[i]=Math.max(0,Math.min(255,d[i]+n));d[i+1]=Math.max(0,Math.min(255,d[i+1]+n));d[i+2]=Math.max(0,Math.min(255,d[i+2]+n));}
+   ctx.putImageData(im,0,0);
+  }
+ }
+ function render(w,h,kind,depth){
+  var c=document.createElement('canvas');c.width=w;c.height=h;var x=c.getContext('2d',{willReadFrequently:true});scene(x,w,h,kind);
+  if(depth!==24){var im=x.getImageData(0,0,w,h),d=im.data,g;for(var i=0;i<d.length;i+=4){g=Math.round(0.299*d[i]+0.587*d[i+1]+0.114*d[i+2]);if(depth===1)g=g>=128?255:0;d[i]=d[i+1]=d[i+2]=g;d[i+3]=255;}x.putImageData(im,0,0);}
+  return c;
+ }
+ function bmpBytes(cv,depth){
+  var w=cv.width,h=cv.height,d=cv.getContext('2d').getImageData(0,0,w,h).data;
+  var rowB=Math.ceil(w*depth/32)*4,pal=depth===1?8:(depth===8?1024:0),off=54+pal,size=off+rowB*h,buf=new Uint8Array(size),dv=new DataView(buf.buffer),x,y,i,base,k;
+  buf[0]=0x42;buf[1]=0x4D;dv.setUint32(2,size,true);dv.setUint32(10,off,true);dv.setUint32(14,40,true);dv.setInt32(18,w,true);dv.setInt32(22,h,true);dv.setUint16(26,1,true);dv.setUint16(28,depth,true);dv.setUint32(34,rowB*h,true);dv.setUint32(38,2835,true);dv.setUint32(42,2835,true);dv.setUint32(46,depth===1?2:(depth===8?256:0),true);
+  if(depth===1){buf[54+4]=255;buf[54+5]=255;buf[54+6]=255;}
+  if(depth===8){for(k=0;k<256;k++){buf[54+k*4]=k;buf[54+k*4+1]=k;buf[54+k*4+2]=k;}}
+  for(y=0;y<h;y++){base=off+(h-1-y)*rowB;for(x=0;x<w;x++){i=(y*w+x)*4;
+   if(depth===24){buf[base+x*3]=d[i+2];buf[base+x*3+1]=d[i+1];buf[base+x*3+2]=d[i];}
+   else if(depth===8){buf[base+x]=d[i];}
+   else if(d[i]>127){buf[base+(x>>3)]|=(0x80>>(x&7));}}}
+  return buf;
+ }
+ function bmpSize(w,h,depth){return 54+(depth===1?8:(depth===8?1024:0))+Math.ceil(w*depth/32)*4*h;}
+ function measure(w,h,kind,depth,format,q){
+  var cv=render(w,h,kind,depth);
+  if(format==='bmp'){var b=bmpBytes(cv,depth);return Promise.resolve({bytes:b.length,canvas:cv,data:b});}
+  return new Promise(function(res){cv.toBlob(function(bl){res({bytes:bl?bl.size:0,canvas:cv,blob:bl});},format==='png'?'image/png':'image/jpeg',q||0.8);});
+ }
+ function theoryBits(w,h,depth){return w*h*depth;}
+ /* ----- піксельний редактор ----- */
+ var TPL={
+  'Усмішка':['00111100','01000010','10100101','10000001','10100101','10011001','01000010','00111100'],
+  'Будинок':['00011000','00111100','01111110','11111111','11000011','11011011','11011011','11111111'],
+  'Стрілка':['00001000','00001100','00001110','11111111','11111111','00001110','00001100','00001000'],
+  'К':['11000011','11000110','11001100','11011000','11011000','11001100','11000110','11000011'],
+  'Серце':['01100110','11111111','11111111','11111111','01111110','00111100','00011000','00000000']
+ };
+ function PixelEditor(box,opt){
+  opt=opt||{};var n=opt.n||8,cs=opt.cell||38,st=[],cells=[],self={},down=false,mode=1;
+  box.innerHTML='';box.style.display='inline-grid';box.style.gridTemplateColumns='repeat('+n+','+cs+'px)';box.style.gap='2px';box.style.touchAction='none';box.style.userSelect='none';
+  for(var i=0;i<n*n;i++){st.push(0);var c=document.createElement('div');c.dataset.i=i;c.style.cssText='width:'+cs+'px;height:'+cs+'px;background:#fff;border:1px solid #b9cbd3;cursor:pointer;border-radius:3px;transition:background .12s';box.appendChild(c);cells.push(c);}
+  function paint(i,v){if(st[i]===v)return;st[i]=v;cells[i].style.background=v?'#1b2a4a':'#fff';changed();}
+  function changed(){if(self.onchange)self.onchange(self.rows());}
+  function at(e){var el=document.elementFromPoint(e.clientX,e.clientY);return el&&el.parentNode===box?+el.dataset.i:-1;}
+  box.addEventListener('pointerdown',function(e){var i=at(e);if(i<0)return;down=true;mode=st[i]?0:1;paint(i,mode);e.preventDefault();});
+  box.addEventListener('pointermove',function(e){if(!down)return;var i=at(e);if(i>=0)paint(i,mode);});
+  window.addEventListener('pointerup',function(){down=false;});
+  self.rows=function(){var r=[];for(var y=0;y<n;y++){var s='';for(var x=0;x<n;x++)s+=st[y*n+x];r.push(s);}return r;};
+  self.set=function(rows){for(var y=0;y<n;y++)for(var x=0;x<n;x++){var v=rows[y]&&rows[y][x]==='1'?1:0;st[y*n+x]=v;cells[y*n+x].style.background=v?'#1b2a4a':'#fff';}changed();};
+  self.clear=function(){self.set([]);};
+  self.invert=function(){for(var i=0;i<n*n;i++){st[i]=st[i]?0:1;cells[i].style.background=st[i]?'#1b2a4a':'#fff';}changed();};
+  self.ones=function(){var k=0;st.forEach(function(v){k+=v;});return k;};
+  return self;
+ }
+ function drawBits(cv,rows,sc){var n=rows.length||8,x=cv.getContext('2d');cv.width=cv.height=n*sc;x.fillStyle='#fff';x.fillRect(0,0,cv.width,cv.height);x.fillStyle='#1b2a4a';
+  for(var y=0;y<n;y++)for(var i=0;i<n;i++)if(rows[y]&&rows[y][i]==='1')x.fillRect(i*sc,y*sc,sc,sc);
+  x.strokeStyle='#d3e2e8';for(var k=0;k<=n;k++){x.beginPath();x.moveTo(k*sc,0);x.lineTo(k*sc,n*sc);x.stroke();x.beginPath();x.moveTo(0,k*sc);x.lineTo(n*sc,k*sc);x.stroke();}}
+ /* масштабований показ без згладжування */
+ function show(target,src,box){var x=target.getContext('2d');target.width=box;target.height=box;x.imageSmoothingEnabled=false;x.drawImage(src,0,0,src.width,src.height,0,0,box,box);}
+ return {scene:scene,render:render,bmpBytes:bmpBytes,bmpSize:bmpSize,measure:measure,theoryBits:theoryBits,fmt:fmt,PixelEditor:PixelEditor,TPL:TPL,drawBits:drawBits,show:show,rng:rng};
+})();
+
+/* ===== віджет «Лабораторія зображень» (однаковий в уроці й картці) ===== */
+Img.LabUI=function(root,opt){
+ opt=opt||{};
+ var css='<style>.lu{display:flex;gap:22px;flex-wrap:wrap;align-items:flex-start;font-family:Arial,sans-serif;color:#1b2a4a}.lu select,.lu input[type=range]{font:inherit}.lu select{padding:7px 10px;border:2px solid #b9cbd3;border-radius:10px;background:#fff;font-size:'+(opt.fs||16)+'px}.lu label{display:block;font-size:13px;color:#5b6b7d;font-weight:bold;margin:8px 0 2px}.lu canvas{border:2px solid #d3e2e8;border-radius:10px;background:#fff;image-rendering:pixelated}.lu .r{background:#fff;border:1px solid #d3e2e8;border-radius:12px;padding:10px 14px;margin:6px 0;font-size:'+(opt.fs||16)+'px}.lu .r b{color:#0e8a9b}.lu .big{font-size:'+((opt.fs||16)+6)+'px;font-weight:bold}.lu .df{color:#6a4bc4}</style>';
+ root.innerHTML=css+'<div class="lu"><div><canvas class="lu-cv" width="'+(opt.box||260)+'" height="'+(opt.box||260)+'"></canvas><div class="lu-px" style="font-size:13px;color:#5b6b7d;margin-top:4px"></div></div>'+
+ '<div style="min-width:220px"><label>Зображення</label><select class="lu-k"><option value="logo">Логотип (однотонні ділянки)</option><option value="photo">Фото (градієнти й шум)</option></select>'+
+ '<label>Розмір, пікселів</label><select class="lu-s"><option>16</option><option>32</option><option>64</option><option>100</option><option selected>128</option><option>256</option><option>512</option></select>'+
+ '<label>Глибина кольору</label><select class="lu-d"><option value="1">1 біт (чорно-біле)</option><option value="8">8 бітів (256 сірих)</option><option value="24" selected>24 біти (True Color)</option></select>'+
+ '<label>Формат файлу</label><select class="lu-f"><option value="bmp">BMP (без стиснення)</option><option value="png">PNG (стиснення без втрат)</option><option value="jpeg">JPEG (стиснення з втратами)</option></select>'+
+ '<div class="lu-q" style="display:none"><label>Якість JPEG: <span class="lu-qv">80</span>%</label><input class="lu-qr" type="range" min="10" max="100" value="80" style="width:200px"></div></div>'+
+ '<div style="flex:1;min-width:280px"><div class="r">Теоретичний обсяг: <span class="lu-th"></span></div><div class="r">Фактичний розмір файлу: <span class="lu-fa big"></span></div><div class="r lu-df-box"></div><div class="r lu-note" style="font-size:'+((opt.fs||16)-2)+'px;color:#5b6b7d"></div></div></div>';
+ var $=function(c){return root.querySelector(c);},tick=0;
+ function upd(){
+  var kind=$('.lu-k').value,n=+$('.lu-s').value,dp=+$('.lu-d').value,f=$('.lu-f').value,q=+$('.lu-qr').value/100,my=++tick;
+  $('.lu-q').style.display=f==='jpeg'?'block':'none';$('.lu-qv').textContent=Math.round(q*100);
+  var bits=n*n*dp,by=bits/8;
+  $('.lu-th').innerHTML='<b>'+n+' × '+n+' × '+dp+' = '+Img.fmt(bits)+' біт = '+Img.fmt(by)+' байт</b>';
+  $('.lu-px').textContent=n+' × '+n+' = '+Img.fmt(n*n)+' пікселів';
+  Img.measure(n,n,kind,dp,f,q).then(function(m){
+   if(my!==tick)return;Img.show($('.lu-cv'),m.canvas,opt.box||260);
+   var d=m.bytes-by;
+   $('.lu-fa').textContent=Img.fmt(m.bytes)+' байт';
+   $('.lu-df-box').innerHTML='Різниця (факт − теорія): <b class="df">'+(d>=0?'+':'')+Img.fmt(Math.round(d*100)/100)+' байт</b> ('+Math.round(m.bytes/by*1000)/10+'% від теорії)';
+   var note='';
+   if(f==='bmp'){var pal=dp===1?8:(dp===8?1024:0),row=Math.ceil(n*dp/32)*4,pad=row*n-by;note='BMP: заголовок 54 байти'+(pal?' + палітра '+pal+' байтів':'')+(pad>0?' + вирівнювання рядків до кратності 4 байтам: '+Img.fmt(pad)+' байтів':'')+'.';}
+   else if(f==='png')note='PNG стискає дані без втрат: файл може бути значно меншим за теорію (залежить від зображення й браузера).';
+   else note='JPEG стискає з втратами: чим нижча якість, тим менший файл. Значення залежать від зображення й браузера.';
+   $('.lu-note').textContent=note;
+   if(opt.onmeasure)opt.onmeasure({kind:kind,n:n,depth:dp,format:f,q:q,bytes:m.bytes,theory:by});
+  });
+ }
+ ['.lu-k','.lu-s','.lu-d','.lu-f','.lu-qr'].forEach(function(s){$(s).addEventListener('input',upd);$(s).addEventListener('change',upd);});
+ root.__set=function(o){if(o.kind)$('.lu-k').value=o.kind;if(o.n)$('.lu-s').value=String(o.n);if(o.depth)$('.lu-d').value=String(o.depth);if(o.format)$('.lu-f').value=o.format;upd();};
+ upd();return root;
+};
+
+</script>
+<script>
+(function(){
+var $=function(i){return document.getElementById(i);};
+var fmt=Img.fmt,READY=false;
+function store(k,v){try{localStorage.setItem('u2.'+k,v);}catch(e){}}
+function load(k){try{return localStorage.getItem('u2.'+k);}catch(e){return null;}}
+function num(s){return parseFloat(String(s).replace(/[\s ]/g,'').replace(',','.'));}
+function setMsg(id,cls,t){var m=$(id);m.className='msg '+cls;m.textContent=t;}
+var fields=[].slice.call(document.querySelectorAll('[data-f]'));
+/* автозбереження */
+function reg(f){var k=f.dataset.f,v=load(k);
+ if(f.type==='checkbox'){f.checked=v==='1';f.addEventListener('change',function(){store(k,f.checked?'1':'0');progress();});}
+ else{if(v!==null)f.value=v;f.addEventListener('input',function(){store(k,f.value);progress();});}}
+fields.forEach(reg);
+/* режим */
+var mode='pair';
+function setMode(m){mode=m;store('mode',m);[].forEach.call(document.querySelectorAll('#mode button'),function(b){b.classList.toggle('on',b.dataset.m===m);});}
+[].forEach.call(document.querySelectorAll('#mode button'),function(b){b.addEventListener('click',function(){setMode(b.dataset.m);});});
+setMode(load('mode')==='solo'?'solo':'pair');
+/* тести */
+function quiz(id,msgId,opts,right,explain,key){
+ var box=$(id),saved=load(key);
+ opts.forEach(function(t,i){var l=document.createElement('label');l.className='opt';l.innerHTML='<input type="radio" name="'+id+'" value="'+i+'"> '+t;
+  l.querySelector('input').addEventListener('change',function(){
+   [].forEach.call(box.querySelectorAll('.opt'),function(o){o.classList.remove('ok','bad');});store(key,String(i));
+   if(i===right){l.classList.add('ok');setMsg(msgId,'ok','✓ Правильно. '+explain);}else{l.classList.add('bad');setMsg(msgId,'bad','✗ Ще подумай і спробуй інший варіант.');}
+   progress();});
+  box.appendChild(l);});
+ if(saved!==null){var r=box.querySelectorAll('input')[+saved];if(r){r.checked=true;r.dispatchEvent(new Event('change'));}}
+}
+quiz('q1','q1-msg',['Зображення залишається чітким','Стають видні окремі пікселі — квадратики','Змінюються формули примітивів','Зображення стає векторним'],1,'Растр складається з пікселів, тому при збільшенні видно квадрати.','q1');
+quiz('q2','q2-msg',['Код кольору кожного пікселя','Математичні формули графічних примітивів (лінії, дуги, прямокутники)','Лише розмір файлу','Фотографію у форматі JPEG'],1,'Векторне зображення зберігається як опис примітивів формулами, тому не втрачає чіткості.','q2');
+/* перевірка числових полів */
+function chk(inp){inp.classList.remove('ok','bad');if(!inp.value.trim())return;var a=num(inp.dataset.ans);(num(inp.value)===a)?inp.classList.add('ok'):inp.classList.add('bad');}
+var chks=[].slice.call(document.querySelectorAll('[data-chk]'));
+chks.push($('q3'));$('q3').dataset.ans='256';
+function groupMsg(ids,msgId,okText,hint){var n=0,filled=0;ids.forEach(function(i){var e=$(i)||document.querySelector('[data-chk="'+i+'"]');if(e.value.trim())filled++;if(e.classList.contains('ok'))n++;});
+ if(!filled)setMsg(msgId,'n',hint);else if(n===ids.length)setMsg(msgId,'ok',okText);else setMsg(msgId,'n','Правильних: '+n+' з '+ids.length+'. '+hint);}
+function recheck(){chks.forEach(chk);
+ groupMsg(['t1b','t1y','t2b','t2y','t3b','t3y'],'t-msg','✓ Усе правильно: обсяг = N × M × i бітів, потім : 8 — і маємо байти.','Підказка: біт = N × M × i; байт = біт : 8; для K кольорів i знаходимо з K = 2ⁱ.');
+ groupMsg(['s1','s8','s24'],'s-msg','✓ 64 пікселі × 1, 8, 24 біти = 64, 512, 1536 біт = 8, 64, 192 байти.','Підказка: 64 пікселі × глибина (біт), потім : 8.');
+ if($('q3').classList.contains('ok'))setMsg('q3-msg','ok','✓ 2⁸ = 256'); else setMsg('q3-msg','n','');
+ progress();}
+chks.forEach(function(e){e.addEventListener('input',recheck);});
+/* індивідуальне завдання */
+var GEN=null;
+var SZ=[[320,240],[640,480],[800,600],[1024,768],[1280,720],[1920,1080]],DP=[[1,'чорно-біле'],[2,'4 кольори'],[4,'16 кольорів'],[8,'256 кольорів'],[24,'24 біти на піксель']];
+function genNew(first){
+ if(first){try{GEN=JSON.parse(load('gen'));}catch(e){GEN=null;}}
+ if(!GEN||!first){var s=SZ[Math.floor(Math.random()*SZ.length)],d=DP[Math.floor(Math.random()*DP.length)];GEN={n:s[0],m:s[1],i:d[0],t:d[1]};store('gen',JSON.stringify(GEN));if(!first){$('g-b').value='';$('g-y').value='';store('g-b','');store('g-y','');}}
+ $('gen-t').innerHTML='Зображення <b>'+GEN.n+' × '+GEN.m+'</b> пікселів, '+(GEN.i===24?'<b>24 біти на піксель</b>':'<b>'+GEN.t+'</b>')+'. Знайди обсяг у бітах і в байтах.';
+ gchk();}
+function gchk(){var b=$('g-b'),y=$('g-y'),bits=GEN.n*GEN.m*GEN.i;b.classList.remove('ok','bad');y.classList.remove('ok','bad');
+ if(b.value.trim())b.classList.add(num(b.value)===bits?'ok':'bad');if(y.value.trim())y.classList.add(num(y.value)===bits/8?'ok':'bad');
+ if(b.classList.contains('ok')&&y.classList.contains('ok'))setMsg('g-msg','ok','✓ Правильно: '+fmt(bits)+' біт = '+fmt(bits/8)+' байт ≈ '+fmt(Math.round(bits/8/1024*100)/100)+' КБ.');
+ else setMsg('g-msg','n','Підказка: біт = N × M × i; байт = біт : 8'+(GEN.i<24&&GEN.i>0&&GEN.t.indexOf('колір')>=0?'; K = 2ⁱ, тому i = '+GEN.i+'.':'.'));progress();}
+$('gen').addEventListener('click',function(){genNew(false);});$('g-b').addEventListener('input',gchk);$('g-y').addEventListener('input',gchk);
+/* знак */
+var PE=Img.PixelEditor($('pe-box'),{n:8,cell:36});
+PE.onchange=function(r){$('pe-bits').innerHTML=r.join('<br>');store('sign',r.join(','));progress();};
+Object.keys(Img.TPL).forEach(function(k){var b=document.createElement('button');b.className='btn';b.style.cssText='padding:4px 9px;font-size:13px;margin:2px';b.textContent=k;b.onclick=function(){PE.set(Img.TPL[k]);};$('pe-tpl').appendChild(b);});
+$('pe-clr').onclick=function(){PE.clear();};$('pe-inv').onclick=function(){PE.invert();};
+var sg=load('sign');PE.set(sg?sg.split(','):[]);
+/* відновлення знака */
+function parseRows(t){var rows=t.split(/[\n,;]+/).map(function(x){return x.replace(/\s+/g,'');}).filter(Boolean);return rows;}
+function restore(){var t=$('restore').value,cv=$('rs-cv');if(!t.trim()){cv.getContext('2d').clearRect(0,0,160,160);setMsg('rs-msg','n','Встав матрицю партнера: 8 рядків по 8 символів.');return;}
+ var rows=parseRows(t),err='';
+ if(rows.length!==8)err='Рядків: '+rows.length+', а має бути 8.';
+ else for(var i=0;i<8;i++){if(!/^[01]{8}$/.test(rows[i])){err='Рядок '+(i+1)+' має містити рівно 8 символів 0 і 1.';break;}}
+ if(err){setMsg('rs-msg','bad','✗ '+err);cv.getContext('2d').clearRect(0,0,160,160);return;}
+ Img.drawBits(cv,rows,20);setMsg('rs-msg','ok','✓ Знак відновлено. Покажи його автору й порівняйте із задумом.');}
+$('restore').addEventListener('input',restore);restore();
+var rsv=load('rsok');[].forEach.call(document.querySelectorAll('#rs-ok button'),function(b){b.classList.toggle('on',b.dataset.v===rsv);b.addEventListener('click',function(){store('rsok',b.dataset.v);[].forEach.call(document.querySelectorAll('#rs-ok button'),function(o){o.classList.toggle('on',o===b);});progress();});});
+/* експеримент */
+var EX=[['логотип',128,1],['логотип',128,8],['логотип',128,24],['логотип',256,24]],exT=$('ex');
+EX.forEach(function(r,i){var tr=exT.insertRow(-1),th=r[1]*r[1]*r[2]/8;
+ tr.innerHTML='<td class="s" style="font-size:16px">'+(i+1)+'</td><td>'+r[0]+'</td><td>'+r[1]+' × '+r[1]+'</td><td>'+r[2]+' '+(r[2]===1?'біт':'бітів')+'</td><td><input type="text" id="ex'+i+'" data-f="ex'+i+'" data-label="Експ.'+(i+1)+': теорія, байт" data-ans="'+th+'" style="min-width:110px"></td><td><button class="btn" data-m="'+i+'" style="padding:5px 10px;font-size:13px">Виміряти</button></td><td id="ef'+i+'">—</td><td id="ed'+i+'">—</td>';
+ chks.push($('ex'+i));fields.push($('ex'+i));reg($('ex'+i));$('ex'+i).addEventListener('input',function(){recheck();exMsg();});
+ tr.querySelector('button').addEventListener('click',function(){Img.measure(r[1],r[1],'logo',r[2],'bmp').then(function(m){store('ef'+i,String(m.bytes));showFact(i,m.bytes);});});
+});
+EX.forEach(function(r,i){var fv=load('ef'+i);if(fv)showFact(i,+fv);});
+function showFact(i,b){var th=EX[i][1]*EX[i][1]*EX[i][2]/8;$('ef'+i).innerHTML='<b>'+fmt(b)+'</b>';$('ed'+i).innerHTML='+'+fmt(b-th);exMsg();progress();}
+function exMsg(){var th=0,fa=0;for(var i=0;i<4;i++){if($('ex'+i).classList.contains('ok'))th++;if(load('ef'+i))fa++;}
+ if(th===4&&fa===4)setMsg('ex-msg','ok','✓ Усі виміри виконано. Факт у BMP завжди трохи більший за теорію — поясни чому нижче.');else setMsg('ex-msg','n','Теорія правильна: '+th+' з 4 · виміряно: '+fa+' з 4');}
+$('ph-go').addEventListener('click',function(){var r=$('ph-row');Promise.all([Img.measure(256,256,'photo',24,'bmp'),Img.measure(256,256,'photo',24,'png'),Img.measure(256,256,'photo',24,'jpeg',0.8)]).then(function(a){
+ r.innerHTML='<td>196 608</td><td><b>'+fmt(a[0].bytes)+'</b></td><td><b>'+fmt(a[1].bytes)+'</b></td><td><b>'+fmt(a[2].bytes)+'</b></td>';});});
+Img.LabUI($('lab-root'),{box:230});
+/* причини */
+var WHY=[['Заголовок файлу BMP — 54 байти службових даних',1],['Палітра кольорів у файлі (для 1 і 8 бітів)',1],['Кінець кожного рядка пікселів доповнюється до кратності 4 байтам',1],['Комп’ютер стискає зображення без втрат',0],['Піксель на екрані «важить» більше, ніж у файлі',0]],wsv=(load('why')||'').split(',');
+WHY.forEach(function(w,i){var l=document.createElement('label');l.className='opt';l.innerHTML='<input type="checkbox" data-w="'+i+'"> '+w[0];var c=l.querySelector('input');c.checked=wsv.indexOf(String(i))>=0;c.addEventListener('change',whyChk);$('why').appendChild(l);});
+function whyChk(){var sel=[],good=true,n=0;[].forEach.call(document.querySelectorAll('#why input'),function(c,i){var l=c.parentNode;l.classList.remove('ok','bad');if(c.checked){sel.push(i);if(WHY[i][1]){l.classList.add('ok');n++;}else{l.classList.add('bad');good=false;}}});
+ store('why',sel.join(','));
+ if(!sel.length)setMsg('why-msg','n','');else if(good&&n===3)setMsg('why-msg','ok','✓ Усі три причини названо. Стиснення у BMP немає — воно є у PNG і JPEG.');else if(!good)setMsg('why-msg','bad','✗ Є хибний варіант (червоний). У BMP стиснення немає.');else setMsg('why-msg','n','Ще не всі причини — продовжуй.');progress();}
+whyChk();
+/* самооцінка */
+var ST=['Можу пояснити, що таке піксель і растр','Можу розрахувати обсяг зображення за формулою','Можу пояснити, чому файл більший або менший за теоретичний обсяг'];
+ST.forEach(function(t,i){var d=document.createElement('div');d.style.margin='6px 0';d.innerHTML='<span style="display:inline-block;min-width:430px">'+t+'</span>'+[1,2,3].map(function(v){return '<label><input type="radio" name="self'+i+'" value="'+v+'"> '+v+'</label> ';}).join('');$('self').appendChild(d);
+ var sv=load('self'+i);[].forEach.call(d.querySelectorAll('input'),function(r){if(r.value===sv)r.checked=true;r.addEventListener('change',function(){store('self'+i,r.value);progress();});});});
+/* прогрес */
+function progress(){
+ if(!READY)return;
+ var req=['name','hyp','concl','argA','argB','r1','r2'],n=0,tot=req.length+chks.length+1+1+1+3+1+1;
+ req.forEach(function(id){var e=document.querySelector('[data-f="'+id+'"]');if(e&&e.value.trim())n++;});
+ chks.forEach(function(c){if(c.classList.contains('ok'))n++;});
+ if(GEN&&$('g-b').classList.contains('ok')&&$('g-y').classList.contains('ok'))n++;
+ if(PE.ones()>0)n++;
+ if(document.querySelector('#q1 .opt.ok')&&document.querySelector('#q2 .opt.ok'))n++;
+ for(var i=0;i<3;i++)if(load('self'+i))n++;
+ if($('why-msg').classList.contains('ok'))n++;
+ var m=0;for(var j=0;j<4;j++)if(load('ef'+j))m++;if(m===4)n++;
+ var p=Math.min(100,Math.round(n/tot*100));document.querySelector('#prog i').style.width=p+'%';$('pct').textContent=p+'%';}
+/* експорт */
+function summary(){
+ var L=['ПРАКТИЧНА КАРТКА · УРОК 2 · КОДУВАННЯ ГРАФІЧНИХ ЗОБРАЖЕНЬ','Режим: '+(mode==='pair'?'у парі':'самостійно'),''];
+ fields.forEach(function(f){if(f.type==='checkbox'){if(f.checked)L.push(f.dataset.label);return;}
+  if(f.value.trim()){var mark=f.classList.contains('ok')?' ✓':(f.classList.contains('bad')?' ✗':'');L.push(f.dataset.label+': '+f.value.trim().replace(/\n/g,' / ')+mark);}});
+ L.push('');L.push('Знак 8×8 (рядки): '+PE.rows().join(' '));
+ L.push('Чи збігся відновлений знак: '+(load('rsok')||'—'));
+ L.push('Своє завдання: '+(GEN?GEN.n+'×'+GEN.m+', '+GEN.i+' біт/піксель':'—'));
+ var sc=[];for(var i=0;i<3;i++)sc.push(load('self'+i)||'—');L.push('Самооцінка (1–3): '+sc.join(' · '));
+ L.push('Виконано: '+$('pct').textContent);return L.join('\n');}
+function copyText(t,cb){try{if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(t).then(function(){cb(true);},function(){fb();});return;}}catch(e){}fb();
+ function fb(){var a=document.createElement('textarea');a.value=t;document.body.appendChild(a);a.select();var ok=false;try{ok=document.execCommand('copy');}catch(e){}document.body.removeChild(a);cb(ok);}}
+function translit(s){var m={'а':'a','б':'b','в':'v','г':'h','ґ':'g','д':'d','е':'e','є':'ie','ж':'zh','з':'z','и':'y','і':'i','ї':'i','й':'i','к':'k','л':'l','м':'m','н':'n','о':'o','п':'p','р':'r','с':'s','т':'t','у':'u','ф':'f','х':'kh','ц':'ts','ч':'ch','ш':'sh','щ':'shch','ь':'','ю':'iu','я':'ia','ы':'y','э':'e','ъ':'','ё':'io'},o='';
+ s.toLowerCase().split('').forEach(function(c){if(m[c]!==undefined)o+=m[c];else if(/[a-z0-9]/.test(c))o+=c;else if(/\s|-|_/.test(c))o+='_';});
+ o=o.replace(/_+/g,'_').replace(/^_|_$/g,'');return o?o.charAt(0).toUpperCase()+o.slice(1):'uchen';}
+document.getElementById('b-copy').addEventListener('click',function(){var m=$('final-msg');copyText(summary(),function(ok){m.className='msg '+(ok?'ok':'bad');m.textContent=ok?'Скопійовано. Встав у чат Teams і надішли вчителю.':'Не вдалося скопіювати — скористайся кнопкою «Зберегти».';});});
+$('b-save').addEventListener('click',function(){var name=translit($('name').value)||'uchen';
+ var b=new Blob(['﻿'+summary()],{type:'text/plain;charset=utf-8'}),a=document.createElement('a');a.href=URL.createObjectURL(b);a.download='Urok2_Hrafika_'+name+'.txt';document.body.appendChild(a);a.click();document.body.removeChild(a);
+ $('final-msg').className='msg ok';$('final-msg').textContent='Файл збережено. Надішли його вчителю.';});
+$('b-print').addEventListener('click',function(){window.print();});
+$('b-reset').addEventListener('click',function(){if(!confirm('Очистити всі відповіді на цьому пристрої?'))return;try{Object.keys(localStorage).forEach(function(k){if(k.indexOf('u2.')===0)localStorage.removeItem(k);});}catch(e){}location.reload();});
+READY=true;genNew(true);recheck();exMsg();progress();
+})();
+
+</script>
+</body>
+</html>
