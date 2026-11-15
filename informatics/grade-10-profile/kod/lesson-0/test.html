@@ -1,0 +1,90 @@
+<!doctype html><html lang="uk"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Тест: самостійне повторення</title>
+<style>
+:root{--teal:#0e8a9b;--blue:#2457a6;--violet:#6a4fc2;--ink:#1b2a4a;--muted:#5b6b7b;--line:#d5e2e8;--ok:#1f9d55;--bad:#c0392b}
+*{box-sizing:border-box}body{margin:0;background:#f7fbfc;color:var(--ink);font:18px/1.5 Arial,Helvetica,sans-serif}
+#top{position:sticky;top:0;background:#fff;border-bottom:1px solid var(--line);z-index:5}#top .in{max-width:860px;margin:0 auto;padding:8px 16px;display:flex;align-items:center;gap:12px}
+#prog{flex:1;height:10px;background:#e3eef1;border-radius:6px;overflow:hidden}#prog i{display:block;height:100%;width:0;background:var(--teal);transition:width .3s}
+main{max-width:860px;margin:0 auto;padding:16px 16px 110px}h1{font-size:28px;margin:10px 0 4px}
+section{background:#fff;border:2px solid var(--line);border-radius:16px;padding:14px 20px;margin:14px 0}
+h2{font-size:21px;margin:0 0 8px;color:var(--teal)}.sub{color:var(--muted)}
+.opt{display:block;padding:8px 12px;margin:5px 0;border:2px solid var(--line);border-radius:10px;cursor:pointer}.opt.ok{border-color:var(--ok);background:#e9f7ef}.opt.bad{border-color:var(--bad);background:#fdecea}
+input[type=text],input[type=number],textarea{font:inherit;padding:8px 10px;border:2px solid #b9cbd3;border-radius:10px;background:#fff}
+input.ok{border-color:var(--ok);background:#e9f7ef}input.bad{border-color:var(--bad);background:#fdecea}
+.msg{margin-top:6px;font-size:16px}.msg.ok{color:var(--ok)}.msg.bad{color:var(--bad)}.msg.n{color:var(--muted)}
+.tint{background:#e3f4f6;border-radius:12px;padding:8px 14px;margin:8px 0}
+#final{position:fixed;left:0;right:0;bottom:0;background:#fff;border-top:1px solid var(--line)}#final .in{max-width:860px;margin:0 auto;padding:10px 16px;display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.btn{font:inherit;font-weight:bold;padding:9px 16px;border-radius:12px;border:2px solid var(--teal);background:#fff;color:var(--teal);cursor:pointer}.btn.pri{background:var(--teal);color:#fff}
+#score{font-size:22px;font-weight:bold;color:var(--violet)}
+</style></head><body>
+<div id="top"><div class="in"><b>Самостійне повторення</b><div id="prog"><i></i></div><span id="pct">0%</span></div></div>
+<main>
+<h1>Тест: повторюємо перед темою «Кодування символів»</h1>
+<div class="sub">12 запитань, перевірка одразу. Відповіді зберігаються на твоєму пристрої. Час: близько 10 хвилин.</div>
+<section><label><b>Прізвище, ім’я</b><br><input type="text" id="name" data-f="name" data-label="Прізвище, ім’я" style="width:280px"></label> <label style="margin-left:12px"><b>Клас</b><br><input type="text" id="cls" data-f="cls" data-label="Клас" style="width:90px"></label></section>
+<div id="qs"></div>
+<section><h2>Проєкт: мій девіз</h2><div>Запиши девіз (3–5 слів, до 24 символів) великими літерами. Порахуй символи (з пробілами).</div>
+ <input type="text" id="dev" data-f="dev" data-label="Мій девіз" style="width:100%;margin-top:8px;text-transform:uppercase" maxlength="40">
+ <div class="msg n" id="dev-msg"></div>
+ <div style="margin-top:8px">Скільки символів у девізі? <input type="number" id="dk" data-f="dk" data-label="Символів у девізі" style="width:90px"> <span class="msg n" id="dk-msg"></span></div>
+ <div style="margin-top:8px">Скільки це байтів (1 символ = 1 байт)? <input type="number" id="db" data-f="db" data-label="Обсяг девізу, байт" style="width:90px"> <span class="msg n" id="db-msg"></span></div>
+ <div style="margin-top:8px">Скільки це бітів? <input type="number" id="dbit" data-f="dbit" data-label="Обсяг девізу, біт" style="width:90px"> <span class="msg n" id="dbit-msg"></span></div></section>
+<section><h2>Оціни себе</h2><div class="sub">1 — потрібна допомога, 2 — вмію з підказкою, 3 — вмію сам(а).</div><div id="self"></div>
+ <div style="margin-top:8px"><b>Що ще хочу повторити:</b><br><textarea id="more" data-f="more" data-label="Хочу повторити" style="width:100%;min-height:54px"></textarea></div></section>
+</main>
+<div id="final"><div class="in"><span id="score"></span><button class="btn pri" id="b-save">⬇ Зберегти відповіді (.txt)</button><button class="btn" id="b-copy">📋 Скопіювати для чату</button><button class="btn" id="b-reset" style="margin-left:auto">Очистити все</button><span class="msg n" id="fmsg"></span></div></div>
+<script>
+(function(){var $=function(i){return document.getElementById(i);};
+function store(k,v){try{localStorage.setItem('rv.'+k,v);}catch(e){}}function load(k){try{return localStorage.getItem('rv.'+k);}catch(e){return null;}}
+var READY=false,fields=[].slice.call(document.querySelectorAll('[data-f]'));
+function reg(f){var k=f.dataset.f,v=load(k);if(v!==null)f.value=v;f.addEventListener('input',function(){store(k,f.value);prog();});}
+fields.forEach(reg);
+/* запитання: [текст, варіанти, правильний, пояснення] або num */
+var Q=[
+['Скільки бітів у одному байті?',['4','8','10','16'],1,'1 байт = 8 бітів.'],
+['Скільки бітів у 5 байтах?',null,40,'5 · 8 = 40 бітів.'],
+['Скільки різних кодів можна скласти з 3 бітів?',['6','8','9','16'],1,'N = 2³ = 8.'],
+['Скільки різних кодів дає 1 байт?',['8','64','256','1024'],2,'2⁸ = 256.'],
+['Чому для українського алфавіту (33 літери) не вистачить 5 бітів?',['5 бітів дають лише 32 коди','5 бітів — це не байт','Літери не кодуються бітами','Бракує цифр'],0,'2⁵ = 32 < 33.'],
+['Переведи двійкове 00001010 у десяткове.',null,10,'8 + 2 = 10.'],
+['Переведи двійкове 01000001 у десяткове.',null,65,'64 + 1 = 65.'],
+['Яке число стоїть після F у шістнадцятковій системі, якщо A = 10?',['F = 14','F = 15','F = 16','F = 17'],1,'A=10, B=11, C=12, D=13, E=14, F=15.'],
+['Переведи 41₁₆ у десяткове.',null,65,'4·16 + 1 = 65.'],
+['Переведи A5₁₆ у десяткове.',null,165,'10·16 + 5 = 165.'],
+['Скільки шістнадцяткових цифр потрібно, щоб записати один байт?',['1','2','4','8'],1,'Байт = 8 бітів = 2 цифри по 4 біти (00–FF).'],
+['Текст має 25 символів, кожен кодується 8 бітами. Скільки байтів займає текст?',null,25,'I = 25 · 8 = 200 бітів = 25 байтів.']
+];
+var box=$('qs'),res=[],qok=[];
+Q.forEach(function(q,qi){var s=document.createElement('section');s.innerHTML='<h2>'+(qi+1)+'. '+q[0]+'</h2><div class="a"></div><div class="msg n"></div>';var a=s.querySelector('.a'),m=s.querySelector('.msg');box.appendChild(s);
+ function mark(ok,e){qok[qi]=ok;m.className='msg '+(ok?'ok':'bad');m.textContent=ok?'✓ Правильно. '+q[3]:'✗ Ще подумай і спробуй знову.';score();prog();}
+ if(q[1]){var sv=load('q'+qi);q[1].forEach(function(t,i){var l=document.createElement('label');l.className='opt';l.innerHTML='<input type="radio" name="q'+qi+'"> '+t;var r=l.querySelector('input');
+  r.addEventListener('change',function(){[].forEach.call(a.querySelectorAll('.opt'),function(o){o.classList.remove('ok','bad');});store('q'+qi,String(i));var ok=i===q[2];l.classList.add(ok?'ok':'bad');mark(ok);});a.appendChild(l);
+  if(sv!==null&&+sv===i){r.checked=true;l.classList.add(i===q[2]?'ok':'bad');qok[qi]=i===q[2];m.className='msg '+(qok[qi]?'ok':'bad');m.textContent=qok[qi]?'✓ Правильно. '+q[3]:'✗ Ще подумай і спробуй знову.';}});}
+ else{var inp=document.createElement('input');inp.type='number';inp.style.width='120px';inp.dataset.f='n'+qi;inp.dataset.label='Запитання '+(qi+1);a.appendChild(inp);fields.push(inp);reg(inp);
+  function chk(){inp.classList.remove('ok','bad');if(inp.value==='')return;var ok=+inp.value===q[2];inp.classList.add(ok?'ok':'bad');mark(ok);}
+  inp.addEventListener('input',chk);if(inp.value!=='')chk();}
+});
+var SELF=['Можу порахувати кількість кодів N = 2ⁱ','Можу перевести двійкове й шістнадцяткове число в десяткове','Можу порахувати обсяг тексту'];
+SELF.forEach(function(t,i){var d=document.createElement('div');d.style.margin='6px 0';d.innerHTML='<span style="display:inline-block;min-width:min(520px,100%)">'+t+'</span>'+[1,2,3].map(function(v){return '<label><input type="radio" name="sf'+i+'" value="'+v+'"> '+v+'</label> ';}).join('');$('self').appendChild(d);
+ var sv=load('sf'+i);[].forEach.call(d.querySelectorAll('input'),function(r){if(r.value===sv)r.checked=true;r.addEventListener('change',function(){store('sf'+i,r.value);prog();});});});
+/* девіз */
+function dev(){var s=$('dev').value.toUpperCase(),k=[].slice.call(s).length,m=$('dev-msg');
+ m.textContent=k===0?'':(k>24?'Задовгий — скороти до 24 символів.':(k<8?'Закороткий — додай слово.':'Добре! Тепер порахуй.'));
+ function c(id,v,msg,ok,no){var e=$(id),mm=$(msg);e.classList.remove('ok','bad');if(e.value===''||k===0){mm.textContent='';return;}var g=+e.value===v;e.classList.add(g?'ok':'bad');mm.className='msg '+(g?'ok':'bad');mm.textContent=g?ok:no;}
+ c('dk',k,'dk-msg','✓','Порахуй ще раз: пробіли теж символи.');c('db',k,'db-msg','✓ 1 символ = 1 байт','K · 1 байт');c('dbit',k*8,'dbit-msg','✓ '+k+' · 8','Байти · 8');prog();}
+['dev','dk','db','dbit'].forEach(function(i){$(i).addEventListener('input',dev);});
+function score(){var n=0;qok.forEach(function(v){if(v)n++;});$('score').textContent='Правильно: '+n+' з '+Q.length;}
+function prog(){if(!READY)return;var n=0,tot=Q.length+4+3+1;qok.forEach(function(v){if(v)n++;});
+ if($('name').value.trim())n++;['dk','db','dbit'].forEach(function(i){if($(i).classList.contains('ok'))n++;});if($('dev').value.trim())n++;
+ for(var i=0;i<3;i++)if(load('sf'+i))n++;
+ var p=Math.min(100,Math.round(n/(Q.length+1+3+1+3)*100));document.querySelector('#prog i').style.width=p+'%';$('pct').textContent=p+'%';}
+function summary(){var L=['САМОСТІЙНЕ ПОВТОРЕННЯ · ПЕРЕД ТЕМОЮ «КОДУВАННЯ СИМВОЛІВ»',$('score').textContent,''];
+ fields.forEach(function(f){if(f.value.trim()){var mk=f.classList.contains('ok')?' ✓':(f.classList.contains('bad')?' ✗':'');L.push(f.dataset.label+': '+f.value.trim().replace(/\n/g,' / ')+mk);}});
+ var sf=[];for(var i=0;i<3;i++)sf.push(load('sf'+i)||'—');L.push('');L.push('Самооцінка (1–3): '+sf.join(' · '));L.push('Виконано: '+$('pct').textContent);return L.join('\n');}
+function translit(s){var m={'а':'a','б':'b','в':'v','г':'h','ґ':'g','д':'d','е':'e','є':'ie','ж':'zh','з':'z','и':'y','і':'i','ї':'i','й':'i','к':'k','л':'l','м':'m','н':'n','о':'o','п':'p','р':'r','с':'s','т':'t','у':'u','ф':'f','х':'kh','ц':'ts','ч':'ch','ш':'sh','щ':'shch','ь':'','ю':'iu','я':'ia'},o='';s.toLowerCase().split('').forEach(function(c){if(m[c]!==undefined)o+=m[c];else if(/[a-z0-9]/.test(c))o+=c;else if(/\s|-|_/.test(c))o+='_';});o=o.replace(/_+/g,'_').replace(/^_|_$/g,'');return o?o.charAt(0).toUpperCase()+o.slice(1):'uchen';}
+$('b-save').onclick=function(){var b=new Blob(['﻿'+summary()],{type:'text/plain;charset=utf-8'}),a=document.createElement('a');a.href=URL.createObjectURL(b);a.download='Povtorennia_'+translit($('name').value)+'.txt';document.body.appendChild(a);a.click();document.body.removeChild(a);$('fmsg').className='msg ok';$('fmsg').textContent='Файл збережено. Надішли його вчителю.';};
+$('b-copy').onclick=function(){var t=summary(),ta=document.createElement('textarea');ta.value=t;document.body.appendChild(ta);ta.select();var ok=false;try{ok=document.execCommand('copy');}catch(e){}document.body.removeChild(ta);$('fmsg').className='msg '+(ok?'ok':'bad');$('fmsg').textContent=ok?'Скопійовано.':'Не вдалося — скористайся «Зберегти».';};
+$('b-reset').onclick=function(){if(!confirm('Очистити всі відповіді на цьому пристрої?'))return;try{Object.keys(localStorage).forEach(function(k){if(k.indexOf('rv.')===0)localStorage.removeItem(k);});}catch(e){}location.reload();};
+READY=true;score();dev();prog();
+})();
+</script></body></html>
