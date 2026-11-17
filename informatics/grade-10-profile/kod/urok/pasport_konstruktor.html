@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Паспорт цифрового знака — конструктор</title>
+<style>:root{--bg:#f7fbfc;--ink:#1b2a4a;--muted:#5b6b7d;--line:#d3e2e8;--teal:#0e8a9b;--blue:#2457a6;--violet:#6a4bc4;--ok:#2e9e6b;--bad:#e5575b;--tealL:#e6f5f7;--violetL:#f0ecfb;--warnL:#fff6dd}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:Arial,Helvetica,sans-serif;line-height:1.5}
+#top{position:sticky;top:0;z-index:5;background:#fff;border-bottom:1px solid var(--line);padding:10px 18px}
+#top .in{max-width:1280px;margin:0 auto;display:flex;align-items:center;gap:16px}
+#prog{flex:1;height:12px;background:#e3edf0;border-radius:99px;overflow:hidden}
+#prog i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--teal),var(--violet));transition:width .4s}
+#pct{font-weight:bold;min-width:46px;text-align:right}
+main{max-width:1280px;margin:0 auto;padding:18px;display:grid;grid-template-columns:minmax(0,1fr) 460px;gap:22px;align-items:start}
+@media(max-width:1000px){main{grid-template-columns:1fr}}
+h1{margin:6px 0 2px;font-size:28px}
+.sub{color:var(--muted);font-size:14px;margin-bottom:10px}
+h2{font-size:20px;color:var(--teal);margin:0 0 8px}
+section{background:#fff;border:1px solid var(--line);border-radius:16px;padding:16px 18px;margin:0 0 14px}
+.task{color:var(--muted);font-size:14px;margin:0 0 10px}
+input[type=text],textarea,select{font:inherit;padding:8px 10px;border:2px solid #b9cbd3;border-radius:10px;background:#fff;color:var(--ink);max-width:100%}
+input:focus,textarea:focus{outline:none;border-color:var(--teal)}
+input.ok{border-color:var(--ok)}input.bad{border-color:var(--bad)}
+textarea{width:100%;min-height:62px;resize:vertical}
+.btn{font:inherit;font-weight:bold;font-size:14px;padding:8px 14px;border-radius:10px;border:2px solid var(--blue);background:#fff;color:var(--blue);cursor:pointer}
+.btn:hover{background:var(--blue);color:#fff}
+.btn.pri{background:var(--teal);border-color:var(--teal);color:#fff}.btn.pri:hover{background:#0b6f7d}
+.row{display:flex;gap:12px;flex-wrap:wrap;align-items:flex-end;margin-top:8px}
+label.l{display:block;font-size:12px;color:var(--muted);font-weight:bold;margin-bottom:3px}
+.msg{font-size:14px;margin-top:6px}.msg.ok{color:var(--ok)}.msg.bad{color:var(--bad)}.msg.n{color:var(--muted)}
+.tint{background:var(--tealL);border-radius:12px;padding:10px 14px;font-size:14px}
+#pg{display:inline-grid;grid-template-columns:repeat(8,34px);gap:2px;user-select:none;touch-action:none}
+#pg div{width:34px;height:34px;border:1px solid #b9cbd3;border-radius:3px;background:#fff;cursor:pointer}
+#pg div.on{background:#1b2a4a}
+#side{position:sticky;top:66px}
+#cv{width:100%;height:auto;border:1px solid var(--line);border-radius:12px;background:#fff;display:block}
+.chk{list-style:none;padding:0;margin:10px 0 0;font-size:14px}.chk li{padding:2px 0;color:var(--muted)}.chk li.ok{color:var(--ok)}.chk li:before{content:"○ "}.chk li.ok:before{content:"✓ "}
+.sw{display:inline-block;width:30px;height:30px;border-radius:8px;border:2px solid #b9cbd3;vertical-align:middle;margin-right:6px}
+#printimg{display:none}
+@media print{body>*{display:none!important}html,body{margin:0;padding:0}#printimg{display:block!important;width:auto;height:295mm;margin:0 auto}@page{size:A4;margin:0}}
+</style>
+</head>
+<body>
+<div id="top"><div class="in"><b>Паспорт цифрового знака</b><div id="prog"><i></i></div><span id="pct">0%</span></div></div>
+<main>
+<div>
+<h1>Конструктор паспорта цифрового знака</h1>
+<div class="sub">Збери три розділи проєкту в один паспорт. Усе рахується автоматично; дані зберігаються на твоєму пристрої. Працює без інтернету.</div>
+
+<section>
+  <h2>0. Імпорт з карток</h2>
+  <p class="task">Якщо ти зберігав(ла) файли відповідей з карток уроків 1–3 (.txt) — вибери їх усі разом, і поля заповняться. Усе можна виправити вручну.</p>
+  <div class="row"><input type="file" id="imp" accept=".txt,text/plain" multiple><span class="msg n" id="imp-msg"></span></div>
+</section>
+
+<section>
+  <h2>Автор і знак</h2>
+  <div class="row">
+    <div><label class="l">Прізвище, ім’я</label><input type="text" id="name" style="width:230px"></div>
+    <div><label class="l">Клас</label><input type="text" id="cls" style="width:90px"></div>
+    <div><label class="l">Назва мого знака</label><input type="text" id="sname" maxlength="30" style="width:240px"></div>
+  </div>
+</section>
+
+<section id="s1">
+  <h2>1. Код мого девізу</h2>
+  <p class="task">Девіз — 3–5 великих літер української абетки. Коди й обсяг порахуються самі.</p>
+  <div class="row"><div><label class="l">Мій девіз</label><input type="text" id="dev" maxlength="5" style="width:200px;font-size:22px;letter-spacing:.12em;font-weight:bold"></div></div>
+  <div class="msg n" id="dev-msg"></div>
+  <label class="l" style="margin-top:10px">Мій висновок до розділу 1 (чому коди такі, скільки пам’яті займає девіз)</label>
+  <textarea id="t1" maxlength="220"></textarea>
+</section>
+
+<section id="s2">
+  <h2>2. Мій знак у пікселях</h2>
+  <p class="task">Намалюй простий знак 8 × 8: клацай по клітинках (темна = 1, світла = 0).</p>
+  <div style="display:flex;gap:18px;flex-wrap:wrap;align-items:flex-start">
+    <div><div id="pg"></div><div class="row" style="margin-top:8px"><button class="btn" id="clr">Очистити</button><button class="btn" id="inv">Інвертувати</button></div></div>
+    <div style="flex:1;min-width:230px"><label class="l">Матриця (8 рядків по 8 цифр; можна вставити)</label><textarea id="mx" style="font-family:Consolas,monospace;min-height:132px"></textarea><div class="msg n" id="mx-msg"></div></div>
+  </div>
+  <label class="l" style="margin-top:10px">Мій висновок до розділу 2 (від чого залежить обсяг зображення)</label>
+  <textarea id="t2" maxlength="220" placeholder="Ми помітили, що обсяг зображення … Це означає, що …"></textarea>
+</section>
+
+<section id="s3">
+  <h2>3. Колір мого знака</h2>
+  <p class="task">Введи колір знака й тла (HEX із «Колірної лабораторії»). RGB, HSL і CMYK порахуються самі.</p>
+  <div class="row">
+    <div><label class="l">Колір знака (HEX)</label><input type="text" id="fg" style="width:130px" value="#2457A6"></div>
+    <div><label class="l">Колір тла (HEX)</label><input type="text" id="bg" style="width:130px" value="#FFF3D6"></div>
+  </div>
+  <div class="msg n" id="col-msg"></div>
+  <div class="row"><div><label class="l">Мій знак у редакторі (необов’язково: SVG, PNG або знімок екрана)</label><input type="file" id="svg" accept=".svg,image/svg+xml,image/png,image/jpeg"></div><button class="btn" id="svgx">Прибрати зображення</button></div>
+  <label class="l" style="margin-top:10px">Мій висновок до розділу 3 (чому коди різні, а колір той самий; чому цей колір читається на цьому тлі)</label>
+  <textarea id="t3" maxlength="220"></textarea>
+</section>
+
+<section>
+  <h2>Рефлексія</h2>
+  <label class="l">Під час роботи над паспортом я навчився / навчилася…</label>
+  <textarea id="rf" maxlength="200"></textarea>
+</section>
+</div>
+
+<div id="side">
+  <section>
+    <h2>Мій паспорт</h2>
+    <canvas id="cv" width="1240" height="1754"></canvas>
+    <ul class="chk" id="chk"></ul>
+    <div class="row">
+      <button class="btn pri" id="b-png">⬇ Зберегти PNG</button>
+      <button class="btn" id="b-pdf">🖨 PDF / друк</button>
+      <button class="btn" id="b-html">⬇ Сторінка .html</button>
+    </div>
+    <div class="msg n" id="exp-msg"></div>
+    <div class="tint" style="margin-top:10px"><b>Куди далі.</b> PNG — на стіну класу (Padlet) і в портфоліо. Сторінка .html — для розміщення за посиланням.</div>
+  </section>
+</div>
+</main>
+<img id="printimg" alt="Паспорт цифрового знака">
+
+<script>
+/* ===== Col: колірні моделі та «Колірна лабораторія» ===== */
+var Col=(function(){
+ var C={};
+ function h2(n){var s=n.toString(16).toUpperCase();return s.length<2?'0'+s:s;}
+ C.hex=function(r,g,b){return '#'+h2(r)+h2(g)+h2(b);};
+ C.parseHex=function(s){s=String(s).trim().replace(/^#/,'');if(/^[0-9a-fA-F]{3}$/.test(s))s=s.replace(/(.)/g,'$1$1');if(!/^[0-9a-fA-F]{6}$/.test(s))return null;return [parseInt(s.slice(0,2),16),parseInt(s.slice(2,4),16),parseInt(s.slice(4,6),16)];};
+ C.rgb2hsl=function(r,g,b){r/=255;g/=255;b/=255;var mx=Math.max(r,g,b),mn=Math.min(r,g,b),d=mx-mn,h=0,s=0,l=(mx+mn)/2;
+  if(d>0){s=d/(1-Math.abs(2*l-1));if(mx===r)h=60*(((g-b)/d)%6);else if(mx===g)h=60*((b-r)/d+2);else h=60*((r-g)/d+4);if(h<0)h+=360;}
+  return [Math.round(h)%360,Math.round(s*100),Math.round(l*100)];};
+ C.hsl2rgb=function(h,s,l){s/=100;l/=100;var c=(1-Math.abs(2*l-1))*s,x=c*(1-Math.abs((h/60)%2-1)),m=l-c/2,r=0,g=0,b=0;h=((h%360)+360)%360;
+  if(h<60){r=c;g=x;}else if(h<120){r=x;g=c;}else if(h<180){g=c;b=x;}else if(h<240){g=x;b=c;}else if(h<300){r=x;b=c;}else{r=c;b=x;}
+  return [Math.round((r+m)*255),Math.round((g+m)*255),Math.round((b+m)*255)];};
+ C.rgb2cmyk=function(r,g,b){r/=255;g/=255;b/=255;var k=1-Math.max(r,g,b);if(k>=1)return [0,0,0,100];
+  return [Math.round((1-r-k)/(1-k)*100),Math.round((1-g-k)/(1-k)*100),Math.round((1-b-k)/(1-k)*100),Math.round(k*100)];};
+ C.cmyk2rgb=function(c,m,y,k){c/=100;m/=100;y/=100;k/=100;return [Math.round(255*(1-c)*(1-k)),Math.round(255*(1-m)*(1-k)),Math.round(255*(1-y)*(1-k))];};
+ C.css=function(r,g,b){return 'rgb('+r+','+g+','+b+')';};
+ /* кольори практичної роботи (у порядку створення) та місце в ряду за веселкою */
+ C.SIX=[{n:'Червоний',l:'R',rgb:[255,0,0],pos:1},{n:'Зелений',l:'G',rgb:[0,255,0],pos:3},{n:'Синій',l:'B',rgb:[0,0,255],pos:5},{n:'Блакитний',l:'C',rgb:[0,255,255],pos:4},{n:'Пурпуровий',l:'M',rgb:[255,0,255],pos:6},{n:'Жовтий',l:'Y',rgb:[255,255,0],pos:2}];
+ C.ORANGE={n:'Помаранчевий',l:'—',rgb:[255,165,0]};
+ C.txt=function(rgb){var r=rgb[0],g=rgb[1],b=rgb[2],h=C.rgb2hsl(r,g,b),k=C.rgb2cmyk(r,g,b);
+  return {rgb:r+', '+g+', '+b,hsl:h[0]+'°, '+h[1]+'%, '+h[2]+'%',cmyk:k.join(', '),hex:C.hex(r,g,b),h:h[0]};};
+ /* інтерактивна лабораторія: 4 моделі, змінюємо будь-яку — решта оновлюються */
+ C.Lab=function(root,opt){
+  opt=opt||{};var st=[255,165,0];
+  var css='<style>.cl{display:flex;gap:22px;flex-wrap:wrap;align-items:flex-start;font-family:Arial,sans-serif;color:#1b2a4a}.cl .sw{width:200px;height:200px;border-radius:16px;border:3px solid #cfdde3}.cl fieldset{border:2px solid #d5e2e8;border-radius:12px;padding:8px 14px 12px;margin:0 0 10px;min-width:0}.cl legend{font-weight:bold;color:#0e8a9b;padding:0 6px}.cl input[type=text]{width:66px;padding:7px 8px;font:inherit;font-size:'+(opt.fs||18)+'px;text-align:center;border:2px solid #b9cbd3;border-radius:8px}.cl .pre{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px}.cl .pre button{width:36px;height:36px;border-radius:8px;border:2px solid #b9cbd3;cursor:pointer;padding:0}.cl .pre button.on{border-color:#1b2a4a;box-shadow:0 0 0 2px #fff inset}.cl small{color:#5b6b7b;display:block;margin-top:4px}</style>';
+  root.innerHTML=css+'<div class="cl"><div><div class="sw"></div><div class="pre"></div><small class="info"></small></div><div style="flex:1;min-width:300px"><fieldset><legend>RGB (0–255)</legend><label>R <input type="text" data-m="r0"></label> <label>G <input type="text" data-m="r1"></label> <label>B <input type="text" data-m="r2"></label></fieldset><fieldset><legend>HSL (H 0–360°, S і L у %)</legend><label>H <input type="text" data-m="h0"></label> <label>S <input type="text" data-m="h1"></label> <label>L <input type="text" data-m="h2"></label></fieldset><fieldset><legend>CMYK (у %)</legend><label>C <input type="text" data-m="c0"></label> <label>M <input type="text" data-m="c1"></label> <label>Y <input type="text" data-m="c2"></label> <label>K <input type="text" data-m="c3"></label></fieldset><fieldset><legend>HEX</legend><input type="text" data-m="x" style="width:120px"></fieldset></div></div>';
+  var q=function(m){return root.querySelector('[data-m="'+m+'"]');},sw=root.querySelector('.sw'),info=root.querySelector('.info');
+  function show(except){var h=C.rgb2hsl(st[0],st[1],st[2]),k=C.rgb2cmyk(st[0],st[1],st[2]);
+   if(except!=='r')for(var i=0;i<3;i++)q('r'+i).value=st[i];
+   if(except!=='h')for(i=0;i<3;i++)q('h'+i).value=h[i];
+   if(except!=='c')for(i=0;i<4;i++)q('c'+i).value=k[i];
+   if(except!=='x')q('x').value=C.hex(st[0],st[1],st[2]);
+   sw.style.background=C.css(st[0],st[1],st[2]);
+   info.textContent='Один колір — чотири записи: RGB('+st.join(', ')+') · HSL('+h[0]+'°, '+h[1]+'%, '+h[2]+'%) · CMYK('+k.join(', ')+') · '+C.hex(st[0],st[1],st[2]);
+   [].forEach.call(root.querySelectorAll('.pre button'),function(b){b.classList.toggle('on',b.dataset.c===st.join(','));});
+   if(opt.onchange)opt.onchange(st.slice());}
+  function num(v,mn,mx){v=parseFloat(String(v).replace(',','.'));if(isNaN(v))return null;return Math.max(mn,Math.min(mx,v));}
+  [].forEach.call(root.querySelectorAll('input'),function(inp){inp.addEventListener('input',function(){var m=inp.dataset.m,t=m[0],v;
+   if(t==='r'){var a=[0,1,2].map(function(i){return num(q('r'+i).value,0,255);});if(a.indexOf(null)>=0)return;st=a.map(Math.round);show('r');}
+   else if(t==='h'){var h=[num(q('h0').value,0,360),num(q('h1').value,0,100),num(q('h2').value,0,100)];if(h.indexOf(null)>=0)return;st=C.hsl2rgb(h[0],h[1],h[2]);show('h');}
+   else if(t==='c'){var c=[0,1,2,3].map(function(i){return num(q('c'+i).value,0,100);});if(c.indexOf(null)>=0)return;st=C.cmyk2rgb(c[0],c[1],c[2],c[3]);show('c');}
+   else{var p=C.parseHex(q('x').value);if(!p)return;st=p;show('x');}});});
+  var pre=root.querySelector('.pre');
+  C.SIX.concat([C.ORANGE]).forEach(function(c){var b=document.createElement('button');b.style.background=C.css.apply(null,c.rgb);b.title=c.n;b.dataset.c=c.rgb.join(',');b.onclick=function(){st=c.rgb.slice();show();};pre.appendChild(b);});
+  root.__set=function(a){st=a.slice();show();};
+  show();
+ };
+ return C;
+})();
+
+window.Col=Col;
+</script>
+<script>
+(function(){
+var $=function(i){return document.getElementById(i);};
+var KEY='pasport10_v1',ST={};
+function sv(){try{localStorage.setItem(KEY,JSON.stringify(ST));}catch(e){}}
+function ld(){try{ST=JSON.parse(localStorage.getItem(KEY)||'{}')||{};}catch(e){ST={};}}
+var TXT=['name','cls','sname','dev','t1','t2','t3','rf','fg','bg'];
+var cells=[],bits=[];for(var i=0;i<64;i++)bits.push(0);
+var IMG=null;
+/* ---- піксельна сітка ---- */
+var pg=$('pg');
+for(i=0;i<64;i++){(function(k){var d=document.createElement('div');d.onpointerdown=function(e){e.preventDefault();bits[k]^=1;paintDrag=bits[k];drag=true;sync(true);};
+ d.onpointerenter=function(){if(drag){bits[k]=paintDrag;sync(true);}};pg.appendChild(d);cells.push(d);})(i);}
+var drag=false,paintDrag=1;document.addEventListener('pointerup',function(){drag=false;});
+function rowsStr(){var r=[];for(var y=0;y<8;y++)r.push(bits.slice(y*8,y*8+8).join(''));return r;}
+function sync(fromGrid){cells.forEach(function(c,k){c.classList.toggle('on',!!bits[k]);});if(fromGrid)$('mx').value=rowsStr().join('\n');ST.mx=rowsStr().join(' ');mxMsg();upd();}
+function parseMx(s){var r=String(s).split(/[\s,;/]+/).filter(Boolean);if(r.length===8&&r.every(function(x){return /^[01]{8}$/.test(x);}))return r;return null;}
+function mxMsg(){var v=$('mx').value,r=parseMx(v),m=$('mx-msg');if(!v.trim()){m.className='msg n';m.textContent='';return;}
+ if(r){m.className='msg ok';m.textContent='✓ Матриця 8 × 8 коректна';}else{m.className='msg bad';m.textContent='Потрібно 8 рядків по 8 цифр 0 і 1';}}
+$('mx').addEventListener('input',function(){var r=parseMx(this.value);if(r){bits=r.join('').split('').map(Number);cells.forEach(function(c,k){c.classList.toggle('on',!!bits[k]);});ST.mx=r.join(' ');}mxMsg();upd();});
+$('clr').onclick=function(){bits=bits.map(function(){return 0;});sync(true);};
+$('inv').onclick=function(){bits=bits.map(function(b){return 1-b;});sync(true);};
+/* ---- поля ---- */
+TXT.forEach(function(id){$(id).addEventListener('input',function(){if(id==='dev')this.value=this.value.toUpperCase().replace(/[^А-ЩЬЮЯҐЄІЇ]/g,'');ST[id]=this.value;upd();});});
+function loadFields(){TXT.forEach(function(id){if(ST[id]!==undefined)$(id).value=ST[id];});var r=parseMx((ST.mx||'').replace(/ /g,'\n'));if(r){bits=r.join('').split('').map(Number);$('mx').value=r.join('\n');}sync(false);}
+/* ---- розрахунки ---- */
+var Col=window.Col;
+function dL(a,b){return Math.abs(Col.rgb2hsl(a[0],a[1],a[2])[2]-Col.rgb2hsl(b[0],b[1],b[2])[2]);}
+function fmt(n){return String(n).replace(/\B(?=(\d{3})+(?!\d))/g,' ');}
+function bin16(c){var s=c.toString(2);while(s.length<16)s='0'+s;return s.slice(0,8)+' '+s.slice(8);}
+function hx4(c){var s=c.toString(16).toUpperCase();while(s.length<4)s='0'+s;return s;}
+function plural(n){return n===1?'символ':(n<5?'символи':'символів');}
+/* ---- малювання ---- */
+var cv=$('cv'),x=cv.getContext('2d'),W=1240,H=1754;
+function rr(a,b,w,h,r){x.beginPath();x.moveTo(a+r,b);x.arcTo(a+w,b,a+w,b+h,r);x.arcTo(a+w,b+h,a,b+h,r);x.arcTo(a,b+h,a,b,r);x.arcTo(a,b,a+w,b,r);x.closePath();}
+function wrap(t,px,py,mw,lh,maxL){var words=String(t).split(/\s+/),ln='',n=0;
+ for(var k=0;k<words.length;k++){var tt=ln?ln+' '+words[k]:words[k];if(x.measureText(tt).width>mw&&ln){x.fillText(ln,px,py+n*lh);n++;ln=words[k];if(n>=maxL){return;}}else ln=tt;}
+ if(ln&&n<maxL)x.fillText(ln,px,py+n*lh);}
+function F(w,s,f){x.font=(w?w+' ':'')+s+'px '+(f||'Arial, Helvetica, sans-serif');}
+function card(py,h,col,num,title){x.fillStyle='#fff';rr(50,py,1140,h,26);x.fill();x.strokeStyle='#d3e2e8';x.lineWidth=2;x.stroke();
+ x.fillStyle=col;x.beginPath();x.arc(104,py+58,34,0,7);x.fill();x.fillStyle='#fff';F('bold',38);x.textAlign='center';x.fillText(num,104,py+71);
+ x.textAlign='left';x.fillStyle=col;F('bold',40);x.fillText(title,158,py+71);}
+function draw(){
+ var fg=Col.parseHex($('fg').value)||[36,87,166],bg=Col.parseHex($('bg').value)||[255,243,214];
+ var fgc=Col.css(fg[0],fg[1],fg[2]),bgc=Col.css(bg[0],bg[1],bg[2]);
+ x.clearRect(0,0,W,H);x.fillStyle='#f7fbfc';x.fillRect(0,0,W,H);
+ var g=x.createLinearGradient(0,0,W,0);g.addColorStop(0,'#0e8a9b');g.addColorStop(.6,'#2457a6');g.addColorStop(1,'#6a4bc4');x.fillStyle=g;x.fillRect(0,0,W,200);
+ x.fillStyle='#fff';x.textAlign='left';F('bold',22);x.fillText('ІНФОРМАТИКА · 10 КЛАС · ПРОЄКТ',60,56);
+ F('bold',60);x.fillText('ПАСПОРТ ЦИФРОВОГО ЗНАКА',60,120);
+ F('',28);x.fillText('Від цифрового коду до графічного світу',60,168);
+ F('bold',28);x.textAlign='right';x.fillText(($('name').value||'Прізвище, ім’я')+(ST.cls?' · '+ST.cls+' клас':''),W-60,56);
+ F('bold',34);x.fillText('«'+($('sname').value||'Назва знака')+'»',W-60,176);x.textAlign='left';
+ /* ланцюжок */
+ var ch=[['КОД','#0e8a9b'],['СИМВОЛ','#2457a6'],['ПІКСЕЛЬ','#6a4bc4'],['КОЛІР','#c0392b']];
+ ch.forEach(function(c,k){var px=60+k*290;x.fillStyle=c[1];rr(px,222,230,46,23);x.fill();x.fillStyle='#fff';F('bold',24);x.textAlign='center';x.fillText(c[0],px+115,254);x.textAlign='left';if(k<3){x.fillStyle='#8aa0ad';F('bold',30);x.fillText('→',px+240,256);}});
+ /* розділ 1 */
+ var y1=296;card(y1,395,'#0e8a9b','1','Код мого девізу');
+ var dev=$('dev').value;
+ if(dev){var n=dev.length,bw=Math.min(200,(1090-(n-1)*14)/n),bx=75;
+  for(var k=0;k<n;k++){var c=dev.charCodeAt(k),px=bx+k*(bw+14);x.fillStyle='#e6f5f7';rr(px,y1+100,bw,170,16);x.fill();
+   x.fillStyle='#0e8a9b';F('bold',64);x.textAlign='center';x.fillText(dev[k],px+bw/2,y1+168);
+   x.fillStyle='#1b2a4a';F('bold',24,'Consolas, monospace');x.fillText('U+'+hx4(c),px+bw/2,y1+205);
+   F('',20,'Consolas, monospace');x.fillText(String(c),px+bw/2,y1+232);
+   F('',14,'Consolas, monospace');x.fillText(bin16(c),px+bw/2,y1+256);}
+  x.textAlign='left';x.fillStyle='#6a4bc4';F('bold',26);x.fillText(n+' '+plural(n)+' × 16 бітів = '+fmt(n*16)+' бітів = '+(n*2)+' '+(n*2===1?'байт':(n*2<5?'байти':'байтів')),75,y1+305);
+ }else{x.fillStyle='#8aa0ad';F('',26);x.fillText('Введи девіз — тут з’являться коди літер.',75,y1+180);}
+ x.fillStyle='#1b2a4a';F('',23);if($('t1').value)wrap($('t1').value,75,y1+345,1090,30,2);
+ /* розділ 2 */
+ var y2=y1+415;card(y2,440,'#6a4bc4','2','Мій знак у пікселях');
+ var gyoff=398,cs=34,gx=75,gy=y2+100;
+ for(var yy=0;yy<8;yy++)for(var xx=0;xx<8;xx++){x.fillStyle=bits[yy*8+xx]?'#1b2a4a':'#fff';x.fillRect(gx+xx*cs,gy+yy*cs,cs-2,cs-2);if(!bits[yy*8+xx]){x.strokeStyle='#c9d7de';x.lineWidth=1;x.strokeRect(gx+xx*cs+.5,gy+yy*cs+.5,cs-3,cs-3);}}
+ x.fillStyle='#1b2a4a';F('bold',24,'Consolas, monospace');var rs=rowsStr();for(yy=0;yy<8;yy++)x.fillText(rs[yy].split('').join(' '),gx+300,gy+25+yy*34);
+ var tx=gx+560;x.fillStyle='#6a4bc4';F('bold',26);x.fillText('Обсяг знака (64 пікселі)',tx,gy+22);
+ [['1 біт','64 біти = 8 байтів'],['8 бітів','512 бітів = 64 байти'],['24 біти','1536 бітів = 192 байти']].forEach(function(r,k){x.fillStyle='#f0ecfb';rr(tx,gy+42+k*58,500,48,12);x.fill();x.fillStyle='#1b2a4a';F('bold',22);x.fillText(r[0],tx+14,gy+74+k*58);F('',22);x.fillText(r[1],tx+120,gy+74+k*58);});
+  var t2=$('t2').value;if(t2){x.fillStyle='#1b2a4a';F('',22);wrap('Висновок: '+t2,75,y2+gyoff,1090,28,2);}
+ /* розділ 3 */
+ var y3=y2+460;card(y3,410,'#c0392b','3','Колір мого знака');
+ x.fillStyle=bgc;rr(75,y3+100,250,250,18);x.fill();x.strokeStyle='#d3e2e8';x.lineWidth=2;x.stroke();
+ if(IMG){var s=Math.min(210/IMG.width,210/IMG.height);x.drawImage(IMG,75+125-IMG.width*s/2,y3+100+125-IMG.height*s/2,IMG.width*s,IMG.height*s);}
+ else{var ps=24,ox=75+(250-ps*8)/2,oy=y3+100+(250-ps*8)/2;x.fillStyle=fgc;for(yy=0;yy<8;yy++)for(xx=0;xx<8;xx++)if(bits[yy*8+xx])x.fillRect(ox+xx*ps,oy+yy*ps,ps,ps);}
+ var hf=Col.rgb2hsl(fg[0],fg[1],fg[2]),hb=Col.rgb2hsl(bg[0],bg[1],bg[2]),cf=Col.rgb2cmyk(fg[0],fg[1],fg[2]),cb=Col.rgb2cmyk(bg[0],bg[1],bg[2]);
+ var bx2=350,by=y3+100;x.fillStyle='#1b2a4a';F('bold',22);x.fillText('',bx2,by);
+ x.fillStyle='#5b6b7d';F('bold',20);x.fillText('Модель',bx2,by+20);x.fillText('Знак',bx2+170,by+20);x.fillText('Тло',bx2+500,by+20);
+ var rows=[['RGB',fg.join(', '),bg.join(', ')],['HSL',hf[0]+'°, '+hf[1]+'%, '+hf[2]+'%',hb[0]+'°, '+hb[1]+'%, '+hb[2]+'%'],['CMYK',cf.join(', '),cb.join(', ')],['HEX',Col.hex(fg[0],fg[1],fg[2]),Col.hex(bg[0],bg[1],bg[2])]];
+ rows.forEach(function(r,k){x.fillStyle=k%2?'#fff':'#f7fbfc';x.fillRect(bx2-10,by+34+k*44,820,44);x.fillStyle='#1b2a4a';F('bold',22);x.fillText(r[0],bx2,by+64+k*44);F('',22,'Consolas, monospace');x.fillText(r[1],bx2+170,by+64+k*44);x.fillText(r[2],bx2+500,by+64+k*44);});
+ var d=dL(fg,bg);x.fillStyle=d>=40?'#2e9e6b':'#c0392b';F('bold',24);x.fillText('Різниця світлості знака й тла ΔL = '+d+'%'+(d>=40?' — знак добре видно':' — замало, знак зливається'),bx2,by+254);
+ x.fillStyle='#1b2a4a';F('',23);if($('t3').value)wrap($('t3').value,75,y3+385,1090,30,1);
+ /* рефлексія */
+ var y4=y3+430;x.fillStyle='#fff6dd';rr(50,y4,1140,H-y4-24,22);x.fill();x.fillStyle='#8a6a1f';F('bold',23);x.fillText('Під час роботи над паспортом я навчився / навчилася…',75,y4+38);
+ x.fillStyle='#1b2a4a';F('',23);wrap($('rf').value||'—',75,y4+72,1090,30,2);
+}
+/* ---- контроль ---- */
+var CK=[['Вказано автора й назву знака',function(){return $('name').value.trim()&&$('sname').value.trim();}],
+['Девіз із 3–5 літер; коди й обсяг порахувалися',function(){var l=$('dev').value.length;return l>=3&&l<=5;}],
+['Висновок до розділу 1',function(){return $('t1').value.trim().length>10;}],
+['Знак 8 × 8 намальовано (не порожній і не суцільний)',function(){var s=bits.reduce(function(a,b){return a+b;},0);return s>3&&s<61;}],
+['Висновок до розділу 2',function(){return $('t2').value.trim().length>15;}],
+['Кольори знака й тла введено коректно',function(){return !!Col.parseHex($('fg').value)&&!!Col.parseHex($('bg').value);}],
+['Контраст знака й тла достатній (ΔL ≥ 40 %)',function(){var a=Col.parseHex($('fg').value),b=Col.parseHex($('bg').value);return a&&b&&dL(a,b)>=40;}],
+['Висновок до розділу 3',function(){return $('t3').value.trim().length>10;}],
+['Рефлексія написана',function(){return $('rf').value.trim().length>10;}]];
+var ck=$('chk');CK.forEach(function(c){var li=document.createElement('li');li.textContent=c[0];ck.appendChild(li);});
+var tm=null;
+function upd(){var dev=$('dev').value,m=$('dev-msg');
+ if(dev.length&&(dev.length<3||dev.length>5)){m.className='msg bad';m.textContent='Девіз має містити 3–5 літер.';}else if(dev){m.className='msg ok';m.textContent='✓ '+dev.length+' '+plural(dev.length)+': '+dev.split('').map(function(c){return 'U+'+hx4(c.charCodeAt(0));}).join(' ');}else{m.className='msg n';m.textContent='';}
+ var f=Col.parseHex($('fg').value),b=Col.parseHex($('bg').value),cm=$('col-msg');$('fg').classList.toggle('ok',!!f);$('fg').classList.toggle('bad',!f);$('bg').classList.toggle('ok',!!b);$('bg').classList.toggle('bad',!b);
+ if(f&&b){var d=dL(f,b);cm.className='msg '+(d>=40?'ok':'bad');cm.textContent='ΔL = '+d+'%'+(d>=40?' — контраст достатній':' — контраст замалий: зроби знак темнішим або тло світлішим');}else{cm.className='msg bad';cm.textContent='HEX у форматі #RRGGBB';}
+ var n=0;CK.forEach(function(c,k){var ok=!!c[1]();ck.children[k].className=ok?'ok':'';if(ok)n++;});
+ var p=Math.round(n/CK.length*100);document.querySelector('#prog i').style.width=p+'%';$('pct').textContent=p+'%';
+ sv();draw();}
+/* ---- зображення з редактора ---- */
+$('svg').addEventListener('change',function(){var f=this.files[0];if(!f)return;var r=new FileReader();r.onload=function(){var im=new Image();im.onload=function(){IMG=im;if(!im.width){IMG=null;}upd();};im.onerror=function(){IMG=null;$('exp-msg').textContent='Не вдалося відкрити зображення. Спробуй PNG-знімок.';};im.src=r.result;};r.readAsDataURL(f);});
+$('svgx').onclick=function(){IMG=null;$('svg').value='';upd();};
+/* ---- імпорт ---- */
+function strip(v){return v.replace(/\s*[✓✗]\s*$/,'').trim();}
+$('imp').addEventListener('change',function(){var fs=[].slice.call(this.files),got=0,pend=fs.length;if(!pend)return;
+ fs.forEach(function(f){var r=new FileReader();r.onload=function(){String(r.result).replace(/^﻿/,'').split(/\r?\n/).forEach(function(l){var k=l.indexOf(': ');if(k<0)return;var a=l.slice(0,k).trim(),v=strip(l.slice(k+2));if(!v||v==='—')return;
+  var set=function(id,val){if(!$(id).value.trim()||id==='name'){$(id).value=val;ST[id]=val;got++;}};
+  if(a==='Прізвище, ім’я')set('name',v);else if(a==='Клас')set('cls',v);else if(a==='Мій девіз'){$('dev').value=v.toUpperCase();ST.dev=$('dev').value;got++;}
+  else if(a==='Назва знака')set('sname',v);else if(a==='Висновок 3 (Юнікод)'||a==='Висновок до розділу 1')set('t1',v);
+  else if(a==='Колір знака HEX'){$('fg').value=v;ST.fg=v;got++;}else if(a==='Колір тла HEX'){$('bg').value=v;ST.bg=v;got++;}
+  else if(a==='Висновок'||a==='Висновок до розділу 3')set('t3',v);else if(a==='Ситуація Б'||a==='Висновок до розділу 2')set('t2',v);else if(a==='Під час роботи над паспортом'||a==='Найважливіше')set('rf',v);
+  else if(a==='Знак 8×8 (рядки)'||a==='Матриця знака'){var m=parseMx(v);if(m){bits=m.join('').split('').map(Number);$('mx').value=m.join('\n');got++;}}
+ });if(--pend===0){sync(false);$('imp-msg').className='msg ok';$('imp-msg').textContent='Імпортовано полів: '+got+'. Перевір і доповни.';upd();}};r.readAsText(f,'utf-8');});});
+/* ---- експорт ---- */
+function translit(s){var m={'а':'a','б':'b','в':'v','г':'h','ґ':'g','д':'d','е':'e','є':'ie','ж':'zh','з':'z','и':'y','і':'i','ї':'i','й':'i','к':'k','л':'l','м':'m','н':'n','о':'o','п':'p','р':'r','с':'s','т':'t','у':'u','ф':'f','х':'kh','ц':'ts','ч':'ch','ш':'sh','щ':'shch','ь':'','ю':'iu','я':'ia'},o='';
+ s.toLowerCase().split('').forEach(function(c){if(m[c]!==undefined)o+=m[c];else if(/[a-z0-9]/.test(c))o+=c;else if(/\s|-|_/.test(c))o+='_';});o=o.replace(/_+/g,'_').replace(/^_|_$/g,'');return o?o.charAt(0).toUpperCase()+o.slice(1):'Uchen';}
+function dl(href,name){var a=document.createElement('a');a.href=href;a.download=name;document.body.appendChild(a);a.click();document.body.removeChild(a);}
+function fname(){return 'Pasport_'+translit($('name').value||'');}
+$('b-png').onclick=function(){draw();cv.toBlob(function(b){dl(URL.createObjectURL(b),fname()+'.png');$('exp-msg').className='msg ok';$('exp-msg').textContent='Збережено '+fname()+'.png';});};
+$('b-pdf').onclick=function(){draw();$('printimg').src=cv.toDataURL('image/png');setTimeout(function(){window.print();},200);};
+$('b-html').onclick=function(){draw();var u=cv.toDataURL('image/png'),n=$('name').value||'Учень',s=$('sname').value||'знак';
+ var h='<!DOCTYPE html><html lang="uk"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Паспорт цифрового знака — '+esc(n)+'</title><style>body{margin:0;background:#eaf2f5;font-family:Arial,sans-serif;color:#1b2a4a;text-align:center}img{max-width:100%;height:auto;display:block;margin:0 auto;box-shadow:0 6px 24px rgba(27,42,74,.18)}p{padding:10px;font-size:14px;color:#5b6b7d}</style></head><body><img src="'+u+'" alt="Паспорт цифрового знака «'+esc(s)+'», автор: '+esc(n)+'"><p>Паспорт цифрового знака · «'+esc(s)+'» · '+esc(n)+'</p></body></html>';
+ var b=new Blob([h],{type:'text/html;charset=utf-8'});dl(URL.createObjectURL(b),fname()+'.html');$('exp-msg').className='msg ok';$('exp-msg').textContent='Збережено '+fname()+'.html — відкривається в браузері, можна розмістити за посиланням.';};
+function esc(s){return String(s).replace(/[&<>"]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];});}
+ld();loadFields();upd();
+})();
+
+</script>
+</body>
+</html>
