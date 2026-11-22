@@ -1,0 +1,874 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Урок 1. Кодування символів — інтерактивний урок (спрощений)</title>
+<style>
+:root{--bg:#f7fbfc;--ink:#1b2a4a;--muted:#5b6b7d;--line:#d3e2e8;--teal:#0e8a9b;--blue:#2457a6;--violet:#6a4bc4;--amber:#f2a93b;--red:#e5575b;--green:#2e9e6b;--tealL:#e6f5f7;--violetL:#f0ecfb;--card:#fff}
+*{box-sizing:border-box}
+html,body{margin:0;height:100%;overflow:hidden;background:#dfeaee;font-family:Arial,Helvetica,sans-serif;color:var(--ink)}
+#wrap{position:fixed;inset:0;display:flex;flex-direction:column}
+#main{flex:1;display:flex;min-height:0}
+#viewport{flex:1;position:relative;overflow:hidden}
+#stage{position:absolute;left:50%;top:50%;width:1280px;height:720px;transform-origin:center;background:var(--bg);box-shadow:0 10px 40px rgba(27,42,74,.18);overflow:hidden;border-radius:6px}
+#notes{width:0;overflow:hidden;background:#fff;border-left:1px solid var(--line);transition:width .3s}
+#notes.open{width:340px}
+#notes .in{width:340px;padding:18px;overflow:auto;height:100%;font-size:15px;line-height:1.5}
+#notes h4{margin:0 0 8px;color:var(--violet)}
+#notes .time{display:inline-block;background:var(--violetL);color:var(--violet);padding:2px 10px;border-radius:99px;font-size:13px;font-weight:bold;margin-bottom:10px}
+
+/* слайди */
+.slide{position:absolute;inset:0;padding:44px 64px 40px;opacity:0;visibility:hidden;transform:translateX(50px);transition:opacity .5s,transform .5s,visibility 0s .5s}
+.slide.on{opacity:1;visibility:visible;transform:none;transition:opacity .5s,transform .5s}
+.slide.past{transform:translateX(-50px)}
+h2.t{margin:0 0 24px;font-size:44px;line-height:1.1}
+.card{background:var(--card);border:1px solid var(--line);border-radius:18px;box-shadow:0 3px 12px rgba(27,42,74,.07)}
+.tint{background:var(--tealL);border-radius:16px}
+.tintv{background:var(--violetL);border:1px solid #d8cdf3;border-radius:16px}
+.muted{color:var(--muted)}
+sub{font-size:.6em}sup{font-size:.6em}
+.disc{display:inline-flex;align-items:center;justify-content:center;border-radius:50%;color:#fff;font-weight:bold}
+
+/* кроки */
+.rv{opacity:0;transform:translateY(22px) scale(.97);transition:opacity .55s,transform .55s;pointer-events:none}
+.rv.in{opacity:1;transform:none;pointer-events:auto;transition-delay:calc(var(--i,0)*.13s)}
+.grow{opacity:1;transform:scaleX(0);transform-origin:left;transition:transform .8s cubic-bezier(.2,.8,.2,1)}
+.grow.in{transform:none;pointer-events:auto}
+.view{display:none}
+.view.on{display:block;animation:fadeUp .5s}
+@keyframes fadeUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:none}}
+@keyframes pop{0%{opacity:0;transform:scale(.6) translateY(20px)}70%{transform:scale(1.06)}100%{opacity:1;transform:none}}
+@keyframes flipin{0%{transform:rotateX(90deg);opacity:0}100%{transform:none;opacity:1}}
+@keyframes pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.07)}}
+.slide.on .pop{animation:pop .7s both;animation-delay:var(--d,0s)}
+
+/* таблиці */
+table{border-collapse:collapse;width:100%;font-size:22px}
+th{background:var(--teal);color:#fff;padding:12px 14px;font-size:20px}
+td{border:1px solid var(--line);padding:12px 14px;background:#fff}
+td.rl{background:var(--tealL);font-weight:bold}
+.flip{cursor:pointer;color:var(--violet);font-weight:bold;text-align:center;font-size:26px;user-select:none}
+.flip.open{color:var(--ink);font-size:20px;background:#eaf7f0;animation:flipin .5s}
+.mono{font-family:Consolas,Menlo,monospace}
+.kt td{padding:5px 12px}.kt th{padding:8px 12px}
+.ctl{white-space:nowrap}#bar{flex-wrap:nowrap}
+
+/* керування всередині слайдів */
+input[type=text],select{font:inherit;font-size:24px;padding:8px 12px;border:2px solid #b9cbd3;border-radius:12px;background:#fff;color:var(--ink)}
+input[type=text]:focus,select:focus{outline:none;border-color:var(--teal)}
+.btn{font:inherit;font-weight:bold;font-size:18px;padding:8px 16px;border-radius:12px;border:2px solid var(--blue);background:#fff;color:var(--blue);cursor:pointer}
+.btn:hover{background:var(--blue);color:#fff}
+.btn.on{background:var(--teal);border-color:var(--teal);color:#fff}
+.tabs{position:absolute;right:64px;top:44px;display:flex;gap:8px}
+.tabs .btn{font-size:16px;padding:6px 12px}
+
+/* таймер-віджет */
+.mt{display:inline-flex;align-items:center;gap:12px;background:#fff;border:1px solid var(--line);border-radius:14px;padding:8px 14px}
+.mt b{font-size:34px;font-family:Consolas,Menlo,monospace;min-width:92px;color:var(--ink)}
+.mt .l{font-size:16px;color:var(--violet);font-weight:bold;max-width:380px}
+.mt.end b{color:var(--red);animation:pulse .6s infinite}
+.mt button{font:inherit;font-size:18px;border:1px solid var(--line);background:var(--tealL);border-radius:10px;padding:6px 12px;cursor:pointer}
+
+/* нижня панель */
+#bar{background:#fff;border-top:1px solid var(--line);padding:8px 14px;display:flex;gap:14px;align-items:center;font-size:14px}
+#tl{flex:1;position:relative;display:flex;gap:3px;height:34px}
+#tl .seg{border-radius:8px;background:#e8f0f3;display:flex;align-items:center;justify-content:center;font-size:12px;color:var(--muted);white-space:nowrap;overflow:hidden;position:relative;transition:background .3s,color .3s;cursor:default}
+#tl .seg.on{background:var(--teal);color:#fff;font-weight:bold}
+#tl .seg.done{background:#bfe3e8;color:#2c6a74}
+#clock{position:absolute;top:-3px;bottom:-3px;width:3px;background:var(--violet);border-radius:3px;left:0;transition:left 1s linear}
+.ctl button{font:inherit;font-size:15px;border:1px solid var(--line);background:#fff;border-radius:10px;padding:6px 11px;cursor:pointer;color:var(--ink)}
+.ctl button:hover{background:var(--tealL)}
+#sched{min-width:130px;text-align:center;font-weight:bold}
+#cnt{min-width:70px;text-align:center;color:var(--muted)}
+#over,#help{position:fixed;inset:0;background:rgba(27,42,74,.82);display:none;align-items:center;justify-content:center;z-index:20}
+#over.on,#help.on{display:flex}
+#over .g{display:grid;grid-template-columns:repeat(4,230px);gap:12px;max-height:88vh;overflow:auto;padding:10px}
+#over .g div{background:#fff;border-radius:12px;padding:12px 14px;cursor:pointer;font-size:15px}
+#over .g div:hover{outline:3px solid var(--teal)}
+#over .g b{color:var(--teal)}
+#help .box{background:#fff;border-radius:18px;padding:26px 34px;max-width:560px;font-size:17px;line-height:1.8}
+kbd{background:#eef3f5;border:1px solid var(--line);border-radius:6px;padding:1px 8px;font-family:inherit;font-weight:bold}
+@media (prefers-reduced-motion:reduce){.rv,.slide,.grow{transition:none!important}.slide.on .pop{animation:none}}
+
+.gc{display:block;text-align:center;font-size:20px;background:#fff;border:1px solid #d3dce2;padding:3px 0}
+.pxg i{display:block;width:17px;height:17px}
+.linkrow{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-top:14px}
+.lr-t{font-size:20px;color:var(--muted);font-weight:bold}
+a.btn{display:inline-block;text-decoration:none}
+#tv{position:fixed;inset:0;background:rgba(27,42,74,.82);display:none;align-items:center;justify-content:center;z-index:25}
+#tv.on{display:flex}
+#tv .box{background:#fff;border-radius:18px;padding:16px 20px;width:min(1240px,97vw);max-height:97vh;overflow:auto}
+#tv .hd{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-bottom:8px}
+#tv .hd b{font-size:22px;color:var(--teal);margin-right:8px}
+#tv .hd .sp{flex:1}
+#tv table{table-layout:fixed;font-size:14px;margin:6px 0}
+#tv th{padding:4px;font-size:14px}
+#tv th.r{background:#e6f5f7;color:var(--teal);width:52px}
+#tv td{padding:2px;height:44px;cursor:pointer;text-align:center;line-height:1.1}
+#tv td .c{font-size:22px;font-weight:bold;display:block}
+#tv td .n{font-size:11px;color:#7a8a9a;display:block}
+#tv td.ctl{background:#f0f2f5;color:#7a8a9a}
+#tv td.ctl .c{font-size:12px}
+#tv td.hl{outline:3px solid var(--violet);background:#f0ecfb}
+#tv td.sel{outline:3px solid var(--teal);background:#e6f5f7}
+#tv .info{background:var(--tealL);border-radius:12px;padding:8px 14px;font-size:19px;min-height:40px;margin-top:6px}
+#tv .note{background:#fff6dd;border-radius:10px;padding:6px 12px;font-size:15px;margin:4px 0}
+/*RESP*/
+html.fl,html.fl body{overflow:hidden}
+html.fl #viewport{overflow-y:auto;overflow-x:hidden;-webkit-overflow-scrolling:touch}
+html.fl #stage{position:relative;left:auto;top:auto;width:100%;height:auto;min-height:100%;transform:none!important;border-radius:0;box-shadow:none;overflow:visible}
+html.fl .slide{position:relative;inset:auto;display:none;padding:16px 16px 26px;opacity:1;visibility:visible;transform:none;transition:none}
+html.fl .slide.on{display:block}
+html.fl .slide *{max-width:100%}
+html.fl .slide h2.t{font-size:32px;margin-bottom:14px}
+html.fl .slide table{display:block;overflow-x:auto;width:auto}
+html.fl .slide [style*="display:flex"]{flex-wrap:wrap}
+html.fl .slide .stk{flex-direction:column!important;align-items:stretch!important}
+html.fl .slide .stk>*{flex:none!important;width:auto!important;height:auto!important;max-width:100%!important}
+html.fl .slide img,html.fl .slide canvas,html.fl .slide svg{max-width:100%}
+html.fl .slide input[type=text],html.fl .slide input[type=number],html.fl .slide select,html.fl .slide button{min-height:40px}
+html.fl #bar{flex-wrap:wrap;gap:6px 8px;padding:6px 8px;justify-content:space-between}
+html.fl #tl,html.fl #sched{display:none}
+html.fl #cnt{min-width:0;font-size:13px;order:0}
+html.fl .ctl button{min-height:44px;min-width:44px;font-size:17px}
+html.fl #b-timer{font-size:14px}
+html.fl #notes.open{position:fixed;left:0;right:0;bottom:62px;width:auto;height:42vh;z-index:15;border-left:0;border-top:2px solid var(--line);box-shadow:0 -6px 20px #0003}
+html.fl #notes .in{width:auto}
+html.fl #over .g{grid-template-columns:repeat(auto-fill,minmax(140px,1fr));width:94vw}
+html.fl #tv .box{padding:10px;width:98vw}
+html.fl #tv-tbl{overflow-x:auto}
+html.fl #tv table{table-layout:auto;min-width:640px}
+html.fl #tv .info{font-size:16px}
+html.fl #help .box{width:92vw;padding:18px;font-size:15px}
+html.fl .slide [style*="position:absolute"][style*="bottom:"]{position:relative!important;left:auto!important;right:auto!important;bottom:auto!important;margin-top:14px}
+html.fl #stage>.slide:first-child [style*="position:absolute"]{position:relative!important;left:auto!important;right:auto!important;top:auto!important;width:auto!important;margin:12px 0}
+html.fl #stage>.slide:first-child [style*="width:620px"]{display:none!important}
+html.fl #b-timer,html.fl #b-full,html.fl #b-help,html.fl #b-fs{display:none}
+html.fl #bar{flex-wrap:nowrap}
+html.fl .slide [style*="white-space:nowrap"]{white-space:normal!important}
+</style>
+<script>/*RESP*/
+(function(){
+var H=document.documentElement,lastS=null;
+function isFl(){var w=innerWidth,h=innerHeight;return w<900||(h<480&&w<1100);}
+function undo(s){[].forEach.call(s.querySelectorAll('.stk'),function(e){e.classList.remove('stk');});
+ [].forEach.call(s.querySelectorAll('[data-oh]'),function(e){e.style.height=e.dataset.oh;e.removeAttribute('data-oh');});
+ [].forEach.call(s.querySelectorAll('[data-ofs]'),function(e){e.style.fontSize=e.dataset.ofs;e.removeAttribute('data-ofs');});
+ [].forEach.call(s.querySelectorAll('[data-osz]'),function(e){var o=e.dataset.osz.split('|');e.style.width=o[0];e.style.height=o[1];e.removeAttribute('data-osz');});}
+function apply(s){
+ [].forEach.call(s.querySelectorAll('[style*="display:flex"]'),function(el){
+  if(/flex-direction:\s*column/.test(el.getAttribute('style')||''))return;
+  var kids=[].slice.call(el.children),big=kids.filter(function(k){return k.textContent.trim().length>35||k.querySelector('table,canvas,svg,select,input[type=range]');});
+  if(big.length>=2)el.classList.add('stk');});
+ [].forEach.call(s.querySelectorAll('[style*="height:"]'),function(el){
+  var m=/(?:^|;|\s)height:\s*(\d+)px/.exec(el.getAttribute('style')||'');
+  if(m&&+m[1]>=60&&(el.textContent.trim().length>20||(+m[1]>=100&&el.textContent.trim().length>2))&&!el.classList.contains('mt')&&el.dataset.oh===undefined&&!el.querySelector(':scope>[style*="position:absolute"]')){el.dataset.oh=el.style.height;el.style.height='auto';}});
+ [].forEach.call(s.querySelectorAll('[style*="font-size"]'),function(el){
+  var m=/font-size:\s*(\d+)px/.exec(el.getAttribute('style')||'');
+  if(m&&+m[1]>=44&&el.dataset.ofs===undefined){var v=+m[1];el.dataset.ofs=el.style.fontSize;el.style.fontSize=Math.max(30,Math.round(v*(v>=100?0.4:0.62)))+'px';}});
+ [].forEach.call(s.querySelectorAll('.disc,svg,img,canvas'),function(el){
+  var st=el.getAttribute('style')||'',w=/(?:^|;|\s)width:\s*(\d+)px/.exec(st),h=/(?:^|;|\s)height:\s*(\d+)px/.exec(st);
+  if(w&&h&&+w[1]>=130&&+h[1]>=130&&el.dataset.osz===undefined){el.dataset.osz=el.style.width+'|'+el.style.height;el.style.width=Math.round(+w[1]*0.5)+'px';el.style.height=Math.round(+h[1]*0.5)+'px';}});
+}
+function resp(){
+ var fl=H.classList.contains('fl'),vp=document.getElementById('viewport');
+ [].forEach.call(document.querySelectorAll('.slide'),function(s){if(!fl)undo(s);else if(s.classList.contains('on')){apply(s);if(lastS!==s){vp.scrollTop=0;lastS=s;}}});
+}
+window.__resp=resp;
+window.__fit=function(vp,stage){
+ var fl=isFl();H.classList.toggle('fl',fl);
+ if(!fl){stage.style.zoom='';resp();return false;}
+ stage.style.zoom=Math.max(.66,Math.min(1,innerWidth/620));stage.style.transform='none';resp();return true;};
+var tx=0,ty=0;
+document.addEventListener('touchstart',function(e){if(e.touches.length===1){tx=e.touches[0].clientX;ty=e.touches[0].clientY;}},{passive:true});
+document.addEventListener('touchend',function(e){if(!H.classList.contains('fl')||!e.changedTouches.length)return;
+ if(e.target.closest&&e.target.closest('input,select,textarea,#tv,#over,#notes,table,.mt'))return;
+ var dx=e.changedTouches[0].clientX-tx,dy=e.changedTouches[0].clientY-ty;
+ if(Math.abs(dx)>80&&Math.abs(dy)<45&&window.__nav){dx<0?window.__nav.next():window.__nav.prev();}},{passive:true});
+})();
+</script></head>
+<body>
+<div id="wrap">
+ <div id="main">
+  <div id="viewport">
+   <div id="stage">
+
+<!-- 1. ТИТУЛ -->
+<section class="slide" data-steps="0">
+  <div style="position:absolute;right:-180px;top:-200px;width:620px;height:620px;border-radius:50%;background:#eaf4f6"></div>
+  <div style="position:absolute;left:64px;top:70px;width:640px">
+    <div style="color:var(--teal);font-weight:bold;letter-spacing:.06em;font-size:18px" class="pop">ІНФОРМАТИКА · 10 КЛАС · ТЕМА 10</div>
+    <h1 class="pop" style="--d:.15s;font-size:84px;line-height:1.02;margin:18px 0 20px">Кодування символів</h1>
+    <div class="pop" style="--d:.3s;font-size:28px;color:var(--blue)">Від цифрового коду до графічного світу</div>
+    <div style="display:flex;gap:12px;margin-top:40px">
+      <span class="pop" style="--d:.5s;padding:9px 22px;border-radius:99px;background:var(--teal);color:#fff;font-weight:bold">СИМВОЛ</span>
+      <span class="pop" style="--d:.6s;padding:9px 22px;border-radius:99px;border:2px solid #b9cbd3;font-weight:bold;color:var(--muted)">ПІКСЕЛЬ</span>
+      <span class="pop" style="--d:.7s;padding:9px 22px;border-radius:99px;border:2px solid #b9cbd3;font-weight:bold;color:var(--muted)">КОЛІР</span>
+    </div>
+  </div>
+  <div style="position:absolute;right:90px;top:90px;width:360px;display:flex;flex-direction:column;align-items:center;gap:8px">
+    <div class="pop" style="--d:.5s;width:360px;height:130px;border-radius:18px;background:var(--teal);color:#fff;font-size:60px;font-weight:bold;display:flex;align-items:center;justify-content:center;box-shadow:0 6px 16px rgba(0,0,0,.12)">A</div>
+    <div class="pop muted" style="--d:.8s;font-size:30px">↓</div>
+    <div class="pop" style="--d:1.1s;width:360px;height:130px;border-radius:18px;background:var(--blue);color:#fff;font-size:60px;font-weight:bold;display:flex;align-items:center;justify-content:center;box-shadow:0 6px 16px rgba(0,0,0,.12)">65</div>
+    <div class="pop muted" style="--d:1.4s;font-size:30px">↓</div>
+    <div class="pop" style="--d:1.7s;width:360px;height:130px;border-radius:18px;background:var(--violet);color:#fff;font-size:48px;font-weight:bold;display:flex;align-items:center;justify-content:center;box-shadow:0 6px 16px rgba(0,0,0,.12)">01000001</div>
+  </div>
+</section>
+
+<!-- 2. ПРОЄКТ -->
+<section class="slide" data-steps="0">
+  <h2 class="t" style="font-size:44px;margin-bottom:14px">Проєкт «Паспорт цифрового знака»</h2>
+  <div style="display:flex;gap:30px;align-items:flex-start">
+    <div style="flex:1.35">
+      <div class="card" style="padding:10px 18px;display:flex;gap:16px;align-items:center;border:3px solid var(--teal);background:var(--tealL)"><span class="disc" style="width:58px;height:58px;background:var(--teal);font-size:30px;flex:none">1</span><div><div style="font-size:27px;font-weight:bold">Кодування символів</div><div class="muted" style="font-size:21px">→ «Код мого девізу» · розділ 1 &nbsp;<b style="color:var(--teal)">← ми тут</b></div></div></div>
+      <div class="card" style="margin-top:10px;padding:10px 18px;display:flex;gap:16px;align-items:center"><span class="disc" style="width:58px;height:58px;background:var(--blue);font-size:30px;flex:none">2</span><div><div style="font-size:27px;font-weight:bold">Кодування графічних зображень</div><div class="muted" style="font-size:21px">→ «Мій знак у пікселях» · розділ 2</div></div></div>
+      <div class="card" style="margin-top:10px;padding:10px 18px;display:flex;gap:16px;align-items:center"><span class="disc" style="width:58px;height:58px;background:var(--violet);font-size:30px;flex:none">3</span><div><div style="font-size:27px;font-weight:bold">Колірні моделі у векторному редакторі</div><div class="muted" style="font-size:21px">→ «Колір мого знака» · розділ 3</div></div></div>
+      <div class="card" style="margin-top:14px;padding:14px 22px"><div style="font-size:26px;font-weight:bold;color:var(--teal)">Порядок роботи на кожному уроці</div>
+        <ol style="font-size:23px;line-height:1.5;margin:6px 0 0;padding-left:30px">
+          <li>Виконуєш практичну картку.</li>
+          <li>Зберігаєш файл із відповідями (.txt) у себе на комп’ютері.</li>
+          <li><b>На 3 уроці:</b> вносиш усі розділи в конструктор паспорта, імпортуєш файли й зберігаєш PNG.</li>
+        </ol></div>
+    </div>
+    <div style="flex:1">
+      <div class="muted" style="font-size:22px;font-weight:bold;margin-bottom:6px">Приклад готового паспорта</div>
+      <div style="border:3px solid #d3e2e8;border-radius:18px;overflow:hidden;background:#fff">
+        <div style="background:linear-gradient(90deg,#0e8a9b,#2457a6 60%,#6a4bc4);color:#fff;padding:10px 16px"><div style="font-size:13px;font-weight:bold;letter-spacing:.04em">ІНФОРМАТИКА · 10 КЛАС · ПРОЄКТ</div><div style="font-size:24px;font-weight:bold">ПАСПОРТ ЦИФРОВОГО ЗНАКА</div></div>
+        <div style="padding:12px;display:grid;grid-template-columns:1fr 1fr;gap:10px">
+          <div style="grid-column:1/3;border:2px solid #d3e2e8;border-radius:12px;padding:8px 12px"><div style="font-weight:bold;color:var(--teal);font-size:16px">1 · Код девізу</div><div class="mono" style="font-size:17px;margin-top:2px">Б І Т &nbsp; U+0411 U+0406 U+0422</div></div>
+          <div style="border:2px solid #d3e2e8;border-radius:12px;padding:8px 12px"><div style="font-weight:bold;color:var(--violet);font-size:16px">2 · Знак у пікселях</div><div style="display:grid;grid-template-columns:repeat(8,17px);gap:1px;margin-top:6px;width:fit-content" class="pxg"><i style="background:#FFF3D6"></i><i style="background:#FFF3D6"></i><i style="background:#2457A6"></i><i style="background:#2457A6"></i><i style="background:#2457A6"></i><i style="background:#2457A6"></i><i style="background:#FFF3D6"></i><i style="background:#FFF3D6"></i><i style="background:#FFF3D6"></i><i style="background:#2457A6"></i><i style="background:#FFF3D6"></i><i style="background:#FFF3D6"></i><i style="background:#FFF3D6"></i><i style="background:#FFF3D6"></i><i style="background:#2457A6"></i><i style="background:#FFF3D6"></i><i style="background:#2457A6"></i><i style="background:#FFF3D6"></i><i style="background:#2457A6"></i><i style="background:#FFF3D6"></i><i style="background:#FFF3D6"></i><i style="background:#2457A6"></i><i style="background:#FFF3D6"></i><i style="background:#2457A6"></i><i style="background:#2457A6"></i><i style="background:#FFF3D6"></i><i style="background:#FFF3D6"></i><i style="background:#FFF3D6"></i><i style="background:#FFF3D6"></i><i style="background:#FFF3D6"></i><i style="background:#FFF3D6"></i><i style="background:#2457A6"></i><i style="background:#2457A6"></i><i style="background:#FFF3D6"></i><i style="background:#2457A6"></i><i style="background:#FFF3D6"></i><i style="background:#FFF3D6"></i><i style="background:#2457A6"></i><i style="background:#FFF3D6"></i><i style="background:#2457A6"></i><i style="background:#2457A6"></i><i style="background:#FFF3D6"></i><i style="background:#FFF3D6"></i><i style="background:#2457A6"></i><i style="background:#2457A6"></i><i style="background:#FFF3D6"></i><i style="background:#FFF3D6"></i><i style="background:#2457A6"></i><i style="background:#FFF3D6"></i><i style="background:#2457A6"></i><i style="background:#FFF3D6"></i><i style="background:#FFF3D6"></i><i style="background:#FFF3D6"></i><i style="background:#FFF3D6"></i><i style="background:#2457A6"></i><i style="background:#FFF3D6"></i><i style="background:#FFF3D6"></i><i style="background:#FFF3D6"></i><i style="background:#2457A6"></i><i style="background:#2457A6"></i><i style="background:#2457A6"></i><i style="background:#2457A6"></i><i style="background:#FFF3D6"></i><i style="background:#FFF3D6"></i></div></div>
+          <div style="border:2px solid #d3e2e8;border-radius:12px;padding:8px 12px"><div style="font-weight:bold;color:#c0392b;font-size:16px">3 · Колір знака</div><div style="display:flex;gap:8px;margin-top:8px"><span style="width:56px;height:44px;border-radius:8px;border:2px solid #b9cbd3;background:#2457A6"></span><span style="width:56px;height:44px;border-radius:8px;border:2px solid #b9cbd3;background:#FFF3D6"></span></div><div class="mono" style="font-size:14px;margin-top:8px">#2457A6<br>#FFF3D6</div></div>
+        </div>
+      </div>
+      <div class="linkrow" style="margin-top:14px"><a class="btn lnk" href="https://tanyaol.github.io/my_teaching_materials/informatics/grade-10-profile/kod/urok/pasport_konstruktor.html" target="_blank" rel="noopener" style="background:var(--teal);border-color:var(--teal);color:#fff;font-size:18px;padding:10px 18px">Демонстрація: конструктор паспорта ↗</a></div>
+    </div>
+  </div>
+</section>
+
+<!-- 3. ПАСПОРТ УРОКУ -->
+<section class="slide" data-steps="0">
+  <h2 class="t" style="font-size:46px">Паспорт цього уроку: розділ 1 «Код мого девізу»</h2>
+  <div style="display:flex;gap:40px;align-items:flex-start;margin-top:10px">
+    <div style="text-align:center"><div class="card" style="padding:12px;width:360px;height:360px"><svg width="334" height="334" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 49 49" shape-rendering="crispEdges"><rect width="49" height="49" fill="#fff"/><path d="M4 4h7v1h-7zM12 4h2v1h-2zM16 4h1v1h-1zM22 4h1v1h-1zM25 4h2v1h-2zM29 4h1v1h-1zM31 4h1v1h-1zM38 4h7v1h-7zM4 5h1v1h-1zM10 5h1v1h-1zM13 5h3v1h-3zM20 5h2v1h-2zM23 5h1v1h-1zM30 5h1v1h-1zM32 5h2v1h-2zM35 5h1v1h-1zM38 5h1v1h-1zM44 5h1v1h-1zM4 6h1v1h-1zM6 6h3v1h-3zM10 6h1v1h-1zM13 6h1v1h-1zM15 6h2v1h-2zM20 6h3v1h-3zM24 6h2v1h-2zM27 6h1v1h-1zM29 6h1v1h-1zM31 6h2v1h-2zM35 6h1v1h-1zM38 6h1v1h-1zM40 6h3v1h-3zM44 6h1v1h-1zM4 7h1v1h-1zM6 7h3v1h-3zM10 7h1v1h-1zM15 7h2v1h-2zM23 7h1v1h-1zM25 7h5v1h-5zM31 7h1v1h-1zM33 7h1v1h-1zM35 7h2v1h-2zM38 7h1v1h-1zM40 7h3v1h-3zM44 7h1v1h-1zM4 8h1v1h-1zM6 8h3v1h-3zM10 8h1v1h-1zM13 8h1v1h-1zM15 8h2v1h-2zM18 8h2v1h-2zM22 8h1v1h-1zM24 8h1v1h-1zM29 8h2v1h-2zM32 8h5v1h-5zM38 8h1v1h-1zM40 8h3v1h-3zM44 8h1v1h-1zM4 9h1v1h-1zM10 9h1v1h-1zM15 9h3v1h-3zM21 9h2v1h-2zM24 9h1v1h-1zM27 9h1v1h-1zM29 9h2v1h-2zM33 9h1v1h-1zM36 9h1v1h-1zM38 9h1v1h-1zM44 9h1v1h-1zM4 10h7v1h-7zM12 10h1v1h-1zM14 10h1v1h-1zM16 10h1v1h-1zM18 10h1v1h-1zM20 10h1v1h-1zM22 10h1v1h-1zM24 10h1v1h-1zM26 10h1v1h-1zM28 10h1v1h-1zM30 10h1v1h-1zM32 10h1v1h-1zM34 10h1v1h-1zM36 10h1v1h-1zM38 10h7v1h-7zM12 11h1v1h-1zM14 11h2v1h-2zM17 11h1v1h-1zM23 11h2v1h-2zM26 11h4v1h-4zM32 11h1v1h-1zM34 11h1v1h-1zM36 11h1v1h-1zM4 12h2v1h-2zM7 12h2v1h-2zM10 12h1v1h-1zM19 12h3v1h-3zM23 12h1v1h-1zM27 12h1v1h-1zM30 12h2v1h-2zM33 12h1v1h-1zM38 12h1v1h-1zM44 12h1v1h-1zM4 13h1v1h-1zM7 13h3v1h-3zM14 13h1v1h-1zM16 13h1v1h-1zM18 13h2v1h-2zM22 13h5v1h-5zM29 13h1v1h-1zM31 13h1v1h-1zM33 13h3v1h-3zM39 13h5v1h-5zM4 14h2v1h-2zM10 14h5v1h-5zM18 14h5v1h-5zM26 14h2v1h-2zM29 14h1v1h-1zM31 14h3v1h-3zM37 14h2v1h-2zM40 14h1v1h-1zM42 14h1v1h-1zM4 15h2v1h-2zM12 15h1v1h-1zM14 15h1v1h-1zM16 15h1v1h-1zM18 15h1v1h-1zM20 15h2v1h-2zM23 15h1v1h-1zM26 15h1v1h-1zM30 15h1v1h-1zM33 15h5v1h-5zM39 15h3v1h-3zM44 15h1v1h-1zM4 16h1v1h-1zM6 16h6v1h-6zM13 16h1v1h-1zM16 16h3v1h-3zM20 16h5v1h-5zM27 16h2v1h-2zM35 16h2v1h-2zM38 16h2v1h-2zM43 16h2v1h-2zM4 17h2v1h-2zM7 17h3v1h-3zM12 17h1v1h-1zM14 17h1v1h-1zM20 17h2v1h-2zM23 17h1v1h-1zM27 17h1v1h-1zM29 17h6v1h-6zM38 17h7v1h-7zM4 18h1v1h-1zM6 18h5v1h-5zM12 18h1v1h-1zM14 18h3v1h-3zM18 18h1v1h-1zM20 18h2v1h-2zM25 18h2v1h-2zM28 18h4v1h-4zM34 18h3v1h-3zM39 18h1v1h-1zM41 18h2v1h-2zM44 18h1v1h-1zM4 19h5v1h-5zM13 19h3v1h-3zM19 19h1v1h-1zM22 19h2v1h-2zM30 19h2v1h-2zM34 19h2v1h-2zM39 19h1v1h-1zM41 19h2v1h-2zM44 19h1v1h-1zM4 20h1v1h-1zM7 20h4v1h-4zM12 20h1v1h-1zM14 20h1v1h-1zM17 20h1v1h-1zM23 20h1v1h-1zM26 20h4v1h-4zM35 20h2v1h-2zM39 20h1v1h-1zM4 21h2v1h-2zM9 21h1v1h-1zM13 21h1v1h-1zM16 21h2v1h-2zM19 21h1v1h-1zM22 21h4v1h-4zM29 21h1v1h-1zM31 21h1v1h-1zM33 21h1v1h-1zM35 21h3v1h-3zM40 21h1v1h-1zM43 21h1v1h-1zM4 22h3v1h-3zM8 22h6v1h-6zM15 22h1v1h-1zM19 22h2v1h-2zM23 22h6v1h-6zM30 22h2v1h-2zM33 22h1v1h-1zM35 22h2v1h-2zM39 22h4v1h-4zM44 22h1v1h-1zM4 23h5v1h-5zM11 23h1v1h-1zM13 23h1v1h-1zM18 23h1v1h-1zM20 23h4v1h-4zM27 23h1v1h-1zM29 23h1v1h-1zM31 23h2v1h-2zM37 23h4v1h-4zM42 23h2v1h-2zM4 24h1v1h-1zM7 24h9v1h-9zM17 24h3v1h-3zM24 24h1v1h-1zM27 24h1v1h-1zM32 24h2v1h-2zM38 24h1v1h-1zM42 24h1v1h-1zM4 25h1v1h-1zM6 25h4v1h-4zM14 25h1v1h-1zM16 25h1v1h-1zM18 25h1v1h-1zM20 25h1v1h-1zM22 25h1v1h-1zM24 25h1v1h-1zM27 25h1v1h-1zM31 25h2v1h-2zM35 25h1v1h-1zM40 25h2v1h-2zM43 25h1v1h-1zM4 26h1v1h-1zM6 26h2v1h-2zM10 26h1v1h-1zM13 26h1v1h-1zM15 26h1v1h-1zM17 26h1v1h-1zM19 26h2v1h-2zM25 26h4v1h-4zM31 26h3v1h-3zM36 26h3v1h-3zM40 26h2v1h-2zM4 27h1v1h-1zM7 27h2v1h-2zM11 27h6v1h-6zM18 27h1v1h-1zM20 27h3v1h-3zM26 27h1v1h-1zM28 27h1v1h-1zM30 27h1v1h-1zM32 27h2v1h-2zM35 27h1v1h-1zM37 27h2v1h-2zM40 27h2v1h-2zM44 27h1v1h-1zM4 28h1v1h-1zM7 28h6v1h-6zM15 28h2v1h-2zM19 28h1v1h-1zM23 28h2v1h-2zM27 28h2v1h-2zM31 28h2v1h-2zM35 28h2v1h-2zM38 28h1v1h-1zM41 28h1v1h-1zM43 28h1v1h-1zM4 29h1v1h-1zM8 29h1v1h-1zM15 29h3v1h-3zM19 29h2v1h-2zM22 29h1v1h-1zM27 29h1v1h-1zM29 29h3v1h-3zM34 29h1v1h-1zM36 29h1v1h-1zM38 29h5v1h-5zM44 29h1v1h-1zM4 30h2v1h-2zM9 30h2v1h-2zM12 30h1v1h-1zM14 30h1v1h-1zM17 30h1v1h-1zM19 30h1v1h-1zM22 30h4v1h-4zM29 30h1v1h-1zM31 30h1v1h-1zM33 30h3v1h-3zM38 30h2v1h-2zM42 30h3v1h-3zM4 31h1v1h-1zM8 31h1v1h-1zM11 31h1v1h-1zM14 31h1v1h-1zM20 31h1v1h-1zM24 31h1v1h-1zM26 31h1v1h-1zM28 31h1v1h-1zM31 31h1v1h-1zM38 31h2v1h-2zM42 31h1v1h-1zM44 31h1v1h-1zM4 32h1v1h-1zM10 32h1v1h-1zM12 32h5v1h-5zM18 32h2v1h-2zM21 32h2v1h-2zM24 32h1v1h-1zM26 32h1v1h-1zM32 32h1v1h-1zM35 32h1v1h-1zM37 32h1v1h-1zM39 32h1v1h-1zM41 32h1v1h-1zM43 32h1v1h-1zM4 33h1v1h-1zM7 33h2v1h-2zM11 33h1v1h-1zM15 33h1v1h-1zM18 33h1v1h-1zM24 33h1v1h-1zM26 33h1v1h-1zM30 33h4v1h-4zM35 33h2v1h-2zM40 33h2v1h-2zM4 34h4v1h-4zM10 34h2v1h-2zM16 34h1v1h-1zM18 34h1v1h-1zM20 34h1v1h-1zM24 34h2v1h-2zM27 34h1v1h-1zM29 34h4v1h-4zM34 34h2v1h-2zM37 34h5v1h-5zM44 34h1v1h-1zM4 35h5v1h-5zM11 35h1v1h-1zM15 35h1v1h-1zM17 35h4v1h-4zM26 35h1v1h-1zM28 35h2v1h-2zM31 35h2v1h-2zM34 35h2v1h-2zM37 35h1v1h-1zM39 35h1v1h-1zM42 35h3v1h-3zM4 36h2v1h-2zM8 36h1v1h-1zM10 36h2v1h-2zM15 36h2v1h-2zM18 36h1v1h-1zM20 36h2v1h-2zM28 36h1v1h-1zM30 36h1v1h-1zM32 36h11v1h-11zM12 37h4v1h-4zM17 37h3v1h-3zM21 37h1v1h-1zM23 37h1v1h-1zM25 37h1v1h-1zM27 37h1v1h-1zM29 37h3v1h-3zM34 37h1v1h-1zM36 37h1v1h-1zM40 37h1v1h-1zM43 37h1v1h-1zM4 38h7v1h-7zM13 38h1v1h-1zM15 38h3v1h-3zM19 38h2v1h-2zM25 38h5v1h-5zM31 38h2v1h-2zM34 38h3v1h-3zM38 38h1v1h-1zM40 38h1v1h-1zM43 38h1v1h-1zM4 39h1v1h-1zM10 39h1v1h-1zM15 39h1v1h-1zM17 39h1v1h-1zM22 39h1v1h-1zM27 39h2v1h-2zM30 39h1v1h-1zM32 39h2v1h-2zM35 39h2v1h-2zM40 39h1v1h-1zM43 39h2v1h-2zM4 40h1v1h-1zM6 40h3v1h-3zM10 40h1v1h-1zM12 40h2v1h-2zM15 40h1v1h-1zM17 40h1v1h-1zM21 40h1v1h-1zM24 40h1v1h-1zM28 40h1v1h-1zM32 40h1v1h-1zM35 40h7v1h-7zM43 40h2v1h-2zM4 41h1v1h-1zM6 41h3v1h-3zM10 41h1v1h-1zM12 41h1v1h-1zM16 41h3v1h-3zM22 41h3v1h-3zM27 41h1v1h-1zM29 41h6v1h-6zM37 41h1v1h-1zM41 41h1v1h-1zM44 41h1v1h-1zM4 42h1v1h-1zM6 42h3v1h-3zM10 42h1v1h-1zM13 42h2v1h-2zM17 42h1v1h-1zM19 42h1v1h-1zM21 42h3v1h-3zM26 42h1v1h-1zM31 42h1v1h-1zM33 42h1v1h-1zM36 42h2v1h-2zM40 42h1v1h-1zM44 42h1v1h-1zM4 43h1v1h-1zM10 43h1v1h-1zM12 43h3v1h-3zM16 43h1v1h-1zM20 43h1v1h-1zM22 43h1v1h-1zM26 43h3v1h-3zM31 43h1v1h-1zM34 43h2v1h-2zM37 43h1v1h-1zM39 43h1v1h-1zM41 43h2v1h-2zM44 43h1v1h-1zM4 44h7v1h-7zM12 44h2v1h-2zM15 44h3v1h-3zM19 44h1v1h-1zM23 44h2v1h-2zM26 44h1v1h-1zM28 44h2v1h-2zM35 44h2v1h-2zM38 44h1v1h-1z" fill="#000"/></svg></div><div class="muted" style="font-size:21px;margin-top:10px">Скануй QR-код камерою телефона</div></div>
+    <div style="flex:1;display:flex;flex-direction:column;gap:20px">
+      <div class="card" style="padding:20px 26px"><div style="font-size:30px;font-weight:bold;color:var(--teal)">Посилання на практичну картку</div><a href="https://tanyaol.github.io/my_teaching_materials/informatics/grade-10-profile/kod/urok/lesson1/urok1_kartka.html" target="_blank" rel="noopener" class="mono" style="font-size:17px;color:var(--blue);word-break:break-all;display:block;margin-top:8px">https://tanyaol.github.io/my_teaching_materials/informatics/grade-10-profile/kod/urok/lesson1/urok1_kartka.html</a></div>
+      <div class="tintv" style="padding:18px 26px;font-size:27px;line-height:1.5"><b style="color:var(--violet)">Що робити:</b>
+        <ol style="margin:6px 0 0;padding-left:30px"><li>Відкрий посилання: потрапиш до практичної картки розділу 1.</li><li>Введи прізвище, ім’я.</li><li>Виконай завдання.</li><li>Додай висновок і збережи відповіді картки (.txt) для імпорту.</li></ol></div>
+    </div>
+  </div>
+</section>
+
+<!-- 1б. ПРИГАДАЄМО -->
+<section class="slide" data-steps="1">
+  <h2 class="t" style="margin-bottom:22px">Пригадаємо</h2>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px">
+    <div class="card qc" data-a="Текстові, числові, графічні, звукові, відео" style="padding:12px 20px;display:flex;gap:16px;align-items:center;min-height:98px;cursor:pointer"><span class="disc" style="width:50px;height:50px;background:var(--teal);font-size:26px;flex:none">1</span><span class="qt" style="font-size:26px;line-height:1.28">Назвіть типи даних.</span></div>
+    <div class="card qc" data-a="У двійковому коді — послідовностями нулів та одиниць" style="padding:12px 20px;display:flex;gap:16px;align-items:center;min-height:98px;cursor:pointer"><span class="disc" style="width:50px;height:50px;background:var(--blue);font-size:26px;flex:none">2</span><span class="qt" style="font-size:26px;line-height:1.28">Як кодуються різні типи даних у комп’ютері?</span></div>
+    <div class="card qc" data-a="Перетворення даних з одного подання в інше (для комп’ютера — у двійковий код)" style="padding:12px 20px;display:flex;gap:16px;align-items:center;min-height:98px;cursor:pointer"><span class="disc" style="width:50px;height:50px;background:var(--violet);font-size:26px;flex:none">3</span><span class="qt" style="font-size:26px;line-height:1.28">Що таке кодування?</span></div>
+    <div class="card qc" data-a="Зворотний процес — відновлення початкового подання даних" style="padding:12px 20px;display:flex;gap:16px;align-items:center;min-height:98px;cursor:pointer"><span class="disc" style="width:50px;height:50px;background:var(--teal);font-size:26px;flex:none">4</span><span class="qt" style="font-size:26px;line-height:1.28">Що таке декодування?</span></div>
+    <div class="card qc" data-a="біт, байт, КБ, МБ, ГБ, ТБ" style="padding:12px 20px;display:flex;gap:16px;align-items:center;min-height:98px;cursor:pointer"><span class="disc" style="width:50px;height:50px;background:var(--blue);font-size:26px;flex:none">5</span><span class="qt" style="font-size:26px;line-height:1.28">Які одиниці вимірювання інформації ви знаєте?</span></div>
+    <div class="card qc" data-a="Біт" style="padding:12px 20px;display:flex;gap:16px;align-items:center;min-height:98px;cursor:pointer"><span class="disc" style="width:50px;height:50px;background:var(--violet);font-size:26px;flex:none">6</span><span class="qt" style="font-size:26px;line-height:1.28">Яка найменша одиниця вимірювання інформації?</span></div>
+    <div class="card qc" data-a="2<sup>8</sup> = 256" style="padding:12px 20px;display:flex;gap:16px;align-items:center;min-height:98px;cursor:pointer"><span class="disc" style="width:50px;height:50px;background:var(--teal);font-size:26px;flex:none">7</span><span class="qt" style="font-size:26px;line-height:1.28">Скільки різних кодів можна утворити з <b>8 бітів</b>?</span></div>
+    <div class="card qc" data-a="2<sup>16</sup> = 65 536" style="padding:12px 20px;display:flex;gap:16px;align-items:center;min-height:98px;cursor:pointer"><span class="disc" style="width:50px;height:50px;background:var(--blue);font-size:26px;flex:none">8</span><span class="qt" style="font-size:26px;line-height:1.28">А скільки з <b>16 бітів</b>?</span></div>
+  </div>
+  <div class="rv tint" data-s="1" style="margin-top:16px;padding:12px 26px;font-size:28px;text-align:center"><b>Більше бітів — більше різних символів можна закодувати.</b></div>
+</section>
+
+<!-- 2. ПРОБЛЕМА -->
+<section class="slide" data-steps="3">
+  <h2 class="t">Що сталося з текстом?</h2>
+  <div style="display:flex;gap:40px;align-items:center">
+    <div class="card" style="flex:1;padding:26px 34px">
+      <div class="muted" style="font-size:20px">Повідомлення від друга</div>
+      <div style="font-size:92px;font-weight:bold;color:var(--violet);margin-top:12px;white-space:nowrap">Ïðèâ³ò, êëàñ!</div>
+    </div>
+    <div class="rv disc" data-s="1" style="width:220px;height:220px;background:var(--violet);font-size:150px">?</div>
+  </div>
+  <div class="rv tint" data-s="2" style="margin-top:34px;padding:22px 32px;font-size:32px"><b>Файл ніхто не змінював.</b> Чому текст «зіпсувався»? Запиши свою думку.</div>
+  <div class="rv" data-s="3" style="margin-top:26px;display:flex;align-items:center;gap:26px">
+    <div class="mt" data-sec="60" data-phases="0:Подумай сам(а)|20:Обговори з партнером|40:Поділися з класом"><b>01:00</b><button data-a="go">▶</button><button data-a="reset">⟲</button><span class="l"></span></div>
+    <div class="muted" style="font-size:22px">Почни так: «Я думаю, що…»</div>
+  </div>
+</section>
+
+<!-- 4. ВІД ЛІТЕРИ ДО КОДУ -->
+<section class="slide" data-steps="6">
+  <h2 class="t">Від літери до коду</h2>
+  <div style="display:flex;align-items:center;gap:10px">
+    <div class="card rv" data-s="1" style="width:250px;height:190px;text-align:center;padding-top:16px"><div class="muted" style="font-size:19px">літера</div><div style="font-size:96px;font-weight:bold;color:var(--teal);line-height:1.2">A</div></div>
+    <div class="rv muted" data-s="2" style="font-size:46px;width:50px;text-align:center">→</div>
+    <div class="card rv" data-s="2" style="width:250px;height:190px;text-align:center;padding-top:16px"><div class="muted" style="font-size:19px">номер у таблиці</div><div style="font-size:96px;font-weight:bold;color:var(--blue);line-height:1.2">65</div></div>
+    <div class="rv muted" data-s="3" style="font-size:46px;width:50px;text-align:center">→</div>
+    <div class="card rv" data-s="3" style="width:290px;height:190px;text-align:center;padding-top:16px"><div class="muted" style="font-size:19px">двійковий код</div><div style="font-size:54px;font-weight:bold;color:var(--violet);line-height:2;font-family:Consolas,monospace">01000001</div></div>
+    <div class="rv muted" data-s="4" style="font-size:46px;width:50px;text-align:center">→</div>
+    <div class="card rv" data-s="4" style="width:250px;height:190px;text-align:center;padding-top:16px"><div class="muted" style="font-size:19px">шістнадцятковий код</div><div style="font-size:96px;font-weight:bold;line-height:1.2">41<sub>16</sub></div></div>
+  </div>
+  <div class="rv tint" data-s="5" style="margin-top:34px;padding:24px 30px;font-size:44px;font-weight:bold;text-align:center">41<sub>16</sub>&nbsp;=&nbsp;4 · 16 + 1 = 65</div>
+  <div class="rv tintv" data-s="6" style="margin-top:22px;padding:18px 30px;font-size:28px;text-align:center">Шістнадцяткові цифри: <b>0–9</b> і <b>A–F</b> (A = 10, B = 11, C = 12, D = 13, E = 14, F = 15)</div>
+</section>
+
+<!-- 5. ASCII -->
+<section class="slide" data-steps="3">
+  <h2 class="t">ASCII: перша кодова таблиця</h2>
+  <div style="display:flex;justify-content:space-between;font-size:21px;font-weight:bold;margin-bottom:10px"><span style="color:var(--teal)">базова частина: 0–127</span><span style="color:var(--blue)">розширена частина: 128–255</span></div>
+  <div style="position:relative;height:84px;background:#e3edf0;border-radius:12px;overflow:hidden">
+    <div class="grow" data-s="1" style="position:absolute;left:0;width:12.5%;top:0;bottom:0;background:var(--violet);color:#fff;font-size:24px;font-weight:bold;display:flex;align-items:center;justify-content:center;border-right:3px solid #fff">0–31</div>
+    <div class="grow" data-s="2" style="position:absolute;left:12.5%;width:37.5%;top:0;bottom:0;background:var(--teal);color:#fff;font-size:24px;font-weight:bold;display:flex;align-items:center;justify-content:center;border-right:3px solid #fff">32–127</div>
+    <div class="grow" data-s="3" style="position:absolute;left:50%;width:50%;top:0;bottom:0;background:var(--blue);color:#fff;font-size:24px;font-weight:bold;display:flex;align-items:center;justify-content:center">128–255</div>
+  </div>
+  <div style="display:flex;gap:24px;margin-top:30px">
+    <div class="card rv" data-s="1" style="flex:1;padding:24px;height:240px"><div style="font-size:28px;font-weight:bold;color:var(--violet)">0–31 · команди</div><div style="font-size:26px;margin-top:16px;line-height:1.45">Enter, видалення, звуковий сигнал</div></div>
+    <div class="card rv" data-s="2" style="flex:1;padding:24px;height:240px"><div style="font-size:28px;font-weight:bold;color:var(--teal)">32–127 · символи</div><div style="font-size:26px;margin-top:16px;line-height:1.45">латиниця, цифри, знаки.<br><b>Однакові на всіх комп’ютерах</b></div></div>
+    <div class="card rv" data-s="3" style="flex:1;padding:24px;height:240px"><div style="font-size:28px;font-weight:bold;color:var(--blue)">128–255 · національні</div><div style="font-size:26px;margin-top:16px;line-height:1.45">літери різних мов.<br><b>У різних країнах різні</b></div></div>
+  </div>
+  <div class="linkrow"><span class="lr-t">Подивитись таблицю:</span><button class="btn tvb" data-tv="ascii-base">📋 Базова частина (0–127)</button><button class="btn tvb" data-tv="ascii-ext">📋 Розширена частина (128–255)</button><button class="btn lnk tbl-open">🔗 Усі таблиці кодування</button></div>
+</section>
+
+<!-- 6. ОДИН КОД — РІЗНІ СИМВОЛИ -->
+<section class="slide" data-steps="5">
+  <h2 class="t">Один код — різні символи</h2>
+  <div style="display:flex;justify-content:center"><div class="rv" data-s="1" style="background:var(--ink);color:#fff;border-radius:18px;padding:14px 60px;text-align:center"><div style="font-size:24px;color:#bfd0e0">у файлі лежить число</div><div style="font-size:38px;font-weight:bold">223 <span style="font-size:26px;font-weight:normal">(байт DF = 11011111)</span></div></div></div>
+  <div style="display:flex;gap:22px;margin-top:20px;padding:0 10px">
+    <div class="rv" data-s="2" style="flex:1;text-align:center"><div style="font-size:24px;color:var(--muted);padding:4px">↓ шукаємо номер 223 у таблиці…</div><div class="card" style="padding:10px;height:230px"><div style="font-size:26px;font-weight:bold;color:var(--teal)">Windows-1251</div><div style="font-size:120px;font-weight:bold;line-height:1.25">Я</div></div></div>
+    <div class="rv" data-s="3" style="flex:1;text-align:center"><div style="font-size:24px;color:var(--muted);padding:4px">↓ шукаємо номер 223 у таблиці…</div><div class="card" style="padding:10px;height:230px"><div style="font-size:26px;font-weight:bold;color:var(--blue)">ISO 8859-1</div><div style="font-size:120px;font-weight:bold;line-height:1.25">ß</div></div></div>
+    <div class="rv" data-s="4" style="flex:1;text-align:center"><div style="font-size:24px;color:var(--muted);padding:4px">↓ шукаємо номер 223 у таблиці…</div><div class="card" style="padding:10px;height:230px"><div style="font-size:26px;font-weight:bold;color:var(--violet)">KOI8-U</div><div style="font-size:120px;font-weight:bold;line-height:1.25">ъ</div></div></div>
+  </div>
+  <div class="rv" data-s="5" style="text-align:center;margin-top:18px;font-size:30px;font-weight:bold;color:var(--violet)">Те саме число 223, але різні таблиці — і різні символи</div>
+  <div class="muted" style="text-align:center;margin-top:4px;font-size:20px">Для української використовували KOI8-U, Windows-1251, ISO 8859</div>
+  <div class="linkrow" style="justify-content:center"><span class="lr-t">Подивитись таблиці:</span><button class="btn tvb" data-tv="win1251">📋 Windows-1251</button><button class="btn tvb" data-tv="iso1">📋 ISO 8859-1</button><button class="btn tvb" data-tv="koi8u">📋 KOI8-U</button><button class="btn lnk tbl-open">🔗 Усі таблиці кодування</button></div>
+</section>
+
+<!-- 7. ЮНІКОД -->
+<section class="slide" data-steps="4">
+  <h2 class="t">Юнікод: одна таблиця для всіх</h2>
+  <div style="display:flex;gap:34px">
+    <div class="card" style="width:430px;padding:24px;text-align:center;height:470px">
+      <div class="muted" style="font-size:20px">код у Юнікоді</div>
+      <div style="font-size:64px;font-weight:bold;color:var(--violet);margin:8px 0">U+042F</div>
+      <div class="muted" style="font-size:40px">↓</div>
+      <div class="rv" data-s="1" style="font-size:220px;font-weight:bold;color:var(--teal);line-height:1.1">Я</div>
+    </div>
+    <div style="flex:1;display:flex;flex-direction:column;gap:22px">
+      <div class="card rv" data-s="2" style="padding:26px;display:flex;gap:22px;align-items:center;height:140px"><span class="disc" style="width:80px;height:80px;background:var(--teal);font-size:40px;flex:none">🌍</span><span style="font-size:30px">Єдина таблиця для символів усіх мов</span></div>
+      <div class="card rv" data-s="3" style="padding:26px;display:flex;gap:22px;align-items:center;height:140px"><span class="disc" style="width:80px;height:80px;background:var(--blue);font-size:30px;flex:none">16</span><span style="font-size:30px">16 бітів на символ → 65 536 кодів</span></div>
+      <div class="card rv" data-s="4" style="padding:26px;display:flex;gap:22px;align-items:center;height:140px"><span class="disc" style="width:80px;height:80px;background:var(--violet);font-size:24px;flex:none">UTF</span><span style="font-size:30px">UTF — формат передавання тексту інтернетом</span></div>
+    </div>
+  </div>
+  <div class="linkrow"><span class="lr-t">Подивитись таблицю:</span><button class="btn tvb" data-tv="uni1">📋 Юнікод: кирилиця</button><button class="btn lnk tbl-open">🔗 Усі таблиці кодування</button><a class="btn lnk" href="https://www.unicode.org/charts/PDF/U0400.pdf" target="_blank" rel="noopener">🔗 Таблиця кирилиці (unicode.org)</a><a class="btn lnk" href="https://uk.wikipedia.org/wiki/Юнікод" target="_blank" rel="noopener">🔗 Юнікод (Вікіпедія)</a></div>
+</section>
+
+<!-- 7в. РОЗМИНКА ДЛЯ ОЧЕЙ -->
+<section class="slide" data-steps="0" id="warm">
+  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px"><h2 class="t" style="margin:0">Розминка для очей · 50 секунд</h2><div id="wm-ctl" style="display:inline-flex;align-items:center;gap:12px;background:#fff;border:1px solid var(--line);border-radius:14px;padding:8px 14px"><b id="wm-t" style="font-size:34px;font-family:Consolas,Menlo,monospace;min-width:92px">00:50</b><button id="wm-go" class="btn">▶</button><button id="wm-rs" class="btn">⟲</button><span id="wm-ph" style="font-size:16px;color:var(--violet);font-weight:bold;max-width:380px">Стежи очима за кульками</span></div></div>
+  <div id="wm-stage" style="position:relative;height:455px;background:#fff;border:2px solid var(--line,#d5e3ea);border-radius:18px;overflow:hidden">
+    <div id="wm-a" style="position:absolute;inset:0;display:none;flex-direction:column;align-items:center;justify-content:center">
+      <div style="font-size:26px;font-weight:bold;color:var(--blue)">Бітова доріжка · байт літери <b>A</b></div>
+      <div id="wm-bits" style="position:relative;display:flex;width:90%;max-width:760px;margin:62px 0 14px"><div id="wm-ball" style="position:absolute;top:-52px;left:6.25%;width:36px;height:36px;margin-left:-18px;border-radius:50%;background:#f2a93b;box-shadow:0 0 0 6px #f2a93b44,0 4px 12px #0003"></div></div>
+      <div id="wm-say" style="font-size:44px;font-weight:bold;height:60px"></div>
+      <div class="muted" style="font-size:22px;text-align:center">Очі відкриті, голова нерухома: плавно стеж за кулькою ліворуч → праворуч → назад</div>
+    </div>
+    <svg id="wm-b" viewBox="0 0 260 150" style="position:absolute;inset:0;width:100%;height:100%;display:none">
+      <text x="130" y="14" text-anchor="middle" font-size="9" font-weight="bold" fill="#2a56a8">Очима «намалюй» символ: Я → 7 → D</text>
+      <g transform="translate(86,22) scale(.88)"><text id="wm-lab" x="50" y="146" text-anchor="middle" font-size="8" fill="#6a7a86"></text>
+      <path id="wm-p" d="" fill="none" stroke="#d9d3f0" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>
+      <path id="wm-d" d="" fill="none" stroke="#6b46c1" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>
+      <circle id="wm-dot" r="6" fill="#f2a93b" cx="-20" cy="-20"/></g>
+    </svg>
+    <svg id="wm-c" viewBox="0 0 260 150" style="position:absolute;inset:0;width:100%;height:100%;display:none">
+      <text x="130" y="16" text-anchor="middle" font-size="9" font-weight="bold" fill="#2a56a8" id="wm-ct">Хрест: вгору — вниз — ліворуч — праворуч</text>
+      <circle id="wm-cd" r="7" fill="#f2a93b" cx="130" cy="80"/>
+      <g stroke="#c9d6dd" stroke-width="1.5"><line x1="130" y1="30" x2="130" y2="130"/><line x1="40" y1="80" x2="220" y2="80"/></g>
+    </svg>
+    <div id="wm-e" style="position:absolute;inset:0;display:none;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:0 40px">
+      <div style="font-size:30px;color:var(--blue);font-weight:bold">Подивись у вікно вдалечінь · 5 секунд, а потім поморгай 10 разів</div>
+      <div class="tint" style="margin-top:30px;padding:16px 28px;font-size:30px"><b>Очі готові читати коди.</b> Символи D, 7, Я ви зараз перетворите на коди в Лабораторії.</div>
+    </div>
+    <div id="wm-0" style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:34px;color:var(--blue);font-weight:bold">Натисни ▶ — і стеж очима за кулькою, не рухаючи головою</div>
+  </div>
+</section>
+
+<!-- 8. ЗАВДАННЯ З ПРАКТИЧНОЇ КАРТКИ -->
+<section class="slide" data-steps="0">
+  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px"><h2 class="t" style="margin:0">Практична картка · Завдання 1</h2><div class="mt" data-sec="360" data-phases="0:Знайди коди D і 7|150:Тепер Я і свій символ|270:Закінчуй і перевір клітинки"><b>06:00</b><button data-a="go">▶</button><button data-a="reset">⟲</button><span class="l"></span></div></div>
+  <div style="background:var(--teal);color:#fff;border-radius:16px;padding:16px 26px;font-size:30px;font-weight:bold">Дослідження «Лабораторія кодів»: чи змінюється код символу в різних таблицях?</div>
+  <div style="display:flex;gap:20px;margin-top:16px">
+    <div class="card" style="flex:1.25;padding:16px 22px">
+      <div style="font-size:24px;font-weight:bold;color:var(--blue);margin-bottom:6px">Що робити</div>
+      <ol style="font-size:23px;line-height:1.45;margin:0;padding-left:26px">
+        <li>Відкрий картку, Завдання 1. Введи символ у «Лабораторії».</li>
+        <li>Прочитай коди: ASCII, Win-1251, Юнікод.</li>
+        <li>Впиши їх у таблицю. Якщо символа немає — пиши «—».</li>
+        <li>Символи: <b>D, 7, Я</b> і ще один — <b>будь-який за бажанням</b>.</li>
+      </ol>
+      <div class="tintv" style="margin-top:10px;padding:10px 16px;font-size:21px"><b style="color:var(--violet)">Зразок:</b> Z → ASCII 5A · Win-1251 5A · Юнікод 005A</div><div class="linkrow" style="margin-top:10px"><span class="lr-t">Таблиці кодування:</span><button class="btn lnk tbl-open">🔗 Усі таблиці кодування</button><button class="btn cardopen" data-a="task1" style="background:var(--teal);border-color:var(--teal);color:#fff;font-size:18px;padding:9px 16px;">📄 Показати картку: завдання 1</button></div>
+    </div>
+    <div style="flex:1;background:#fff6dd;border:2px solid #f2a93b;border-radius:16px;padding:16px 22px">
+      <div style="font-size:24px;font-weight:bold;color:#8a6a1f;margin-bottom:6px">⚠ Правила безпеки (БЖД)</div>
+      <ul style="font-size:21px;line-height:1.4;margin:0;padding-left:22px">
+        <li>Сиди прямо, екран — на відстані 50–70 см, верх екрана на рівні очей.</li>
+        <li>Світло не в очі й не на екран; не працюй у темряві.</li>
+        <li>Зарядку й подовжувач не чіпай мокрими руками; пошкоджений кабель не вмикай. Ноутбук став на стіл, не на ліжко чи диван.</li>
+        <li>Не їж і не пий біля клавіатури.</li>
+        <li>Дивний запах, нагрівання чи іскри — вимкни з розетки й одразу скажи дорослим.</li>
+        <li>Кожні 15 хв — пауза: дивись у далечінь, розімнись.</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- 8б. ПЕРЕВІРКА -->
+<section class="slide" data-steps="1">
+  <h2 class="t">Перевіряємо Завдання 1</h2>
+  <div class="tabs" id="labtabs"><button class="btn" data-g="0">Ключ</button><button class="btn" data-g="1">Пошук коду</button></div>
+
+  <div class="view" data-v="0">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px"><span class="muted" style="font-size:20px">Звір зі своєю таблицею. Натискай на клітинки, щоб відкрити відповіді</span><span><button class="btn" id="key-all">Відкрити все</button> <button class="btn" id="key-none">Закрити</button></span></div>
+    <div id="key-tbl"></div>
+  </div>
+
+  <div class="view" data-v="1">
+    <div style="display:flex;gap:18px;align-items:center"><span style="font-size:24px;font-weight:bold">Символ:</span><input type="text" id="lab-ch" maxlength="1" value="Я" style="width:120px;text-align:center;font-size:44px"><span class="muted" style="font-size:20px">введи будь-який символ — коди оновляться</span></div>
+    <div id="lab-out" style="margin-top:16px"></div>
+    <div class="tint" style="margin-top:14px;padding:12px 22px;font-size:22px">«—» означає, що такого символа в таблиці немає. Базова частина ASCII — лише коди 0–127.</div>
+  </div>
+</section>
+
+<!-- 9. ГРА ТАК ЧИ НІ -->
+<section class="slide" data-steps="0" id="game">
+  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px"><h2 class="t" style="margin:0;font-size:40px">Гра «Так чи ні»: ASCII і Юнікод</h2><div id="g-score" style="font-size:26px;font-weight:bold;color:var(--violet);background:var(--violetL);border-radius:14px;padding:8px 18px">Рахунок: 0</div></div>
+  <div id="g-dots" style="display:flex;gap:8px;margin-bottom:12px"></div>
+  <div class="card" style="padding:22px 34px;min-height:190px;display:flex;flex-direction:column;justify-content:center">
+    <div class="muted" id="g-num" style="font-size:20px;font-weight:bold;margin-bottom:8px"></div>
+    <div id="g-q" style="font-size:38px;font-weight:bold;line-height:1.25"></div>
+  </div>
+  <div id="g-btns" style="display:flex;gap:24px;margin-top:16px">
+    <button class="gb" data-v="1" style="flex:1;font:inherit;font-size:40px;font-weight:bold;padding:14px 0;border-radius:18px;border:3px solid var(--green);background:#fff;color:var(--green);cursor:pointer">✔ Так</button>
+    <button class="gb" data-v="0" style="flex:1;font:inherit;font-size:40px;font-weight:bold;padding:14px 0;border-radius:18px;border:3px solid var(--red);background:#fff;color:var(--red);cursor:pointer">✘ Ні</button>
+  </div>
+  <div style="display:flex;gap:18px;align-items:center;margin-top:16px">
+    <div class="tint" id="g-fb" style="flex:1;padding:14px 22px;font-size:25px;line-height:1.35;min-height:96px;display:flex;align-items:center"><span class="muted">Обери відповідь: «Так» чи «Ні». Можна радитися з партнером.</span></div>
+    <button class="btn" id="g-next" style="display:none;font-size:24px;padding:12px 22px;flex:none">Далі →</button>
+  </div>
+</section>
+
+<!-- 11. КОД МОГО ДЕВІЗУ -->
+<section class="slide" data-steps="5">
+  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px"><h2 class="t" style="margin:0;font-size:40px">Практична картка · Завдання 2. Код мого девізу</h2><div class="mt" data-sec="360" data-phases="0:Вигадай і закодуй девіз|120:Обмін кодом і розшифровка|240:Звірка й виправлення"><b>06:00</b><button data-a="go">▶</button><button data-a="reset">⟲</button><span class="l"></span></div></div>
+  <div style="display:flex;gap:18px">
+    <div class="card rv" data-s="1" style="flex:1;padding:20px 12px;text-align:center;height:260px"><div class="disc" style="width:74px;height:74px;background:var(--teal);font-size:36px">💡</div><div style="font-size:26px;font-weight:bold;margin:12px 0 6px">1. Вигадай девіз</div><div class="muted" style="font-size:21px">3–5 великих літер</div></div>
+    <div class="card rv" data-s="2" style="flex:1;padding:20px 12px;text-align:center;height:260px"><div class="disc" style="width:74px;height:74px;background:var(--blue);font-size:36px">✏️</div><div style="font-size:26px;font-weight:bold;margin:12px 0 6px">2. Закодуй</div><div class="muted" style="font-size:21px">за довідкою: 4 цифри на літеру</div></div>
+    <div class="card rv" data-s="3" style="flex:1;padding:20px 12px;text-align:center;height:260px"><div class="disc" style="width:74px;height:74px;background:var(--violet);font-size:36px">⇄</div><div style="font-size:26px;font-weight:bold;margin:12px 0 6px">3. Обмін</div><div class="muted" style="font-size:21px">передай лише код, розшифруй код партнера</div></div>
+    <div class="card rv" data-s="4" style="flex:1;padding:20px 12px;text-align:center;height:260px"><div class="disc" style="width:74px;height:74px;background:var(--teal);font-size:36px">✓</div><div style="font-size:26px;font-weight:bold;margin:12px 0 6px">4. Звір</div><div class="muted" style="font-size:21px">знайди розбіжність і виправ</div></div>
+  </div>
+  <div class="rv tintv" data-s="5" style="margin-top:26px;padding:20px 30px;display:flex;align-items:center;gap:24px;font-size:40px;font-weight:bold">
+    <span class="muted" style="font-size:24px;font-weight:normal">Приклад:</span>
+    <span style="color:var(--violet);letter-spacing:.1em">КОД</span><span class="muted">→</span>
+    <span class="mono">041A</span><span class="mono">041E</span><span class="mono">0414</span>
+  </div>
+  <div class="linkrow" style="margin-top:14px"><span class="lr-t">Де це в картці:</span><button class="btn cardopen" data-a="task2" style="background:var(--teal);border-color:var(--teal);color:#fff;font-size:18px;padding:9px 16px;">📄 Показати картку: завдання 2</button></div>
+</section>
+
+<!-- 12. ОБСЯГ -->
+<section class="slide" data-steps="3">
+  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px"><h2 class="t" style="margin:0;font-size:38px">Практична картка · Завдання 3. Обсяг тексту</h2><div class="mt" data-sec="120" data-phases="0:Порахуй обсяг свого девіза|60:Фраза «Моя країна — Україна»|105:Перевір відповіді"><b>02:00</b><button data-a="go">▶</button><button data-a="reset">⟲</button><span class="l"></span></div></div>
+  <div class="rv" data-s="1" style="background:var(--ink);color:#fff;border-radius:18px;padding:22px;text-align:center"><div style="font-size:44px;font-weight:bold">обсяг = кількість символів × довжина коду</div><div style="font-size:26px;margin-top:8px;color:#bfd0e0">у Юнікоді: 1 символ = 16 бітів = 2 байти</div></div>
+  <div class="rv" data-s="2" style="margin-top:24px">
+    <div style="display:flex;align-items:center;gap:16px"><span style="font-size:24px;font-weight:bold">Девіз:</span><input type="text" id="vol-in" value="КОД" maxlength="12" style="width:330px;font-size:34px;letter-spacing:.08em"><span class="muted" style="font-size:19px">введи свій — калькулятор порахує</span><button class="btn cardopen" data-a="task3" style="background:var(--teal);border-color:var(--teal);color:#fff;font-size:18px;padding:9px 16px;margin-left:auto">📄 Показати картку: завдання 3</button></div>
+    <div id="vol-chips" style="display:flex;gap:12px;flex-wrap:wrap;margin-top:18px;min-height:130px"></div>
+    <div id="vol-calc" style="margin-top:16px;display:flex;gap:18px;flex-wrap:wrap;font-size:30px;font-weight:bold"></div>
+  </div>
+  <div class="rv" data-s="3" style="margin-top:20px;font-size:28px;font-weight:bold;color:var(--teal);text-align:center">Твій девіз: ___ × 16 = ___ бітів = ___ байтів</div>
+</section>
+
+<!-- 12б. КОД СИМВОЛУ В WORD -->
+<section class="slide" data-steps="4">
+  <h2 class="t">Додаткове завдання: код символу в Word</h2>
+  <div style="display:flex;gap:30px;align-items:flex-start">
+    <div style="flex:1;display:flex;flex-direction:column;gap:12px">
+      <div class="card rv" data-s="1" style="padding:12px 18px;display:flex;gap:16px;align-items:center"><span class="disc" style="width:48px;height:48px;background:var(--teal);font-size:24px;flex:none">1</span><span style="font-size:24px;line-height:1.3">Вкладка <b>Вставлення</b> → <b>Символ</b> → <b>Інші символи…</b></span></div>
+      <div class="card rv" data-s="2" style="padding:12px 18px;display:flex;gap:16px;align-items:center"><span class="disc" style="width:48px;height:48px;background:var(--blue);font-size:24px;flex:none">2</span><span style="font-size:24px;line-height:1.3">У вікні <b>«Символ»</b> клацни на потрібний символ, наприклад <b>Я</b></span></div>
+      <div class="card rv" data-s="3" style="padding:12px 18px;display:flex;gap:16px;align-items:center"><span class="disc" style="width:48px;height:48px;background:var(--violet);font-size:24px;flex:none">3</span><span style="font-size:24px;line-height:1.3">Внизу в полі <b>«Код знака»</b> — шістнадцятковий код. У полі <b>«з:»</b> обери таблицю: <b>Юнікод (шістн.)</b> або <b>ASCII (шістн.)</b></span></div>
+      <div class="tintv rv" data-s="4" style="padding:12px 18px;font-size:23px;line-height:1.4"><b style="color:var(--violet)">Швидко:</b> набери код <span class="mono">042F</span> і натисни <b>Alt + X</b> — код стане символом <b>Я</b></div>
+    </div>
+    <div class="rv" data-s="2" style="width:460px;background:#f3f3f3;border:2px solid #aab6bf;border-radius:10px;overflow:hidden;box-shadow:0 8px 22px rgba(27,42,74,.18)">
+      <div style="background:#fff;padding:7px 12px;font-size:17px;border-bottom:1px solid #d3dce2">Символ <span class="muted" style="font-size:13px">(схематично)</span></div>
+      <div style="padding:10px 12px;font-size:15px;display:flex;gap:14px"><span>Шрифт: <b>(звичайний текст)</b></span><span>Набір: <b>кирилиця</b></span></div>
+      <div style="display:grid;grid-template-columns:repeat(8,1fr);gap:2px;padding:0 12px 10px;background:#f3f3f3">
+        <span class="gc">А</span><span class="gc">Б</span><span class="gc">В</span><span class="gc">Г</span><span class="gc">Д</span><span class="gc">Е</span><span class="gc">Є</span><span class="gc">Ж</span>
+        <span class="gc">Ю</span><span class="gc">Ь</span><span class="gc">Ш</span><span class="gc">Щ</span><span class="gc">Ч</span><span class="gc">Х</span><span class="gc">Ц</span><span class="gc" style="outline:3px solid var(--violet);background:#f0ecfb">Я</span>
+      </div>
+      <div class="rv" data-s="3" style="background:#fff;padding:10px 14px;font-size:17px;border-top:1px solid #d3dce2;line-height:1.7"><div>Код знака: <b class="mono" style="outline:2px solid var(--violet);padding:0 6px;border-radius:4px">042F</b> &nbsp; з: <b>Юнікод (шістн.)</b></div><div class="muted" style="font-size:14px">Я · U+042F = 1071</div></div>
+    </div>
+  </div>
+  <div class="linkrow"><span class="lr-t">Де це в картці:</span><button class="btn cardopen" data-a="word" style="background:var(--teal);border-color:var(--teal);color:#fff;font-size:18px;padding:9px 16px;">📄 Показати картку: додаткове завдання</button></div>
+</section>
+
+<!-- 13. ПІДСУМОК -->
+<section class="slide" data-steps="4">
+  <h2 class="t">Розгадка: що сталося з текстом?</h2>
+  <div style="overflow-x:auto;padding-bottom:4px">
+    <div class="rv" data-s="1" style="display:flex;align-items:center;gap:6px;flex-wrap:nowrap;margin-bottom:10px"><div style="flex:none;width:170px;font-size:19px;font-weight:bold;color:var(--violet);line-height:1.25">Що побачив друг</div><div style="flex:none;width:58px;height:56px;display:flex;align-items:center;justify-content:center;font-size:34px;font-weight:700;background:#fff3d6;color:var(--violet);border:1px solid var(--line);border-radius:10px">Ï</div><div style="flex:none;width:58px;height:56px;display:flex;align-items:center;justify-content:center;font-size:34px;font-weight:700;background:#fff3d6;color:var(--violet);border:1px solid var(--line);border-radius:10px">ð</div><div style="flex:none;width:58px;height:56px;display:flex;align-items:center;justify-content:center;font-size:34px;font-weight:700;background:#fff3d6;color:var(--violet);border:1px solid var(--line);border-radius:10px">è</div><div style="flex:none;width:58px;height:56px;display:flex;align-items:center;justify-content:center;font-size:34px;font-weight:700;background:#fff3d6;color:var(--violet);border:1px solid var(--line);border-radius:10px">â</div><div style="flex:none;width:58px;height:56px;display:flex;align-items:center;justify-content:center;font-size:34px;font-weight:700;background:#fff3d6;color:var(--violet);border:1px solid var(--line);border-radius:10px">³</div><div style="flex:none;width:58px;height:56px;display:flex;align-items:center;justify-content:center;font-size:34px;font-weight:700;background:#fff3d6;color:var(--violet);border:1px solid var(--line);border-radius:10px">ò</div><div style="flex:none;width:58px;height:56px;display:flex;align-items:center;justify-content:center;font-size:34px;font-weight:700;background:#f2f6f8;color:var(--violet);border:1px solid var(--line);border-radius:10px">,</div><div style="flex:none;width:58px;height:56px;display:flex;align-items:center;justify-content:center;font-size:34px;font-weight:700;background:#f2f6f8;color:var(--violet);border:1px solid var(--line);border-radius:10px">␣</div><div style="flex:none;width:58px;height:56px;display:flex;align-items:center;justify-content:center;font-size:34px;font-weight:700;background:#fff3d6;color:var(--violet);border:1px solid var(--line);border-radius:10px">ê</div><div style="flex:none;width:58px;height:56px;display:flex;align-items:center;justify-content:center;font-size:34px;font-weight:700;background:#fff3d6;color:var(--violet);border:1px solid var(--line);border-radius:10px">ë</div><div style="flex:none;width:58px;height:56px;display:flex;align-items:center;justify-content:center;font-size:34px;font-weight:700;background:#fff3d6;color:var(--violet);border:1px solid var(--line);border-radius:10px">à</div><div style="flex:none;width:58px;height:56px;display:flex;align-items:center;justify-content:center;font-size:34px;font-weight:700;background:#fff3d6;color:var(--violet);border:1px solid var(--line);border-radius:10px">ñ</div><div style="flex:none;width:58px;height:56px;display:flex;align-items:center;justify-content:center;font-size:34px;font-weight:700;background:#f2f6f8;color:var(--violet);border:1px solid var(--line);border-radius:10px">!</div></div>
+    <div class="rv" data-s="2" style="display:flex;align-items:center;gap:6px;flex-wrap:nowrap;margin-bottom:10px"><div style="flex:none;width:170px;font-size:19px;font-weight:bold;color:var(--blue);line-height:1.25">Що лежить у файлі (байти, hex)</div><div style="flex:none;width:58px;height:56px;display:flex;align-items:center;justify-content:center;font-size:26px;font-weight:700;background:#e6f0fb;color:var(--blue);border:1px solid var(--line);border-radius:10px">CF</div><div style="flex:none;width:58px;height:56px;display:flex;align-items:center;justify-content:center;font-size:26px;font-weight:700;background:#e6f0fb;color:var(--blue);border:1px solid var(--line);border-radius:10px">F0</div><div style="flex:none;width:58px;height:56px;display:flex;align-items:center;justify-content:center;font-size:26px;font-weight:700;background:#e6f0fb;color:var(--blue);border:1px solid var(--line);border-radius:10px">E8</div><div style="flex:none;width:58px;height:56px;display:flex;align-items:center;justify-content:center;font-size:26px;font-weight:700;background:#e6f0fb;color:var(--blue);border:1px solid var(--line);border-radius:10px">E2</div><div style="flex:none;width:58px;height:56px;display:flex;align-items:center;justify-content:center;font-size:26px;font-weight:700;background:#e6f0fb;color:var(--blue);border:1px solid var(--line);border-radius:10px">B3</div><div style="flex:none;width:58px;height:56px;display:flex;align-items:center;justify-content:center;font-size:26px;font-weight:700;background:#e6f0fb;color:var(--blue);border:1px solid var(--line);border-radius:10px">F2</div><div style="flex:none;width:58px;height:56px;display:flex;align-items:center;justify-content:center;font-size:26px;font-weight:700;background:#e6f0fb;color:var(--blue);border:1px solid var(--line);border-radius:10px">2C</div><div style="flex:none;width:58px;height:56px;display:flex;align-items:center;justify-content:center;font-size:26px;font-weight:700;background:#e6f0fb;color:var(--blue);border:1px solid var(--line);border-radius:10px">20</div><div style="flex:none;width:58px;height:56px;display:flex;align-items:center;justify-content:center;font-size:26px;font-weight:700;background:#e6f0fb;color:var(--blue);border:1px solid var(--line);border-radius:10px">EA</div><div style="flex:none;width:58px;height:56px;display:flex;align-items:center;justify-content:center;font-size:26px;font-weight:700;background:#e6f0fb;color:var(--blue);border:1px solid var(--line);border-radius:10px">EB</div><div style="flex:none;width:58px;height:56px;display:flex;align-items:center;justify-content:center;font-size:26px;font-weight:700;background:#e6f0fb;color:var(--blue);border:1px solid var(--line);border-radius:10px">E0</div><div style="flex:none;width:58px;height:56px;display:flex;align-items:center;justify-content:center;font-size:26px;font-weight:700;background:#e6f0fb;color:var(--blue);border:1px solid var(--line);border-radius:10px">F1</div><div style="flex:none;width:58px;height:56px;display:flex;align-items:center;justify-content:center;font-size:26px;font-weight:700;background:#e6f0fb;color:var(--blue);border:1px solid var(--line);border-radius:10px">21</div></div>
+    <div class="rv" data-s="3" style="display:flex;align-items:center;gap:6px;flex-wrap:nowrap;margin-bottom:10px"><div style="flex:none;width:170px;font-size:19px;font-weight:bold;color:var(--green);line-height:1.25">Читаємо за Windows-1251</div><div style="flex:none;width:58px;height:56px;display:flex;align-items:center;justify-content:center;font-size:34px;font-weight:700;background:#e6f6ee;color:var(--green);border:1px solid var(--line);border-radius:10px">П</div><div style="flex:none;width:58px;height:56px;display:flex;align-items:center;justify-content:center;font-size:34px;font-weight:700;background:#e6f6ee;color:var(--green);border:1px solid var(--line);border-radius:10px">р</div><div style="flex:none;width:58px;height:56px;display:flex;align-items:center;justify-content:center;font-size:34px;font-weight:700;background:#e6f6ee;color:var(--green);border:1px solid var(--line);border-radius:10px">и</div><div style="flex:none;width:58px;height:56px;display:flex;align-items:center;justify-content:center;font-size:34px;font-weight:700;background:#e6f6ee;color:var(--green);border:1px solid var(--line);border-radius:10px">в</div><div style="flex:none;width:58px;height:56px;display:flex;align-items:center;justify-content:center;font-size:34px;font-weight:700;background:#e6f6ee;color:var(--green);border:1px solid var(--line);border-radius:10px">і</div><div style="flex:none;width:58px;height:56px;display:flex;align-items:center;justify-content:center;font-size:34px;font-weight:700;background:#e6f6ee;color:var(--green);border:1px solid var(--line);border-radius:10px">т</div><div style="flex:none;width:58px;height:56px;display:flex;align-items:center;justify-content:center;font-size:34px;font-weight:700;background:#f2f6f8;color:var(--green);border:1px solid var(--line);border-radius:10px">,</div><div style="flex:none;width:58px;height:56px;display:flex;align-items:center;justify-content:center;font-size:34px;font-weight:700;background:#f2f6f8;color:var(--green);border:1px solid var(--line);border-radius:10px">␣</div><div style="flex:none;width:58px;height:56px;display:flex;align-items:center;justify-content:center;font-size:34px;font-weight:700;background:#e6f6ee;color:var(--green);border:1px solid var(--line);border-radius:10px">к</div><div style="flex:none;width:58px;height:56px;display:flex;align-items:center;justify-content:center;font-size:34px;font-weight:700;background:#e6f6ee;color:var(--green);border:1px solid var(--line);border-radius:10px">л</div><div style="flex:none;width:58px;height:56px;display:flex;align-items:center;justify-content:center;font-size:34px;font-weight:700;background:#e6f6ee;color:var(--green);border:1px solid var(--line);border-radius:10px">а</div><div style="flex:none;width:58px;height:56px;display:flex;align-items:center;justify-content:center;font-size:34px;font-weight:700;background:#e6f6ee;color:var(--green);border:1px solid var(--line);border-radius:10px">с</div><div style="flex:none;width:58px;height:56px;display:flex;align-items:center;justify-content:center;font-size:34px;font-weight:700;background:#f2f6f8;color:var(--green);border:1px solid var(--line);border-radius:10px">!</div></div>
+  </div>
+  <div class="rv tint" data-s="4" style="margin-top:14px;padding:14px 26px;font-size:26px;line-height:1.35"><b>Текст закодували за таблицею Windows-1251, а декодували за іншою</b> (ISO 8859-1). Комп’ютер не помилився — таблиця була не та. Кома, пробіл і «!» не змінилися: вони у базовій частині ASCII.</div>
+</section>
+
+
+<section class="slide" data-steps="6">
+  <h2 class="t">Підбиваємо підсумки</h2>
+  <div style="display:flex;flex-direction:column;gap:14px">
+    <div class="card rv" data-s="1" style="padding:16px 24px;height:152px"><div style="display:flex;gap:20px;align-items:center"><span class="disc" style="width:56px;height:56px;background:var(--teal);font-size:28px;flex:none">1</span><span style="font-size:27px;line-height:1.3">Скільки символів містить кодова таблиця ASCII?</span></div>
+      <div class="rv" data-s="4" style="margin-top:10px;font-size:25px;color:var(--teal);font-weight:bold">128 у базовій частині, 256 разом із розширеною</div></div>
+    <div class="card rv" data-s="2" style="padding:16px 24px;height:152px"><div style="display:flex;gap:20px;align-items:center"><span class="disc" style="width:56px;height:56px;background:var(--blue);font-size:28px;flex:none">2</span><span style="font-size:27px;line-height:1.3">«Моя країна — Україна» — 20 символів. Який обсяг у 8-бітній таблиці й у Юнікоді?</span></div>
+      <div class="rv" data-s="5" style="margin-top:10px;font-size:25px;color:var(--blue);font-weight:bold">20 × 8 = 160 бітів = 20 байтів · Юнікод: 20 × 16 = 320 бітів = 40 байтів</div></div>
+    <div class="card rv" data-s="3" style="padding:16px 24px;height:152px"><div style="display:flex;gap:20px;align-items:center"><span class="disc" style="width:56px;height:56px;background:var(--violet);font-size:28px;flex:none">3</span><span style="font-size:27px;line-height:1.3">Як можна дізнатися код символу в текстовому процесорі?</span></div>
+      <div class="rv" data-s="6" style="margin-top:10px;font-size:25px;color:var(--violet);font-weight:bold">Вставлення → Символи → Інші символи: внизу вікна видно код</div></div>
+  </div>
+</section>
+
+<!-- 14. РЕФЛЕКСІЯ -->
+<section class="slide" data-steps="2">
+  <h2 class="t">Рефлексія і домашнє завдання</h2>
+  <div style="display:flex;gap:28px">
+    <div class="card rv" data-s="1" style="flex:1;padding:26px;height:380px"><div style="font-size:30px;font-weight:bold;color:var(--teal)">Закінчи речення</div>
+      <ul style="font-size:28px;line-height:1.7;padding-left:26px;margin-top:14px"><li>Сьогодні я дізнався(лась)…</li><li>Мені було легко…</li><li>Мені було складно…</li></ul></div>
+    <div class="tintv rv" data-s="2" style="flex:1;padding:22px 26px;min-height:380px"><div style="font-size:30px;font-weight:bold;color:var(--violet)">Вдома (з підручника)</div>
+      <ol style="font-size:24px;line-height:1.4;padding-left:28px;margin-top:10px"><li>Чи можуть бути в тексті неправильно зазначені коди однотипних літер різних алфавітів?</li><li>Як, вводячи однакові літери, отримати вигляд «Біт» → значки?</li><li>Дізнайся роздільну здатність екрана свого смартфона або монітора.</li></ol>
+      <div style="margin-top:12px;padding:12px 16px;background:#fff;border:2px solid var(--violet);border-radius:12px;font-size:24px;line-height:1.35"><b style="color:var(--violet)">★ Додаткове завдання:</b> виконати вправу 10* на с. 40 і надіслати скриншот виконаного завдання.</div></div>
+  </div>
+  <div class="rv" data-s="2" style="margin-top:22px;background:var(--teal);color:#fff;border-radius:14px;padding:14px 26px;font-size:26px;font-weight:bold;text-align:center">Паспорт: розділ 1 ✓ → наступний урок: розділ 2 «Мій знак у пікселях»</div>
+</section>
+
+
+   </div>
+  </div>
+  <aside id="notes"><div class="in"><h4>Нотатки вчителя</h4><div class="time" id="n-time"></div><div id="n-body"></div></div></aside>
+ </div>
+ <div id="bar">
+  <div class="ctl"><button id="b-prev" title="Назад (←)">◀</button> <button id="b-next" title="Далі (→, Пробіл)">▶</button></div>
+  <div id="cnt"></div>
+  <div id="tl"><div id="clock"></div></div>
+  <div id="sched"></div>
+  <div class="ctl"><button id="b-timer" title="Старт/пауза таймера уроку (T)">⏱ <span id="elapsed">0:00</span> / 45:00</button> <button id="b-notes" title="Нотатки (N)">📝</button> <button id="b-over" title="Огляд слайдів (O)">▦</button> <button id="b-full" title="Повний екран (F)">⛶</button> <button id="b-help" title="Підказка (?)">?</button></div>
+ </div>
+</div>
+<div id="over"><div class="g" id="over-g"></div></div>
+<div id="tv"><div class="box"><div class="hd"><b id="tv-title"></b><span id="tv-tabs"></span><span class="sp"></span><span id="tv-link"></span><button class="btn" id="tv-x">✕ Закрити (Esc)</button></div><div class="note" id="tv-note"></div><div id="tv-tbl"></div><div class="info" id="tv-info">Натисни на клітинку — побачиш код символу.</div></div></div>
+<div id="help" onclick="this.classList.remove('on')"><div class="box"><b>Керування уроком</b><br><kbd>→</kbd> <kbd>Пробіл</kbd> наступний крок або слайд · <kbd>←</kbd> назад<br><kbd>N</kbd> нотатки вчителя · <kbd>T</kbd> таймер уроку (старт/пауза) · <kbd>O</kbd> огляд слайдів<br><kbd>F</kbd> повний екран · <kbd>Esc</kbd> закрити вікна<br>Клацання по порожньому місцю слайда — теж «далі».</div></div>
+
+<script>
+(function(){
+/* ===== дані етапів і нотаток ===== */
+var STAGES=[[9,'Вступ'],[8,'Пояснення'],[8,'Практична'],[4,'Перевірка і висновок'],[7,'Девіз'],[7,'Обсяг і підсумок'],[2,'Рефлексія']];
+var SLIDE_STAGE=[0,0,0,0,0,1,1,1,1,2,2,3,3,4,5,5,5,5,6];
+var TITLES=['Титул','Проєкт «Паспорт цифрового знака»','Паспорт цього уроку','Пригадаємо','Що сталося з текстом?','Від літери до коду','ASCII','Один код — різні символи','Юнікод','Розминка для очей','Завдання 1 (БЖД)','Перевірка','Гра «Так чи ні»','Завдання 2 · Код девізу','Завдання 3 · Обсяг','Додаткове завдання · Код у Word','Розгадка','Підсумки','Рефлексія і ДЗ'];
+var NOTES=[
+'Привітання, тема, мета. Сьогодні кожен починає розділ 1 «Паспорта цифрового знака» — код власного девізу (мотивація з параграфа: текст — це символи, а символ у комп’ютері — двійковий код).',
+'Проєкт: за три уроки кожен збирає один «Паспорт цифрового знака» — на кожному уроці свій розділ. Сьогодні розділ 1. Порядок роботи: картка → зберегти відповіді → внести розділ у конструктор. Показати приклад готового паспорта; кнопка праворуч відкриває конструктор.',
+'Паспорт цього уроку: розділ 1 «Код мого девізу». QR-код і посилання ведуть до конструктора — учні відкривають його наприкінці уроку або вдома. Не затримуватись (до 1 хв).',
+'АКТУАЛІЗАЦІЯ (≈3 хв, усно). Картки клацанням перевертаються й показують відповідь. 1) текстові, числові, графічні, звукові, відео; 2) двійковим кодом (0 і 1); 3) кодування — перетворення даних з одного подання в інше (для комп’ютера — у двійковий код); 4) декодування — зворотне перетворення, відновлення початкового подання; 5) біт, байт, КБ, МБ, ГБ, ТБ; 6) біт; 7) 2⁸ = 256; 8) 2¹⁶ = 65 536. Висновок: більше бітів — більше різних символів можна закодувати. Якщо клас впорався швидко — рухаємось далі.',
+'Показати повідомлення «Ïðèâ³ò, êëàñ!». Файл ніхто не змінював. Гіпотези озвучують УСНО (таймер 1 хв: сам(а) — з партнером — з класом), 2–3 відповіді записати на дошці. Повернемося до них на слайді 8.',
+'Кожному символу відповідає номер у кодовій таблиці, його записують двійково: A → 65 → 01000001. Шістнадцятковий код 41₁₆ = 4·16 + 1 = 65 (у MS Word код видно саме в такому вигляді). Крок 6: цифри 0–9 і A–F залишити на екрані.',
+'ASCII (параграф). Базова частина 0–127 — однакова на всіх комп’ютерах: 0–31 керувальні (Enter, видалення, звуковий сигнал), далі латиниця, цифри, знаки. Розширена частина 128–255 — національні символи й псевдографіка, у різних країнах різна.',
+'Для української використовували різні 8-розрядні таблиці: KOI8-U, KOI8-R, Windows-1251, ISO 8859. Байт DF у Windows-1251 — «Я», в ISO 8859-1 — «ß», в KOI8-U — «ъ». Це відповідь на проблему зі слайда 2: текст записали за однією таблицею, а прочитали за іншою. Кома й «!» не змінились, бо це базова частина ASCII.',
+'Юнікод (ISO 10646): єдина таблиця для символів усіх мов, 16 бітів, 65 536 кодів. «Я» = U+042F. UTF — формат передавання символів інтернетом. У MS Word шістнадцятковий код символу видно у вікні «Символ» (Вставлення → Символи → Інші символи).',
+'РОЗМИНКА ДЛЯ ОЧЕЙ (50 с, входить у 8 хв практичної). Натисніть ▶ — далі все йде саме (50 с). Діти не рухають головою, а лише стежать очима. 1) Підсвічуються 8 клітинок байта A = 01000001: «0» — заплющ очі, «1» — відкрий. 2) Кулька малює на екрані Я, потім 7, потім D — діти повторюють очима. 3) Кулька рухається хрестом. 4) Погляд вдалечінь, 10 морганнь; на екрані з’являється місток до Лабораторії. ⟲ — почати знову.',
+'ПРАКТИЧНА (етап 8 хв: БЖД ≈30 с + розминка 50 с + таймер 6 хв; вправа 10 з параграфа). СПОЧАТКУ нагадайте правила БЖД для роботи вдома (права панель слайда) — 30 секунд. Потім опишіть завдання за пунктами ліворуч. Учні працюють у картці: «Лабораторія» + таблиця з миттєвою перевіркою. Таймер ▶ підказує етапи. Останній рядок таблиці — будь-який символ за вибором учня (за бажанням).',
+'ПЕРЕВІРКА. Вкладка «Ключ»: клас звіряє свою таблицю з відповідями, відкривайте клітинки по одній. Вкладка «Пошук коду» — для додаткового символа, який учень обрав сам.',
+'ГРА «ТАК ЧИ НІ» (≈3 хв, замість таблиці порівняння). Показується по одному твердженню; клас голосує (руки/картки «Так» і «Ні», можна з партнером), потім клацніть «Так» або «Ні» — з’явиться відповідь із поясненням. Після 6 тверджень видно результат; «Грати знову» починає спочатку. Очікувані відповіді: 1 — Ні; 2 — Так; 3 — Ні; 4 — Так; 5 — Ні; 6 — Так. Після кожного пояснення просіть учнів сказати: «Ми помітили… Це означає, тому що…».',
+'7 хв: пояснення 1 хв (кроки 1–4) + таймер 6 хв. Девіз — 3–5 великих літер. Код літер шукати в довідці на картці. Обмін КОДОМ, не девізом. Без пари: розшифрувати «запасний» код із картки.',
+'ЗАВДАННЯ 3 (таймер 2:00): девіз ≈1 хв, фраза «Моя країна — Україна» ≈45 с, перевірка ≈15 с. Обсяг = кількість символів × довжина коду. У Юнікоді 16 бітів = 2 байти на символ. КОД: 3 × 16 = 48 бітів = 6 байтів. Калькулятор працює для будь-якого слова; учні обчислюють обсяг свого девіза в картці.',
+'ДОДАТКОВЕ ЗАВДАННЯ (за бажанням, ≈1 хв; у картці воно теж позначене як додаткове). КОД СИМВОЛУ В WORD (параграф, вправа 10). Показати по кроках: Вставлення → Символ → Інші символи; поле «Код знака» і список «з:» (Юнікод шістн. / ASCII шістн.). Додатково: код 042F + Alt+X дає «Я». Учні можуть перевірити D, 7, Я у власному Word.',
+'РОЗГАДКА (≈1,5 хв). Повертаємось до повідомлення друга зі слайда 5. Відкривайте рядки по одному: що побачив друг (ISO 8859-1) → які байти лежать у файлі (CF F0 E8 E2 B3 F2…) → що виходить за Windows-1251 («Привіт, клас!»). Висновок: текст закодували за однією таблицею, а декодували за іншою; кома, пробіл і «!» не змінились, бо це базова частина ASCII.',
+'Підсумки — питання з параграфа (по одному кроку на запитання, потім відповіді): кількість символів ASCII; обсяг фрази «Моя країна — Україна»; як дізнатися код у текстовому процесорі.',
+'Рефлексія усно (1 хв): продовжити одне з речень. Домашнє завдання — з підручника, додатково вправа 10* на с. 40 (скриншот надіслати вчителю); роздільна здатність екрана потрібна для уроку 2.'];
+
+/* ===== кодові таблиці ===== */
+var UK='АБВГҐДЕЄЖЗИІЇЙКЛМНОПРСТУФХЦЧШЩЬЮЯ';
+function buildW(){var e={},d={};for(var b=0xC0;b<=0xFF;b++){var c=String.fromCharCode(0x0410+b-0xC0);d[b]=c;e[c]=b;}
+ [[0xA8,'Ё'],[0xB8,'ё'],[0xAA,'Є'],[0xBA,'є'],[0xB2,'І'],[0xB3,'і'],[0xAF,'Ї'],[0xBF,'ї'],[0xA5,'Ґ'],[0xB4,'ґ']].forEach(function(p){d[p[0]]=p[1];e[p[1]]=p[0];});return{enc:e,dec:d};}
+function buildK(){var lo='юабцдефгхийклмнопярстужвьызшэщчъ',up=lo.toUpperCase(),e={},d={};
+ for(var i=0;i<32;i++){d[0xC0+i]=lo[i];e[lo[i]]=0xC0+i;d[0xE0+i]=up[i];e[up[i]]=0xE0+i;}
+ [[0xA3,'ё'],[0xB3,'Ё'],[0xA4,'є'],[0xB4,'Є'],[0xA6,'і'],[0xB6,'І'],[0xA7,'ї'],[0xB7,'Ї'],[0xAD,'ґ'],[0xBD,'Ґ']].forEach(function(p){d[p[0]]=p[1];e[p[1]]=p[0];});return{enc:e,dec:d};}
+var TB={w1251:buildW(),koi8u:buildK()};
+function byteOf(ch,t){var c=ch.charCodeAt(0);if(c<128)return c;if(t==='l1')return(c>=160&&c<=255)?c:null;var v=TB[t].enc[ch];return v===undefined?null:v;}
+function charOf(b,t){if(b<128)return String.fromCharCode(b);if(t==='l1')return b>=160?String.fromCharCode(b):'?';var v=TB[t].dec[b];return v===undefined?'?':v;}
+function hx(n,w){return n.toString(16).toUpperCase().padStart(w||2,'0');}
+window.__enc={byteOf:byteOf,charOf:charOf};
+
+/* ===== рушій слайдів ===== */
+var slides=[].slice.call(document.querySelectorAll('.slide')),cur=0,step=0;
+var stage=document.getElementById('stage'),vp=document.getElementById('viewport');
+function maxStep(i){return +slides[i].dataset.steps||0;}
+function setFlip(el,on){if(on){el.textContent=el.dataset.a;el.classList.add('open');}else{el.textContent='?';el.classList.remove('open');}}
+function render(){
+ slides.forEach(function(s,i){s.classList.toggle('on',i===cur);s.classList.toggle('past',i<cur);});
+ var s=slides[cur];
+ [].forEach.call(s.querySelectorAll('[data-s]'),function(el){var on=step>=+el.dataset.s;el.classList.toggle('in',on);if(el.classList.contains('flip'))setFlip(el,on);});
+ [].forEach.call(s.querySelectorAll('.view'),function(v){v.classList.toggle('on',+v.dataset.v===step);});
+ [].forEach.call(s.querySelectorAll('#labtabs .btn'),function(b){b.classList.toggle('on',+b.dataset.g===step);});
+ if(cur===14){if(step>=2&&!window.__vs){window.__vs=1;volRender(true);}}else window.__vs=0; if(cur===11&&step===1)labRender();
+ document.getElementById('cnt').textContent=(cur+1)+' / '+slides.length+(maxStep(cur)?'  ·  крок '+step+'/'+maxStep(cur):'');
+ location.hash='#'+(cur+1);
+ var st=SLIDE_STAGE[cur];
+ [].forEach.call(document.querySelectorAll('#tl .seg'),function(sg,i){sg.classList.toggle('on',i===st);sg.classList.toggle('done',i<st);});
+ var start=0;for(var i=0;i<st;i++)start+=STAGES[i][0];
+ document.getElementById('n-time').textContent='Етап '+(st+1)+' · '+STAGES[st][1]+' · '+Math.floor(start)+':00–'+(start+STAGES[st][0])+':00 ('+STAGES[st][0]+' хв)';
+ document.getElementById('n-body').textContent=NOTES[cur];
+ sched();if(window.__resp)window.__resp();
+}
+function next(){if(step<maxStep(cur)){step++;render();}else if(cur<slides.length-1){cur++;step=0;render();}}
+function prev(){if(step>0){step--;render();}else if(cur>0){cur--;step=maxStep(cur);render();}}
+function go(i){cur=Math.max(0,Math.min(slides.length-1,i));step=0;render();}
+function setStep(n){step=Math.max(0,Math.min(maxStep(cur),n));render();}
+window.__nav={next:next,prev:prev,go:go,setStep:setStep,state:function(){return{cur:cur,step:step};}};
+
+/* ===== масштаб ===== */
+function fit(){if(window.__fit&&window.__fit(vp,stage))return;var k=Math.min(vp.clientWidth/1280,vp.clientHeight/720);stage.style.transform='translate(-50%,-50%) scale('+k+')';}
+window.addEventListener('resize',fit);
+
+/* ===== нижня панель і таймер уроку ===== */
+var tl=document.getElementById('tl');
+STAGES.forEach(function(s,i){var d=document.createElement('div');d.className='seg';d.style.flex=s[0]+' 1 0';d.textContent=s[0]>=7?(i+1)+' · '+s[1]+' · '+s[0]+'′':String(i+1);d.title=(i+1)+'. '+s[1]+' · '+s[0]+' хв';tl.insertBefore(d,document.getElementById('clock'));});
+var elapsed=0,running=false,iv=null;
+function fmt(s){s=Math.max(0,Math.round(s));return Math.floor(s/60)+':'+String(s%60).padStart(2,'0');}
+function sched(){
+ var el=document.getElementById('sched'),st=SLIDE_STAGE[cur],start=0;for(var i=0;i<st;i++)start+=STAGES[i][0];
+ document.getElementById('elapsed').textContent=fmt(elapsed);
+ document.getElementById('clock').style.left=Math.min(100,elapsed/2700*100)+'%';
+ if(!elapsed){el.textContent='';return;}
+ var d=elapsed-start*60;
+ if(Math.abs(d)<30){el.textContent='за графіком';el.style.color='var(--green)';}
+ else if(d>0){el.textContent='запізнення '+fmt(d);el.style.color='var(--red)';}
+ else{el.textContent='попереду '+fmt(-d);el.style.color='var(--teal)';}
+}
+function toggleClock(){running=!running;document.getElementById('b-timer').classList.toggle('on',running);
+ if(running){iv=setInterval(function(){elapsed++;sched();},1000);}else{clearInterval(iv);}}
+document.getElementById('b-timer').addEventListener('click',toggleClock);
+document.getElementById('b-timer').addEventListener('dblclick',function(){if(running)toggleClock();elapsed=0;sched();});
+
+/* ===== міні-таймери ===== */
+function beep(){try{var a=new (window.AudioContext||window.webkitAudioContext)(),o=a.createOscillator(),g=a.createGain();o.connect(g);g.connect(a.destination);o.frequency.value=880;g.gain.value=.15;o.start();o.stop(a.currentTime+.4);}catch(e){}}
+[].forEach.call(document.querySelectorAll('.mt'),function(w){
+ var total=+w.dataset.sec,left=total,t=null,disp=w.querySelector('b'),lab=w.querySelector('.l');
+ var ph=(w.dataset.phases||'').split('|').filter(Boolean).map(function(x){var i=x.indexOf(':');return[+x.slice(0,i),x.slice(i+1)];});
+ function draw(){disp.textContent=String(Math.floor(left/60)).padStart(2,'0')+':'+String(left%60).padStart(2,'0');var e=total-left,l='';ph.forEach(function(p){if(e>=p[0])l=p[1];});lab.textContent=l;w.classList.toggle('end',left===0);}
+ w.querySelector('[data-a=go]').addEventListener('click',function(){if(t){clearInterval(t);t=null;this.textContent='▶';return;}if(left===0)left=total;this.textContent='⏸';var b=this;t=setInterval(function(){left--;draw();if(left<=0){clearInterval(t);t=null;b.textContent='▶';beep();}},1000);});
+ w.querySelector('[data-a=reset]').addEventListener('click',function(){clearInterval(t);t=null;left=total;w.querySelector('[data-a=go]').textContent='▶';draw();});
+ draw();
+});
+
+/* ===== слайд 9: лабораторія ===== */
+function labRender(){
+ var v=document.getElementById('lab-ch').value,out=document.getElementById('lab-out');
+ if(!v){out.innerHTML='';return;}
+ var ch=v[0],u=ch.charCodeAt(0),a=u<128?u:null,w=u<128?u:(TB.w1251.enc[ch]===undefined?null:TB.w1251.enc[ch]);
+ function c(n,wd){return n===null?'—':'<b>'+hx(n,wd||2)+'</b> <span class="muted">('+n+')</span>';}
+ function b(n,l){return n===null?'—':n.toString(2).padStart(l||8,'0');}
+ out.innerHTML='<table><tr><th>Таблиця</th><th>Код (hex, десятковий)</th><th>Двійковий код</th></tr>'+
+ '<tr><td class="rl">ASCII (базова)</td><td class="mono">'+c(a)+'</td><td class="mono">'+b(a)+'</td></tr>'+
+ '<tr><td class="rl">Windows-1251</td><td class="mono">'+c(w)+'</td><td class="mono">'+b(w)+'</td></tr>'+
+ '<tr><td class="rl">Юнікод (16 бітів)</td><td class="mono"><b>'+hx(u,4)+'</b> <span class="muted">('+u+')</span></td><td class="mono">'+b(u,16)+'</td></tr></table>';
+}
+document.getElementById('lab-ch').addEventListener('input',labRender);
+(function keyTable(){
+ var syms=['D','7','Я'],h='<table style="font-size:24px" class="kt"><tr><th>Символ</th><th>ASCII</th><th>Win-1251</th><th>Юнікод</th></tr>';
+ syms.forEach(function(ch){var u=ch.charCodeAt(0),a=u<128?hx(u):'—',w=hx(byteOf(ch,'w1251')),n=u<128?u:byteOf(ch,'w1251'),chk=Math.floor(n/16)+'·16 + '+(n%16)+' = '+n;
+  h+='<tr style="height:62px"><td class="rl" style="text-align:center;font-size:26px">'+ch+'</td>'+
+  '<td class="flip" data-a="'+a+'">?</td><td class="flip" data-a="'+w+'">?</td><td class="flip" data-a="'+hx(u,4)+'">?</td></tr>';});
+ document.getElementById('key-tbl').innerHTML=h+'</table>';
+})();
+document.getElementById('key-all').addEventListener('click',function(){[].forEach.call(document.querySelectorAll('#key-tbl .flip'),function(e){setFlip(e,true);});});
+document.getElementById('key-none').addEventListener('click',function(){[].forEach.call(document.querySelectorAll('#key-tbl .flip'),function(e){setFlip(e,false);});});
+
+
+/* ===== картки-питання: клац — відповідь ===== */
+function qcSet(c,on){var q=c.querySelector('.qt');if(!c.dataset.q)c.dataset.q=q.innerHTML;c.classList.toggle('open',on);
+ q.innerHTML=on?c.dataset.a:c.dataset.q;q.style.fontWeight=on?'bold':'';q.style.color=on?'var(--teal)':'';c.style.background=on?'#eaf7f0':'';
+ if(on){q.style.animation='none';void q.offsetWidth;q.style.animation='flipin .45s';}}
+[].forEach.call(document.querySelectorAll('.qc'),function(c){c.addEventListener('click',function(e){qcSet(c,!c.classList.contains('open'));e.stopPropagation();});});
+document.addEventListener('click',function(e){var f=e.target.closest&&e.target.closest('.flip');if(f&&!f.hasAttribute('data-s')){setFlip(f,!f.classList.contains('open'));e.stopPropagation();}else if(f){setFlip(f,!f.classList.contains('open'));e.stopPropagation();}},true);
+[].forEach.call(document.querySelectorAll('#labtabs .btn'),function(b){b.addEventListener('click',function(){setStep(+b.dataset.g);});});
+/* ===== слайд 13: калькулятор обсягу ===== */
+function volRender(f){
+ var t=document.getElementById('vol-in').value,ch='',n=0;
+ for(var i=0;i<t.length;i++){var c=t[i];n++;ch+='<div style="text-align:center;background:#fff;border:2px solid #d3e2e8;border-radius:12px;padding:8px 14px;animation:pop .4s both;animation-delay:'+(i*.08)+'s"><div style="font-size:34px;font-weight:bold;color:#6a4bc4">'+(c===' '?'␣':c)+'</div><div class="mono" style="font-size:22px">'+hx(c.charCodeAt(0),4)+'</div></div>';}
+ if(f||t!==volRender.last){document.getElementById('vol-chips').innerHTML=ch;volRender.last=t;}
+ var bits=n*16;
+ document.getElementById('vol-calc').innerHTML=n?'<span class="tint" style="padding:12px 20px">'+n+' × 16 = '+bits+' бітів</span><span class="tintv" style="padding:12px 20px">'+bits+' : 8 = '+(bits/8)+' байтів</span>':'';
+}
+document.getElementById('vol-in').addEventListener('input',volRender);
+
+/* ===== переглядач кодових таблиць ===== */
+var CTRL=['NUL','SOH','STX','ETX','EOT','ENQ','ACK','BEL','BS','HT','LF','VT','FF','CR','SO','SI','DLE','DC1','DC2','DC3','DC4','NAK','SYN','ETB','CAN','EM','SUB','ESC','FS','GS','RS','US'];
+function tdec(label){try{var d=new TextDecoder(label);return function(b){var c=d.decode(new Uint8Array([b]));return(c==='\ufffd'||!c)?'':c;};}catch(e){return null;}}
+var D1251=tdec('windows-1251')||function(b){return charOf(b,'w1251');},DKOI=tdec('koi8-u')||function(b){return charOf(b,'koi8u');};
+function dIso(b){return b>=160?String.fromCharCode(b):'';}
+function dAscii(b){return String.fromCharCode(b);}
+var WK='https://uk.wikipedia.org/wiki/';
+var TV={
+ 'ascii-base':{t:'ASCII: базова частина (0–127)',a:0,z:127,dec:dAscii,hl:65,note:'Базова частина однакова на всіх комп’ютерах. Сірі клітинки (0–31) — керувальні символи-команди. Літера A — у рядку 4_ та стовпці _1: 41₁₆ = 65.',link:[['🔗 Вікіпедія',WK+'ASCII']]},
+ 'ascii-ext':{t:'Розширена частина (128–255)',a:128,z:255,dec:D1251,note:'Тут для прикладу кирилиця Windows-1251. В інших країнах на цих самих кодах стоять інші символи — тому розширена частина різна.',link:[['🔗 Вікіпедія',WK+'ASCII']]},
+ 'win1251':{t:'Windows-1251',a:128,z:255,dec:D1251,hl:223,note:'Код 0–127 — як у ASCII. Фіолетова клітинка — байт DF (223): тут це «Я».',link:[['🔗 Вікіпедія',WK+'Windows-1251']]},
+ 'iso1':{t:'ISO 8859-1',a:128,z:255,dec:dIso,hl:223,note:'Код 0–127 — як у ASCII. Фіолетова клітинка — байт DF (223): тут це «ß». Кириличних літер у цій таблиці немає.',link:[['🔗 Вікіпедія',WK+'ISO_8859-1']]},
+ 'koi8u':{t:'KOI8-U',a:128,z:255,dec:DKOI,hl:223,note:'Код 0–127 — як у ASCII. Фіолетова клітинка — байт DF (223): тут це «ъ». Таблиця для української.',link:[['🔗 Вікіпедія',WK+'KOI8-U']]},
+ 'uni1':{t:'Юнікод: кирилиця U+0400–U+047F',a:0x400,z:0x47F,dec:dAscii,hl:0x42F,uni:1,note:'У Юнікоді кожна літера має свій код: літера Я — U+042F. Код = рядок + стовпець: 042_ і _F.',link:[['🔗 Таблиця кирилиці (unicode.org)','https://www.unicode.org/charts/PDF/U0400.pdf'],['🔗 Вікіпедія',WK+'Юнікод']]},
+ 'uni2':{t:'Юнікод: кирилиця U+0480–U+04FF',a:0x480,z:0x4FF,dec:dAscii,hl:0x490,uni:1,note:'Тут є літера Ґ (U+0490). Українські Є, І, Ї — у першій частині таблиці (U+0404, U+0406, U+0407).',link:[['🔗 Таблиця кирилиці (unicode.org)','https://www.unicode.org/charts/PDF/U0400.pdf'],['🔗 Вікіпедія',WK+'Юнікод']]}
+};
+var TVG={'ascii-base':['ascii-base','ascii-ext'],'ascii-ext':['ascii-base','ascii-ext'],'win1251':['win1251','iso1','koi8u'],'iso1':['win1251','iso1','koi8u'],'koi8u':['win1251','iso1','koi8u'],'uni1':['uni1','uni2'],'uni2':['uni1','uni2']};
+function bin(n,l){return n.toString(2).padStart(l,'0');}
+function tvOpen(key){
+ var v=TV[key],ov=document.getElementById('tv');
+ document.getElementById('tv-title').textContent=v.t;
+ document.getElementById('tv-note').textContent=v.note;
+ var tabs=document.getElementById('tv-tabs');tabs.innerHTML='';
+ TVG[key].forEach(function(k){var b=document.createElement('button');b.className='btn'+(k===key?' on':'');b.style.cssText='font-size:15px;padding:5px 10px;margin-right:6px';b.textContent=TV[k].t;b.onclick=function(){tvOpen(k);};tabs.appendChild(b);});
+ var lk=document.getElementById('tv-link');lk.innerHTML='';
+ v.link.forEach(function(l){var a=document.createElement('a');a.className='btn';a.style.cssText='font-size:15px;padding:5px 10px;margin-right:6px';a.href=l[1];a.target='_blank';a.rel='noopener';a.textContent=l[0];lk.appendChild(a);});
+ var r0=Math.floor(v.a/16),r1=Math.floor(v.z/16),h='<table><tr><th class="r"></th>';
+ for(var c=0;c<16;c++)h+='<th>_'+c.toString(16).toUpperCase()+'</th>';
+ h+='</tr>';
+ for(var r=r0;r<=r1;r++){h+='<tr><th class="r">'+(v.uni?r.toString(16).toUpperCase().padStart(3,'0'):r.toString(16).toUpperCase())+'_</th>';
+  for(var c2=0;c2<16;c2++){var n=r*16+c2,ch=v.dec(v.uni?n:n),ctl=!v.uni&&n<32||n===127&&!v.uni,txt=ctl?(n===127?'DEL':CTRL[n]):(n===32&&!v.uni?'␣':(ch||'—'));
+   h+='<td data-n="'+n+'" class="'+(ctl?'ctl ':'')+(n===v.hl?'hl':'')+'"><span class="c">'+txt+'</span><span class="n">'+(v.uni?'':n)+'</span></td>';}
+  h+='</tr>';}
+ h+='</table>';
+ var tb=document.getElementById('tv-tbl');tb.innerHTML=h;
+ function info(td){var n=+td.dataset.n,t=td.querySelector('.c').textContent,s;
+  if(v.uni)s='Символ «'+t+'» · код U+'+n.toString(16).toUpperCase().padStart(4,'0')+' = '+n+' = '+bin(n,16);
+  else if(td.classList.contains('ctl'))s='Керувальний символ '+t+' (код '+n+' = '+n.toString(16).toUpperCase().padStart(2,'0')+'₁₆) — це команда, а не літера.';
+  else s='Символ «'+t+'» · код '+n.toString(16).toUpperCase().padStart(2,'0')+'₁₆ = '+n+' = '+bin(n,8);
+  document.getElementById('tv-info').textContent=s;}
+ [].forEach.call(tb.querySelectorAll('td'),function(td){td.addEventListener('click',function(){[].forEach.call(tb.querySelectorAll('td.sel'),function(x){x.classList.remove('sel');});td.classList.add('sel');info(td);});});
+ var first=v.hl!==undefined?tb.querySelector('td[data-n="'+v.hl+'"]'):null;
+ if(first){first.classList.add('sel');info(first);}else document.getElementById('tv-info').textContent='Натисни на клітинку — побачиш код символу.';
+ ov.classList.add('on');
+}
+[].forEach.call(document.querySelectorAll('.tvb'),function(b){b.addEventListener('click',function(e){e.stopPropagation();tvOpen(b.dataset.tv);});});
+document.getElementById('tv-x').addEventListener('click',function(){document.getElementById('tv').classList.remove('on');});
+document.getElementById('tv').addEventListener('click',function(e){if(e.target===this)this.classList.remove('on');});
+
+/* ===== огляд, нотатки, повний екран, клавіші ===== */
+var og=document.getElementById('over-g');
+TITLES.forEach(function(t,i){var d=document.createElement('div');d.innerHTML='<b>'+(i+1)+'.</b> '+t;d.addEventListener('click',function(){document.getElementById('over').classList.remove('on');go(i);});og.appendChild(d);});
+function toggleNotes(){document.getElementById('notes').classList.toggle('open');setTimeout(fit,320);}
+function full(){var d=document.documentElement;if(!document.fullscreenElement){(d.requestFullscreen||d.webkitRequestFullscreen||function(){}).call(d);}else{(document.exitFullscreen||function(){}).call(document);}}
+document.getElementById('b-next').addEventListener('click',next);document.getElementById('b-prev').addEventListener('click',prev);
+document.getElementById('b-notes').addEventListener('click',toggleNotes);document.getElementById('b-full').addEventListener('click',full);
+document.getElementById('b-over').addEventListener('click',function(){document.getElementById('over').classList.add('on');});
+document.getElementById('b-help').addEventListener('click',function(){document.getElementById('help').classList.add('on');});
+document.getElementById('over').addEventListener('click',function(e){if(e.target===this)this.classList.remove('on');});
+document.addEventListener('keydown',function(e){
+ var tg=e.target.tagName;if(tg==='INPUT'||tg==='SELECT'||tg==='TEXTAREA')return;
+ if(document.getElementById('tv').classList.contains('on')){if(e.key==='Escape')document.getElementById('tv').classList.remove('on');return;}
+ var k=e.key;
+ if(k==='ArrowRight'||k===' '||k==='PageDown'||k==='Enter'){e.preventDefault();next();}
+ else if(k==='ArrowLeft'||k==='PageUp'||k==='Backspace'){e.preventDefault();prev();}
+ else if(k==='Home')go(0);else if(k==='End')go(slides.length-1);
+ else if(k==='n'||k==='N'||k==='т'||k==='Т')toggleNotes();
+ else if(k==='t'||k==='T'||k==='е'||k==='Е')toggleClock();
+ else if(k==='o'||k==='O'||k==='щ'||k==='Щ')document.getElementById('over').classList.toggle('on');
+ else if(k==='f'||k==='F'||k==='а'||k==='А')full();
+ else if(k==='?')document.getElementById('help').classList.toggle('on');
+ else if(k==='Escape'){document.getElementById('over').classList.remove('on');document.getElementById('help').classList.remove('on');}
+});
+stage.addEventListener('click',function(e){if(e.target.closest('input,select,button,a,.flip,.qc,.mt,.tabs,.linkrow,table input'))return;if(slides[cur].classList.contains('on')&&(e.target.closest('#key-tbl')))return;next();});
+
+var h=parseInt((location.hash||'').slice(1),10);if(h>=1&&h<=slides.length)cur=h-1;
+fit();render();labRender();volRender();
+})();
+
+/* розминка */
+(function(){var G=document.getElementById('wm-go');if(!G)return;
+ var $=function(i){return document.getElementById(i)};
+ var BITS='01000001',PATHS=[['Я','M80 125 V18 H48 C14 18 14 72 48 72 H80 M48 72 L20 125'],['7','M20 20 H82 L42 125'],['D','M22 18 V125 H50 C105 125 105 18 50 18 Z']];
+ var bits=$('wm-bits');BITS.split('').forEach(function(c){var d=document.createElement('div');d.style.cssText='flex:1;min-width:0;margin:0 6px;height:96px;border-radius:14px;border:3px solid #c9d6dd;display:flex;align-items:center;justify-content:center;font:bold 52px Consolas,monospace;color:#8aa0ad;background:#fff;transition:all .2s';d.textContent=c;bits.appendChild(d);});
+ var raf=0,t0=0,run=false;
+ function show(id){['wm-0','wm-a','wm-b','wm-c','wm-e'].forEach(function(x){$(x).style.display=(x===id?(x==='wm-b'||x==='wm-c'?'block':'flex'):'none');});}
+ function reset(){run=false;cancelAnimationFrame(raf);show('wm-0');$('wm-t').textContent='00:50';$('wm-ph').textContent='Стежи очима за кульками';G.textContent='▶';}
+ function frame(now){
+  if(!run)return; if(!$('warm').classList.contains('on')){reset();return;}
+  var t=(now-t0)/1000;if(t>=50){$('wm-t').textContent='00:00';$('wm-ph').textContent='Очі готові';run=false;G.textContent='▶';return;}
+  $('wm-t').textContent='00:'+('0'+Math.ceil(50-t)).slice(-2);
+  if(t<22){show('wm-a');$('wm-ph').textContent='1 · Бітова доріжка';
+   var pos=t<10?t/10:(t<20?1-(t-10)/10:0),ease=pos*pos*(3-2*pos),k=Math.max(0,Math.min(7,Math.round(ease*7)));
+   $('wm-ball').style.left=((ease*7+.5)/8*100)+'%';
+   [].slice.call(bits.children,1).forEach(function(d,i){var on=i===k&&t<20,v=BITS[i]==='1';d.style.borderColor=on?(v?'#2f9e6b':'#6b46c1'):(t>=20?'#2f9e6b':'#c9d6dd');d.style.background=on?(v?'#e6f6ee':'#efeafb'):'#fff';d.style.color=on?(v?'#2f9e6b':'#6b46c1'):'#8aa0ad';d.style.transform=on?'scale(1.1)':'scale(1)';});
+   $('wm-say').innerHTML=t<20?('<span style="color:'+(BITS[k]==='1'?'#2f9e6b':'#6b46c1')+'">'+BITS[k]+'</span>'):'<span style="color:#2f9e6b">01000001 = 65 = A ✓</span>';}
+  else if(t<42){show('wm-b');$('wm-ph').textContent='2 · Від Я до Я';var u=(t-22)/20*3,n=Math.min(2,Math.floor(u)),f=u-n,P=$('wm-p'),D=$('wm-d');
+   if(P.getAttribute('data-i')!=n){P.setAttribute('data-i',n);P.setAttribute('d',PATHS[n][1]);D.setAttribute('d',PATHS[n][1]);$('wm-lab').textContent=PATHS[n][0];}
+   var L=D.getTotalLength(),e=Math.min(1,f/0.85);D.style.strokeDasharray=L;D.style.strokeDashoffset=L*(1-e);var pt=D.getPointAtLength(L*e);$('wm-dot').setAttribute('cx',pt.x);$('wm-dot').setAttribute('cy',pt.y);}
+  else if(t<46){show('wm-c');$('wm-ph').textContent='3 · Хрест';var q=(t-42)/4*4,seg=Math.floor(q),w=q-seg,C=[[130,80],[130,30],[130,130],[40,80],[220,80],[130,80]],a=C[Math.min(seg+1,4)],bb=C[Math.min(seg+2,5)];
+   var from=[[130,80],[130,30],[130,130],[40,80]][Math.min(seg,3)],to=[[130,30],[130,130],[40,80],[220,80]][Math.min(seg,3)];$('wm-cd').setAttribute('cx',from[0]+(to[0]-from[0])*w);$('wm-cd').setAttribute('cy',from[1]+(to[1]-from[1])*w);}
+  else{show('wm-e');$('wm-ph').textContent='4 · Вдалечінь';}
+  raf=requestAnimationFrame(frame);}
+ G.addEventListener('click',function(){if(run){reset();return;}run=true;t0=performance.now();G.textContent='■';raf=requestAnimationFrame(frame);});
+ $('wm-rs').addEventListener('click',reset);
+ document.addEventListener('keydown',function(e){if(e.key==='ArrowRight'||e.key==='ArrowLeft'||e.key==='PageDown'||e.key==='PageUp')setTimeout(function(){if(run&&!$('warm').classList.contains('on'))reset();},0);});
+})();
+</script>
+<script>
+(function(){
+var Q=[
+['Кириличні літери є в базовій частині ASCII (коди 0–127).',0,'Ні. У базовій частині лише латиниця, цифри й знаки. Кирилиця — у розширеній частині, і в кожній таблиці різна.'],
+['Базова частина ASCII (0–127) однакова на всіх комп’ютерах.',1,'Так. Тому кома, пробіл і «!» не «зіпсувалися» у повідомленні друга.'],
+['В одній 8-бітній таблиці можна закодувати 65 536 різних символів.',0,'Ні. 2<sup>8</sup> = 256 символів. А 65 536 = 2<sup>16</sup> — це Юнікод.'],
+['У Юнікоді на один символ відводиться 16 бітів (2 байти).',1,'Так. 16 бітів = 2 байти, це 65 536 різних кодів.'],
+['Той самий код у різних 8-бітних таблицях завжди дає той самий символ.',0,'Ні. Байт DF (223): у Windows-1251 це «Я», в ISO 8859-1 — «ß», у KOI8-U — «ъ».'],
+['Текст із 10 символів у Юнікоді займає 20 байтів.',1,'Так. 10 × 16 = 160 бітів = 20 байтів. У 8-бітній таблиці було б 10 байтів.']];
+var $=function(i){return document.getElementById(i)},i=0,score=0,res=[],done=false;
+var dots=$('g-dots'),btns=[].slice.call(document.querySelectorAll('#game .gb'));
+function paintDots(){dots.innerHTML='';Q.forEach(function(q,k){var d=document.createElement('span');d.style.cssText='flex:1;height:10px;border-radius:99px;background:'+(res[k]===1?'var(--green)':res[k]===0?'var(--red)':(k===i&&!done?'var(--teal)':'#d3e2e8'));dots.appendChild(d);});}
+function show(){done=false;var q=Q[i];$('g-num').textContent='Твердження '+(i+1)+' з '+Q.length;$('g-q').innerHTML=q[0];
+ $('g-fb').innerHTML='<span class="muted">Обери відповідь: «Так» чи «Ні». Можна радитися з партнером.</span>';$('g-fb').style.background='';
+ $('g-next').style.display='none';$('g-btns').style.display='flex';
+ btns.forEach(function(b){b.disabled=false;b.style.opacity='1';b.style.background='#fff';b.style.color=b.dataset.v==='1'?'var(--green)':'var(--red)';});
+ $('g-score').textContent='Рахунок: '+score;paintDots();}
+function answer(v){if(res[i]!==undefined)return;var q=Q[i],ok=(v===q[1]);res[i]=ok?1:0;if(ok)score++;
+ btns.forEach(function(b){b.disabled=true;var isRight=(+b.dataset.v===q[1]);b.style.opacity=(isRight||+b.dataset.v===v)?'1':'.35';
+  if(isRight){b.style.background='var(--green)';b.style.color='#fff';}else if(+b.dataset.v===v){b.style.background='var(--red)';b.style.color='#fff';}});
+ $('g-fb').style.background=ok?'#eaf7f0':'#fdeeee';
+ $('g-fb').innerHTML='<div><b style="color:'+(ok?'var(--green)':'var(--red)')+'">'+(ok?'✓ Правильно! ':'✗ Не зовсім. ')+'</b>'+q[2]+'</div>';
+ $('g-score').textContent='Рахунок: '+score;$('g-next').textContent=i<Q.length-1?'Далі →':'Результат';$('g-next').style.display='inline-block';paintDots();}
+function finish(){done=true;var m=score===Q.length?'Блискуче! Ви добре розумієте різницю між таблицями.':score>=4?'Добре! Перевірте ще раз твердження, де були помилки.':'Є що повторити: поверніться до слайдів про ASCII та Юнікод.';
+ $('g-num').textContent='Гру завершено';$('g-q').innerHTML='Результат: <span style="color:var(--violet)">'+score+' з '+Q.length+'</span>';
+ $('g-btns').style.display='none';$('g-fb').style.background='';$('g-fb').innerHTML='<div>'+m+'</div>';
+ $('g-next').textContent='↻ Грати знову';$('g-next').style.display='inline-block';paintDots();}
+btns.forEach(function(b){b.addEventListener('click',function(e){e.stopPropagation();answer(+b.dataset.v);b.blur();});});
+$('g-next').addEventListener('click',function(e){e.stopPropagation();this.blur();
+ if(done){i=0;score=0;res=[];show();return;}
+ if(i<Q.length-1){i++;show();}else finish();});
+show();
+})();
+</script>
+<div id="card-ov" style="position:fixed;inset:0;z-index:45;background:rgba(27,42,74,.88);display:none;flex-direction:column;padding:10px">
+<div style="display:flex;gap:10px;justify-content:flex-end;margin-bottom:8px"><button class="btn" id="card-tab" style="font-size:15px">↗ Відкрити в новій вкладці</button><button class="btn" id="card-x" style="font-size:15px">✕ Закрити (Esc)</button></div>
+<iframe id="card-fr" style="flex:1;border:0;border-radius:12px;background:#f7fbfc;width:100%"></iframe></div>
+<script>
+(function(){var U="https://tanyaol.github.io/my_teaching_materials/informatics/grade-10-profile/kod/urok/lesson1/urok1_kartka.html",ov=document.getElementById('card-ov'),fr=document.getElementById('card-fr'),cur='';
+function open_(a){cur=U+'#'+a;fr.src='about:blank';setTimeout(function(){fr.src=cur;},0);ov.style.display='flex';}
+function close_(){ov.style.display='none';fr.src='about:blank';}
+[].forEach.call(document.querySelectorAll('.cardopen'),function(b){b.addEventListener('click',function(e){e.stopPropagation();b.blur();open_(b.dataset.a);});});
+document.getElementById('card-x').onclick=close_;
+document.getElementById('card-tab').onclick=function(){window.open(cur,'_blank');};
+document.addEventListener('keydown',function(e){if(ov.style.display==='flex'){if(e.key==='Escape')close_();e.stopImmediatePropagation();}},true);
+})();
+</script>
+<div id="tbl-ov" style="position:fixed;inset:0;z-index:40;background:rgba(27,42,74,.88);display:none;flex-direction:column;padding:10px">
+<div style="display:flex;gap:10px;justify-content:flex-end;margin-bottom:8px"><button class="btn" id="tbl-tab" style="font-size:15px">↗ Відкрити в новій вкладці</button><button class="btn" id="tbl-x" style="font-size:15px">✕ Закрити</button></div>
+<iframe id="tbl-fr" style="flex:1;border:0;border-radius:12px;background:#f4f8fb;width:100%"></iframe></div>
+<script>
+(function(){var SRC="<!DOCTYPE html><html lang=\"uk\"><head><meta charset=\"utf-8\"><meta name=\"viewport\" content=\"width=device-width,initial-scale=1\"><title>Таблиці кодування символів<\/title>\n<style>\n:root{--ink:#14213d;--acc:#0e8a9b;--v:#6d4ccf;--mut:#5b6b80}*{box-sizing:border-box}\nbody{margin:0;font-family:Arial,\"Segoe UI\",sans-serif;background:#f4f8fb;color:var(--ink)}.w{max-width:1100px;margin:0 auto;padding:18px 14px 50px}\nh1{color:var(--acc);font-size:26px;margin:.2em 0}.sub{color:var(--mut);margin:0 0 12px}\n.tabs{display:flex;flex-wrap:wrap;gap:8px;margin:10px 0}.tb{font:inherit;font-size:16px;background:#e3eaf0;border:0;border-radius:10px;padding:9px 14px;cursor:pointer}.tb.on{background:var(--acc);color:#fff}\n.pn{display:none}.pn.on{display:block}.nt{background:#e6f4f6;border-radius:10px;padding:10px 14px;font-size:16px;line-height:1.5}.tw{overflow-x:auto}\ntable.ct{border-collapse:collapse;background:#fff;margin:8px 0}.ct th{background:var(--acc);color:#fff;font-size:13px;padding:4px 6px}.ct th.r{background:#0b6f7d;min-width:42px}\n.ct td{border:1px solid #c9d6e0;text-align:center;width:58px;height:46px;padding:0;position:relative;cursor:pointer}.ct td b{font-size:19px;display:block;line-height:1.2;padding-top:3px}.ct td i{font-size:10px;color:#889;font-style:normal;display:block}\n.ct td.ctl{background:#e6e9ee;color:#556}.ct td.ctl b{font-size:12px;padding-top:9px}.ct td.hl{background:#e4dcfb;outline:2px solid var(--v)}.ct td.sel{background:#fff1b8}\n#inf{min-height:2.6em;background:#fff;border-radius:10px;padding:10px 14px;box-shadow:0 1px 6px #0001;font-size:17px;margin:8px 0}\n.sr{background:#fff;border-radius:14px;padding:14px 18px;box-shadow:0 1px 8px #0001;margin:12px 0}.sr input{font:inherit;font-size:26px;width:90px;text-align:center;border:2px solid #9ab;border-radius:8px;padding:6px}\n.sr table{border-collapse:collapse;margin-top:10px}.sr td,.sr th{border:1px solid #9ab;padding:6px 14px;text-align:center;font-size:18px}.sr th{background:var(--acc);color:#fff}\n@media print{.tabs,.sr,#inf{display:none}.pn{display:block;page-break-after:always}.ct td{height:34px}}\n<\/style><\/head><body><div class=\"w\"><h1>Таблиці кодування символів<\/h1><p class=\"sub\">Допоміжна сторінка до уроку «Кодування символів». Натискай на клітинку — побачиш код.<\/p>\n<div class=\"sr\"><b>Знайти код символу:<\/b> введи символ <input id=\"q\" maxlength=\"1\" value=\"Я\"><div id=\"res\"><\/div><\/div>\n<div class=\"tabs\"><button class=\"tb on\" data-k=\"ascii\">ASCII 0–127<\/button><button class=\"tb\" data-k=\"w1251\">Windows-1251<\/button><button class=\"tb\" data-k=\"iso\">ISO 8859-1<\/button><button class=\"tb\" data-k=\"koi\">KOI8-U<\/button><button class=\"tb\" data-k=\"uni1\">Юнікод U+0400–047F<\/button><button class=\"tb\" data-k=\"uni2\">Юнікод U+0480–04FF<\/button><\/div><div id=\"inf\">Натисни на клітинку — побачиш код символу.<\/div><section class=\"pn on\" id=\"p_ascii\"><p class=\"nt\">Базова частина, однакова всюди. Сірі клітинки (0–31 і 127) — керувальні символи. Літера A має код 65 = 41₁₆. Рядок + стовпець у HEX дають код: A → 4_ і _1 → 41₁₆.<\/p><div class=\"tw\"><table class=\"ct\"><tr><th class=\"r\"><\/th><th>_0<\/th><th>_1<\/th><th>_2<\/th><th>_3<\/th><th>_4<\/th><th>_5<\/th><th>_6<\/th><th>_7<\/th><th>_8<\/th><th>_9<\/th><th>_A<\/th><th>_B<\/th><th>_C<\/th><th>_D<\/th><th>_E<\/th><th>_F<\/th><\/tr><tr><th class=\"r\">0_<\/th><td class=\"ctl\" data-n=\"0\"><b>NUL<\/b><i>0<\/i><\/td><td class=\"ctl\" data-n=\"1\"><b>SOH<\/b><i>1<\/i><\/td><td class=\"ctl\" data-n=\"2\"><b>STX<\/b><i>2<\/i><\/td><td class=\"ctl\" data-n=\"3\"><b>ETX<\/b><i>3<\/i><\/td><td class=\"ctl\" data-n=\"4\"><b>EOT<\/b><i>4<\/i><\/td><td class=\"ctl\" data-n=\"5\"><b>ENQ<\/b><i>5<\/i><\/td><td class=\"ctl\" data-n=\"6\"><b>ACK<\/b><i>6<\/i><\/td><td class=\"ctl\" data-n=\"7\"><b>BEL<\/b><i>7<\/i><\/td><td class=\"ctl\" data-n=\"8\"><b>BS<\/b><i>8<\/i><\/td><td class=\"ctl\" data-n=\"9\"><b>HT<\/b><i>9<\/i><\/td><td class=\"ctl\" data-n=\"10\"><b>LF<\/b><i>10<\/i><\/td><td class=\"ctl\" data-n=\"11\"><b>VT<\/b><i>11<\/i><\/td><td class=\"ctl\" data-n=\"12\"><b>FF<\/b><i>12<\/i><\/td><td class=\"ctl\" data-n=\"13\"><b>CR<\/b><i>13<\/i><\/td><td class=\"ctl\" data-n=\"14\"><b>SO<\/b><i>14<\/i><\/td><td class=\"ctl\" data-n=\"15\"><b>SI<\/b><i>15<\/i><\/td><\/tr><tr><th class=\"r\">1_<\/th><td class=\"ctl\" data-n=\"16\"><b>DLE<\/b><i>16<\/i><\/td><td class=\"ctl\" data-n=\"17\"><b>DC1<\/b><i>17<\/i><\/td><td class=\"ctl\" data-n=\"18\"><b>DC2<\/b><i>18<\/i><\/td><td class=\"ctl\" data-n=\"19\"><b>DC3<\/b><i>19<\/i><\/td><td class=\"ctl\" data-n=\"20\"><b>DC4<\/b><i>20<\/i><\/td><td class=\"ctl\" data-n=\"21\"><b>NAK<\/b><i>21<\/i><\/td><td class=\"ctl\" data-n=\"22\"><b>SYN<\/b><i>22<\/i><\/td><td class=\"ctl\" data-n=\"23\"><b>ETB<\/b><i>23<\/i><\/td><td class=\"ctl\" data-n=\"24\"><b>CAN<\/b><i>24<\/i><\/td><td class=\"ctl\" data-n=\"25\"><b>EM<\/b><i>25<\/i><\/td><td class=\"ctl\" data-n=\"26\"><b>SUB<\/b><i>26<\/i><\/td><td class=\"ctl\" data-n=\"27\"><b>ESC<\/b><i>27<\/i><\/td><td class=\"ctl\" data-n=\"28\"><b>FS<\/b><i>28<\/i><\/td><td class=\"ctl\" data-n=\"29\"><b>GS<\/b><i>29<\/i><\/td><td class=\"ctl\" data-n=\"30\"><b>RS<\/b><i>30<\/i><\/td><td class=\"ctl\" data-n=\"31\"><b>US<\/b><i>31<\/i><\/td><\/tr><tr><th class=\"r\">2_<\/th><td class=\"\" data-n=\"32\"><b>␣<\/b><i>32<\/i><\/td><td class=\"\" data-n=\"33\"><b>!<\/b><i>33<\/i><\/td><td class=\"\" data-n=\"34\"><b>\"<\/b><i>34<\/i><\/td><td class=\"\" data-n=\"35\"><b>#<\/b><i>35<\/i><\/td><td class=\"\" data-n=\"36\"><b>$<\/b><i>36<\/i><\/td><td class=\"\" data-n=\"37\"><b>%<\/b><i>37<\/i><\/td><td class=\"\" data-n=\"38\"><b>&<\/b><i>38<\/i><\/td><td class=\"\" data-n=\"39\"><b>'<\/b><i>39<\/i><\/td><td class=\"\" data-n=\"40\"><b>(<\/b><i>40<\/i><\/td><td class=\"\" data-n=\"41\"><b>)<\/b><i>41<\/i><\/td><td class=\"\" data-n=\"42\"><b>*<\/b><i>42<\/i><\/td><td class=\"\" data-n=\"43\"><b>+<\/b><i>43<\/i><\/td><td class=\"\" data-n=\"44\"><b>,<\/b><i>44<\/i><\/td><td class=\"\" data-n=\"45\"><b>-<\/b><i>45<\/i><\/td><td class=\"\" data-n=\"46\"><b>.<\/b><i>46<\/i><\/td><td class=\"\" data-n=\"47\"><b>/<\/b><i>47<\/i><\/td><\/tr><tr><th class=\"r\">3_<\/th><td class=\"\" data-n=\"48\"><b>0<\/b><i>48<\/i><\/td><td class=\"\" data-n=\"49\"><b>1<\/b><i>49<\/i><\/td><td class=\"\" data-n=\"50\"><b>2<\/b><i>50<\/i><\/td><td class=\"\" data-n=\"51\"><b>3<\/b><i>51<\/i><\/td><td class=\"\" data-n=\"52\"><b>4<\/b><i>52<\/i><\/td><td class=\"\" data-n=\"53\"><b>5<\/b><i>53<\/i><\/td><td class=\"\" data-n=\"54\"><b>6<\/b><i>54<\/i><\/td><td class=\"\" data-n=\"55\"><b>7<\/b><i>55<\/i><\/td><td class=\"\" data-n=\"56\"><b>8<\/b><i>56<\/i><\/td><td class=\"\" data-n=\"57\"><b>9<\/b><i>57<\/i><\/td><td class=\"\" data-n=\"58\"><b>:<\/b><i>58<\/i><\/td><td class=\"\" data-n=\"59\"><b>;<\/b><i>59<\/i><\/td><td class=\"\" data-n=\"60\"><b><<\/b><i>60<\/i><\/td><td class=\"\" data-n=\"61\"><b>=<\/b><i>61<\/i><\/td><td class=\"\" data-n=\"62\"><b>><\/b><i>62<\/i><\/td><td class=\"\" data-n=\"63\"><b>?<\/b><i>63<\/i><\/td><\/tr><tr><th class=\"r\">4_<\/th><td class=\"\" data-n=\"64\"><b>@<\/b><i>64<\/i><\/td><td class=\" hl\" data-n=\"65\"><b>A<\/b><i>65<\/i><\/td><td class=\"\" data-n=\"66\"><b>B<\/b><i>66<\/i><\/td><td class=\"\" data-n=\"67\"><b>C<\/b><i>67<\/i><\/td><td class=\"\" data-n=\"68\"><b>D<\/b><i>68<\/i><\/td><td class=\"\" data-n=\"69\"><b>E<\/b><i>69<\/i><\/td><td class=\"\" data-n=\"70\"><b>F<\/b><i>70<\/i><\/td><td class=\"\" data-n=\"71\"><b>G<\/b><i>71<\/i><\/td><td class=\"\" data-n=\"72\"><b>H<\/b><i>72<\/i><\/td><td class=\"\" data-n=\"73\"><b>I<\/b><i>73<\/i><\/td><td class=\"\" data-n=\"74\"><b>J<\/b><i>74<\/i><\/td><td class=\"\" data-n=\"75\"><b>K<\/b><i>75<\/i><\/td><td class=\"\" data-n=\"76\"><b>L<\/b><i>76<\/i><\/td><td class=\"\" data-n=\"77\"><b>M<\/b><i>77<\/i><\/td><td class=\"\" data-n=\"78\"><b>N<\/b><i>78<\/i><\/td><td class=\"\" data-n=\"79\"><b>O<\/b><i>79<\/i><\/td><\/tr><tr><th class=\"r\">5_<\/th><td class=\"\" data-n=\"80\"><b>P<\/b><i>80<\/i><\/td><td class=\"\" data-n=\"81\"><b>Q<\/b><i>81<\/i><\/td><td class=\"\" data-n=\"82\"><b>R<\/b><i>82<\/i><\/td><td class=\"\" data-n=\"83\"><b>S<\/b><i>83<\/i><\/td><td class=\"\" data-n=\"84\"><b>T<\/b><i>84<\/i><\/td><td class=\"\" data-n=\"85\"><b>U<\/b><i>85<\/i><\/td><td class=\"\" data-n=\"86\"><b>V<\/b><i>86<\/i><\/td><td class=\"\" data-n=\"87\"><b>W<\/b><i>87<\/i><\/td><td class=\"\" data-n=\"88\"><b>X<\/b><i>88<\/i><\/td><td class=\"\" data-n=\"89\"><b>Y<\/b><i>89<\/i><\/td><td class=\"\" data-n=\"90\"><b>Z<\/b><i>90<\/i><\/td><td class=\"\" data-n=\"91\"><b>[<\/b><i>91<\/i><\/td><td class=\"\" data-n=\"92\"><b>\\<\/b><i>92<\/i><\/td><td class=\"\" data-n=\"93\"><b>]<\/b><i>93<\/i><\/td><td class=\"\" data-n=\"94\"><b>^<\/b><i>94<\/i><\/td><td class=\"\" data-n=\"95\"><b>_<\/b><i>95<\/i><\/td><\/tr><tr><th class=\"r\">6_<\/th><td class=\"\" data-n=\"96\"><b>`<\/b><i>96<\/i><\/td><td class=\"\" data-n=\"97\"><b>a<\/b><i>97<\/i><\/td><td class=\"\" data-n=\"98\"><b>b<\/b><i>98<\/i><\/td><td class=\"\" data-n=\"99\"><b>c<\/b><i>99<\/i><\/td><td class=\"\" data-n=\"100\"><b>d<\/b><i>100<\/i><\/td><td class=\"\" data-n=\"101\"><b>e<\/b><i>101<\/i><\/td><td class=\"\" data-n=\"102\"><b>f<\/b><i>102<\/i><\/td><td class=\"\" data-n=\"103\"><b>g<\/b><i>103<\/i><\/td><td class=\"\" data-n=\"104\"><b>h<\/b><i>104<\/i><\/td><td class=\"\" data-n=\"105\"><b>i<\/b><i>105<\/i><\/td><td class=\"\" data-n=\"106\"><b>j<\/b><i>106<\/i><\/td><td class=\"\" data-n=\"107\"><b>k<\/b><i>107<\/i><\/td><td class=\"\" data-n=\"108\"><b>l<\/b><i>108<\/i><\/td><td class=\"\" data-n=\"109\"><b>m<\/b><i>109<\/i><\/td><td class=\"\" data-n=\"110\"><b>n<\/b><i>110<\/i><\/td><td class=\"\" data-n=\"111\"><b>o<\/b><i>111<\/i><\/td><\/tr><tr><th class=\"r\">7_<\/th><td class=\"\" data-n=\"112\"><b>p<\/b><i>112<\/i><\/td><td class=\"\" data-n=\"113\"><b>q<\/b><i>113<\/i><\/td><td class=\"\" data-n=\"114\"><b>r<\/b><i>114<\/i><\/td><td class=\"\" data-n=\"115\"><b>s<\/b><i>115<\/i><\/td><td class=\"\" data-n=\"116\"><b>t<\/b><i>116<\/i><\/td><td class=\"\" data-n=\"117\"><b>u<\/b><i>117<\/i><\/td><td class=\"\" data-n=\"118\"><b>v<\/b><i>118<\/i><\/td><td class=\"\" data-n=\"119\"><b>w<\/b><i>119<\/i><\/td><td class=\"\" data-n=\"120\"><b>x<\/b><i>120<\/i><\/td><td class=\"\" data-n=\"121\"><b>y<\/b><i>121<\/i><\/td><td class=\"\" data-n=\"122\"><b>z<\/b><i>122<\/i><\/td><td class=\"\" data-n=\"123\"><b>{<\/b><i>123<\/i><\/td><td class=\"\" data-n=\"124\"><b>|<\/b><i>124<\/i><\/td><td class=\"\" data-n=\"125\"><b>}<\/b><i>125<\/i><\/td><td class=\"\" data-n=\"126\"><b>~<\/b><i>126<\/i><\/td><td class=\"ctl\" data-n=\"127\"><b>DEL<\/b><i>127<\/i><\/td><\/tr><\/table><\/div><\/section><section class=\"pn\" id=\"p_w1251\"><p class=\"nt\">Коди 0–127 — як у ASCII. Фіолетова клітинка — байт DF (223): тут це «Я».<\/p><div class=\"tw\"><table class=\"ct\"><tr><th class=\"r\"><\/th><th>_0<\/th><th>_1<\/th><th>_2<\/th><th>_3<\/th><th>_4<\/th><th>_5<\/th><th>_6<\/th><th>_7<\/th><th>_8<\/th><th>_9<\/th><th>_A<\/th><th>_B<\/th><th>_C<\/th><th>_D<\/th><th>_E<\/th><th>_F<\/th><\/tr><tr><th class=\"r\">8_<\/th><td class=\"\" data-n=\"128\"><b>Ђ<\/b><i>128<\/i><\/td><td class=\"\" data-n=\"129\"><b>Ѓ<\/b><i>129<\/i><\/td><td class=\"\" data-n=\"130\"><b>‚<\/b><i>130<\/i><\/td><td class=\"\" data-n=\"131\"><b>ѓ<\/b><i>131<\/i><\/td><td class=\"\" data-n=\"132\"><b>„<\/b><i>132<\/i><\/td><td class=\"\" data-n=\"133\"><b>…<\/b><i>133<\/i><\/td><td class=\"\" data-n=\"134\"><b>†<\/b><i>134<\/i><\/td><td class=\"\" data-n=\"135\"><b>‡<\/b><i>135<\/i><\/td><td class=\"\" data-n=\"136\"><b>€<\/b><i>136<\/i><\/td><td class=\"\" data-n=\"137\"><b>‰<\/b><i>137<\/i><\/td><td class=\"\" data-n=\"138\"><b>Љ<\/b><i>138<\/i><\/td><td class=\"\" data-n=\"139\"><b>‹<\/b><i>139<\/i><\/td><td class=\"\" data-n=\"140\"><b>Њ<\/b><i>140<\/i><\/td><td class=\"\" data-n=\"141\"><b>Ќ<\/b><i>141<\/i><\/td><td class=\"\" data-n=\"142\"><b>Ћ<\/b><i>142<\/i><\/td><td class=\"\" data-n=\"143\"><b>Џ<\/b><i>143<\/i><\/td><\/tr><tr><th class=\"r\">9_<\/th><td class=\"\" data-n=\"144\"><b>ђ<\/b><i>144<\/i><\/td><td class=\"\" data-n=\"145\"><b>‘<\/b><i>145<\/i><\/td><td class=\"\" data-n=\"146\"><b>’<\/b><i>146<\/i><\/td><td class=\"\" data-n=\"147\"><b>“<\/b><i>147<\/i><\/td><td class=\"\" data-n=\"148\"><b>”<\/b><i>148<\/i><\/td><td class=\"\" data-n=\"149\"><b>•<\/b><i>149<\/i><\/td><td class=\"\" data-n=\"150\"><b>–<\/b><i>150<\/i><\/td><td class=\"\" data-n=\"151\"><b>—<\/b><i>151<\/i><\/td><td class=\"\" data-n=\"152\"><b>—<\/b><i>152<\/i><\/td><td class=\"\" data-n=\"153\"><b>™<\/b><i>153<\/i><\/td><td class=\"\" data-n=\"154\"><b>љ<\/b><i>154<\/i><\/td><td class=\"\" data-n=\"155\"><b>›<\/b><i>155<\/i><\/td><td class=\"\" data-n=\"156\"><b>њ<\/b><i>156<\/i><\/td><td class=\"\" data-n=\"157\"><b>ќ<\/b><i>157<\/i><\/td><td class=\"\" data-n=\"158\"><b>ћ<\/b><i>158<\/i><\/td><td class=\"\" data-n=\"159\"><b>џ<\/b><i>159<\/i><\/td><\/tr><tr><th class=\"r\">A_<\/th><td class=\"\" data-n=\"160\"><b>—<\/b><i>160<\/i><\/td><td class=\"\" data-n=\"161\"><b>Ў<\/b><i>161<\/i><\/td><td class=\"\" data-n=\"162\"><b>ў<\/b><i>162<\/i><\/td><td class=\"\" data-n=\"163\"><b>Ј<\/b><i>163<\/i><\/td><td class=\"\" data-n=\"164\"><b>¤<\/b><i>164<\/i><\/td><td class=\"\" data-n=\"165\"><b>Ґ<\/b><i>165<\/i><\/td><td class=\"\" data-n=\"166\"><b>¦<\/b><i>166<\/i><\/td><td class=\"\" data-n=\"167\"><b>§<\/b><i>167<\/i><\/td><td class=\"\" data-n=\"168\"><b>Ё<\/b><i>168<\/i><\/td><td class=\"\" data-n=\"169\"><b>©<\/b><i>169<\/i><\/td><td class=\"\" data-n=\"170\"><b>Є<\/b><i>170<\/i><\/td><td class=\"\" data-n=\"171\"><b>«<\/b><i>171<\/i><\/td><td class=\"\" data-n=\"172\"><b>¬<\/b><i>172<\/i><\/td><td class=\"\" data-n=\"173\"><b>—<\/b><i>173<\/i><\/td><td class=\"\" data-n=\"174\"><b>®<\/b><i>174<\/i><\/td><td class=\"\" data-n=\"175\"><b>Ї<\/b><i>175<\/i><\/td><\/tr><tr><th class=\"r\">B_<\/th><td class=\"\" data-n=\"176\"><b>°<\/b><i>176<\/i><\/td><td class=\"\" data-n=\"177\"><b>±<\/b><i>177<\/i><\/td><td class=\"\" data-n=\"178\"><b>І<\/b><i>178<\/i><\/td><td class=\"\" data-n=\"179\"><b>і<\/b><i>179<\/i><\/td><td class=\"\" data-n=\"180\"><b>ґ<\/b><i>180<\/i><\/td><td class=\"\" data-n=\"181\"><b>µ<\/b><i>181<\/i><\/td><td class=\"\" data-n=\"182\"><b>¶<\/b><i>182<\/i><\/td><td class=\"\" data-n=\"183\"><b>·<\/b><i>183<\/i><\/td><td class=\"\" data-n=\"184\"><b>ё<\/b><i>184<\/i><\/td><td class=\"\" data-n=\"185\"><b>№<\/b><i>185<\/i><\/td><td class=\"\" data-n=\"186\"><b>є<\/b><i>186<\/i><\/td><td class=\"\" data-n=\"187\"><b>»<\/b><i>187<\/i><\/td><td class=\"\" data-n=\"188\"><b>ј<\/b><i>188<\/i><\/td><td class=\"\" data-n=\"189\"><b>Ѕ<\/b><i>189<\/i><\/td><td class=\"\" data-n=\"190\"><b>ѕ<\/b><i>190<\/i><\/td><td class=\"\" data-n=\"191\"><b>ї<\/b><i>191<\/i><\/td><\/tr><tr><th class=\"r\">C_<\/th><td class=\"\" data-n=\"192\"><b>А<\/b><i>192<\/i><\/td><td class=\"\" data-n=\"193\"><b>Б<\/b><i>193<\/i><\/td><td class=\"\" data-n=\"194\"><b>В<\/b><i>194<\/i><\/td><td class=\"\" data-n=\"195\"><b>Г<\/b><i>195<\/i><\/td><td class=\"\" data-n=\"196\"><b>Д<\/b><i>196<\/i><\/td><td class=\"\" data-n=\"197\"><b>Е<\/b><i>197<\/i><\/td><td class=\"\" data-n=\"198\"><b>Ж<\/b><i>198<\/i><\/td><td class=\"\" data-n=\"199\"><b>З<\/b><i>199<\/i><\/td><td class=\"\" data-n=\"200\"><b>И<\/b><i>200<\/i><\/td><td class=\"\" data-n=\"201\"><b>Й<\/b><i>201<\/i><\/td><td class=\"\" data-n=\"202\"><b>К<\/b><i>202<\/i><\/td><td class=\"\" data-n=\"203\"><b>Л<\/b><i>203<\/i><\/td><td class=\"\" data-n=\"204\"><b>М<\/b><i>204<\/i><\/td><td class=\"\" data-n=\"205\"><b>Н<\/b><i>205<\/i><\/td><td class=\"\" data-n=\"206\"><b>О<\/b><i>206<\/i><\/td><td class=\"\" data-n=\"207\"><b>П<\/b><i>207<\/i><\/td><\/tr><tr><th class=\"r\">D_<\/th><td class=\"\" data-n=\"208\"><b>Р<\/b><i>208<\/i><\/td><td class=\"\" data-n=\"209\"><b>С<\/b><i>209<\/i><\/td><td class=\"\" data-n=\"210\"><b>Т<\/b><i>210<\/i><\/td><td class=\"\" data-n=\"211\"><b>У<\/b><i>211<\/i><\/td><td class=\"\" data-n=\"212\"><b>Ф<\/b><i>212<\/i><\/td><td class=\"\" data-n=\"213\"><b>Х<\/b><i>213<\/i><\/td><td class=\"\" data-n=\"214\"><b>Ц<\/b><i>214<\/i><\/td><td class=\"\" data-n=\"215\"><b>Ч<\/b><i>215<\/i><\/td><td class=\"\" data-n=\"216\"><b>Ш<\/b><i>216<\/i><\/td><td class=\"\" data-n=\"217\"><b>Щ<\/b><i>217<\/i><\/td><td class=\"\" data-n=\"218\"><b>Ъ<\/b><i>218<\/i><\/td><td class=\"\" data-n=\"219\"><b>Ы<\/b><i>219<\/i><\/td><td class=\"\" data-n=\"220\"><b>Ь<\/b><i>220<\/i><\/td><td class=\"\" data-n=\"221\"><b>Э<\/b><i>221<\/i><\/td><td class=\"\" data-n=\"222\"><b>Ю<\/b><i>222<\/i><\/td><td class=\" hl\" data-n=\"223\"><b>Я<\/b><i>223<\/i><\/td><\/tr><tr><th class=\"r\">E_<\/th><td class=\"\" data-n=\"224\"><b>а<\/b><i>224<\/i><\/td><td class=\"\" data-n=\"225\"><b>б<\/b><i>225<\/i><\/td><td class=\"\" data-n=\"226\"><b>в<\/b><i>226<\/i><\/td><td class=\"\" data-n=\"227\"><b>г<\/b><i>227<\/i><\/td><td class=\"\" data-n=\"228\"><b>д<\/b><i>228<\/i><\/td><td class=\"\" data-n=\"229\"><b>е<\/b><i>229<\/i><\/td><td class=\"\" data-n=\"230\"><b>ж<\/b><i>230<\/i><\/td><td class=\"\" data-n=\"231\"><b>з<\/b><i>231<\/i><\/td><td class=\"\" data-n=\"232\"><b>и<\/b><i>232<\/i><\/td><td class=\"\" data-n=\"233\"><b>й<\/b><i>233<\/i><\/td><td class=\"\" data-n=\"234\"><b>к<\/b><i>234<\/i><\/td><td class=\"\" data-n=\"235\"><b>л<\/b><i>235<\/i><\/td><td class=\"\" data-n=\"236\"><b>м<\/b><i>236<\/i><\/td><td class=\"\" data-n=\"237\"><b>н<\/b><i>237<\/i><\/td><td class=\"\" data-n=\"238\"><b>о<\/b><i>238<\/i><\/td><td class=\"\" data-n=\"239\"><b>п<\/b><i>239<\/i><\/td><\/tr><tr><th class=\"r\">F_<\/th><td class=\"\" data-n=\"240\"><b>р<\/b><i>240<\/i><\/td><td class=\"\" data-n=\"241\"><b>с<\/b><i>241<\/i><\/td><td class=\"\" data-n=\"242\"><b>т<\/b><i>242<\/i><\/td><td class=\"\" data-n=\"243\"><b>у<\/b><i>243<\/i><\/td><td class=\"\" data-n=\"244\"><b>ф<\/b><i>244<\/i><\/td><td class=\"\" data-n=\"245\"><b>х<\/b><i>245<\/i><\/td><td class=\"\" data-n=\"246\"><b>ц<\/b><i>246<\/i><\/td><td class=\"\" data-n=\"247\"><b>ч<\/b><i>247<\/i><\/td><td class=\"\" data-n=\"248\"><b>ш<\/b><i>248<\/i><\/td><td class=\"\" data-n=\"249\"><b>щ<\/b><i>249<\/i><\/td><td class=\"\" data-n=\"250\"><b>ъ<\/b><i>250<\/i><\/td><td class=\"\" data-n=\"251\"><b>ы<\/b><i>251<\/i><\/td><td class=\"\" data-n=\"252\"><b>ь<\/b><i>252<\/i><\/td><td class=\"\" data-n=\"253\"><b>э<\/b><i>253<\/i><\/td><td class=\"\" data-n=\"254\"><b>ю<\/b><i>254<\/i><\/td><td class=\"\" data-n=\"255\"><b>я<\/b><i>255<\/i><\/td><\/tr><\/table><\/div><\/section><section class=\"pn\" id=\"p_iso\"><p class=\"nt\">Коди 0–127 — як у ASCII. Байт DF (223) тут — «ß». Кирилиці в цій таблиці немає.<\/p><div class=\"tw\"><table class=\"ct\"><tr><th class=\"r\"><\/th><th>_0<\/th><th>_1<\/th><th>_2<\/th><th>_3<\/th><th>_4<\/th><th>_5<\/th><th>_6<\/th><th>_7<\/th><th>_8<\/th><th>_9<\/th><th>_A<\/th><th>_B<\/th><th>_C<\/th><th>_D<\/th><th>_E<\/th><th>_F<\/th><\/tr><tr><th class=\"r\">8_<\/th><td class=\"\" data-n=\"128\"><b>—<\/b><i>128<\/i><\/td><td class=\"\" data-n=\"129\"><b>—<\/b><i>129<\/i><\/td><td class=\"\" data-n=\"130\"><b>—<\/b><i>130<\/i><\/td><td class=\"\" data-n=\"131\"><b>—<\/b><i>131<\/i><\/td><td class=\"\" data-n=\"132\"><b>—<\/b><i>132<\/i><\/td><td class=\"\" data-n=\"133\"><b>—<\/b><i>133<\/i><\/td><td class=\"\" data-n=\"134\"><b>—<\/b><i>134<\/i><\/td><td class=\"\" data-n=\"135\"><b>—<\/b><i>135<\/i><\/td><td class=\"\" data-n=\"136\"><b>—<\/b><i>136<\/i><\/td><td class=\"\" data-n=\"137\"><b>—<\/b><i>137<\/i><\/td><td class=\"\" data-n=\"138\"><b>—<\/b><i>138<\/i><\/td><td class=\"\" data-n=\"139\"><b>—<\/b><i>139<\/i><\/td><td class=\"\" data-n=\"140\"><b>—<\/b><i>140<\/i><\/td><td class=\"\" data-n=\"141\"><b>—<\/b><i>141<\/i><\/td><td class=\"\" data-n=\"142\"><b>—<\/b><i>142<\/i><\/td><td class=\"\" data-n=\"143\"><b>—<\/b><i>143<\/i><\/td><\/tr><tr><th class=\"r\">9_<\/th><td class=\"\" data-n=\"144\"><b>—<\/b><i>144<\/i><\/td><td class=\"\" data-n=\"145\"><b>—<\/b><i>145<\/i><\/td><td class=\"\" data-n=\"146\"><b>—<\/b><i>146<\/i><\/td><td class=\"\" data-n=\"147\"><b>—<\/b><i>147<\/i><\/td><td class=\"\" data-n=\"148\"><b>—<\/b><i>148<\/i><\/td><td class=\"\" data-n=\"149\"><b>—<\/b><i>149<\/i><\/td><td class=\"\" data-n=\"150\"><b>—<\/b><i>150<\/i><\/td><td class=\"\" data-n=\"151\"><b>—<\/b><i>151<\/i><\/td><td class=\"\" data-n=\"152\"><b>—<\/b><i>152<\/i><\/td><td class=\"\" data-n=\"153\"><b>—<\/b><i>153<\/i><\/td><td class=\"\" data-n=\"154\"><b>—<\/b><i>154<\/i><\/td><td class=\"\" data-n=\"155\"><b>—<\/b><i>155<\/i><\/td><td class=\"\" data-n=\"156\"><b>—<\/b><i>156<\/i><\/td><td class=\"\" data-n=\"157\"><b>—<\/b><i>157<\/i><\/td><td class=\"\" data-n=\"158\"><b>—<\/b><i>158<\/i><\/td><td class=\"\" data-n=\"159\"><b>—<\/b><i>159<\/i><\/td><\/tr><tr><th class=\"r\">A_<\/th><td class=\"\" data-n=\"160\"><b> <\/b><i>160<\/i><\/td><td class=\"\" data-n=\"161\"><b>¡<\/b><i>161<\/i><\/td><td class=\"\" data-n=\"162\"><b>¢<\/b><i>162<\/i><\/td><td class=\"\" data-n=\"163\"><b>£<\/b><i>163<\/i><\/td><td class=\"\" data-n=\"164\"><b>¤<\/b><i>164<\/i><\/td><td class=\"\" data-n=\"165\"><b>¥<\/b><i>165<\/i><\/td><td class=\"\" data-n=\"166\"><b>¦<\/b><i>166<\/i><\/td><td class=\"\" data-n=\"167\"><b>§<\/b><i>167<\/i><\/td><td class=\"\" data-n=\"168\"><b>¨<\/b><i>168<\/i><\/td><td class=\"\" data-n=\"169\"><b>©<\/b><i>169<\/i><\/td><td class=\"\" data-n=\"170\"><b>ª<\/b><i>170<\/i><\/td><td class=\"\" data-n=\"171\"><b>«<\/b><i>171<\/i><\/td><td class=\"\" data-n=\"172\"><b>¬<\/b><i>172<\/i><\/td><td class=\"\" data-n=\"173\"><b>­<\/b><i>173<\/i><\/td><td class=\"\" data-n=\"174\"><b>®<\/b><i>174<\/i><\/td><td class=\"\" data-n=\"175\"><b>¯<\/b><i>175<\/i><\/td><\/tr><tr><th class=\"r\">B_<\/th><td class=\"\" data-n=\"176\"><b>°<\/b><i>176<\/i><\/td><td class=\"\" data-n=\"177\"><b>±<\/b><i>177<\/i><\/td><td class=\"\" data-n=\"178\"><b>²<\/b><i>178<\/i><\/td><td class=\"\" data-n=\"179\"><b>³<\/b><i>179<\/i><\/td><td class=\"\" data-n=\"180\"><b>´<\/b><i>180<\/i><\/td><td class=\"\" data-n=\"181\"><b>µ<\/b><i>181<\/i><\/td><td class=\"\" data-n=\"182\"><b>¶<\/b><i>182<\/i><\/td><td class=\"\" data-n=\"183\"><b>·<\/b><i>183<\/i><\/td><td class=\"\" data-n=\"184\"><b>¸<\/b><i>184<\/i><\/td><td class=\"\" data-n=\"185\"><b>¹<\/b><i>185<\/i><\/td><td class=\"\" data-n=\"186\"><b>º<\/b><i>186<\/i><\/td><td class=\"\" data-n=\"187\"><b>»<\/b><i>187<\/i><\/td><td class=\"\" data-n=\"188\"><b>¼<\/b><i>188<\/i><\/td><td class=\"\" data-n=\"189\"><b>½<\/b><i>189<\/i><\/td><td class=\"\" data-n=\"190\"><b>¾<\/b><i>190<\/i><\/td><td class=\"\" data-n=\"191\"><b>¿<\/b><i>191<\/i><\/td><\/tr><tr><th class=\"r\">C_<\/th><td class=\"\" data-n=\"192\"><b>À<\/b><i>192<\/i><\/td><td class=\"\" data-n=\"193\"><b>Á<\/b><i>193<\/i><\/td><td class=\"\" data-n=\"194\"><b>Â<\/b><i>194<\/i><\/td><td class=\"\" data-n=\"195\"><b>Ã<\/b><i>195<\/i><\/td><td class=\"\" data-n=\"196\"><b>Ä<\/b><i>196<\/i><\/td><td class=\"\" data-n=\"197\"><b>Å<\/b><i>197<\/i><\/td><td class=\"\" data-n=\"198\"><b>Æ<\/b><i>198<\/i><\/td><td class=\"\" data-n=\"199\"><b>Ç<\/b><i>199<\/i><\/td><td class=\"\" data-n=\"200\"><b>È<\/b><i>200<\/i><\/td><td class=\"\" data-n=\"201\"><b>É<\/b><i>201<\/i><\/td><td class=\"\" data-n=\"202\"><b>Ê<\/b><i>202<\/i><\/td><td class=\"\" data-n=\"203\"><b>Ë<\/b><i>203<\/i><\/td><td class=\"\" data-n=\"204\"><b>Ì<\/b><i>204<\/i><\/td><td class=\"\" data-n=\"205\"><b>Í<\/b><i>205<\/i><\/td><td class=\"\" data-n=\"206\"><b>Î<\/b><i>206<\/i><\/td><td class=\"\" data-n=\"207\"><b>Ï<\/b><i>207<\/i><\/td><\/tr><tr><th class=\"r\">D_<\/th><td class=\"\" data-n=\"208\"><b>Ð<\/b><i>208<\/i><\/td><td class=\"\" data-n=\"209\"><b>Ñ<\/b><i>209<\/i><\/td><td class=\"\" data-n=\"210\"><b>Ò<\/b><i>210<\/i><\/td><td class=\"\" data-n=\"211\"><b>Ó<\/b><i>211<\/i><\/td><td class=\"\" data-n=\"212\"><b>Ô<\/b><i>212<\/i><\/td><td class=\"\" data-n=\"213\"><b>Õ<\/b><i>213<\/i><\/td><td class=\"\" data-n=\"214\"><b>Ö<\/b><i>214<\/i><\/td><td class=\"\" data-n=\"215\"><b>×<\/b><i>215<\/i><\/td><td class=\"\" data-n=\"216\"><b>Ø<\/b><i>216<\/i><\/td><td class=\"\" data-n=\"217\"><b>Ù<\/b><i>217<\/i><\/td><td class=\"\" data-n=\"218\"><b>Ú<\/b><i>218<\/i><\/td><td class=\"\" data-n=\"219\"><b>Û<\/b><i>219<\/i><\/td><td class=\"\" data-n=\"220\"><b>Ü<\/b><i>220<\/i><\/td><td class=\"\" data-n=\"221\"><b>Ý<\/b><i>221<\/i><\/td><td class=\"\" data-n=\"222\"><b>Þ<\/b><i>222<\/i><\/td><td class=\" hl\" data-n=\"223\"><b>ß<\/b><i>223<\/i><\/td><\/tr><tr><th class=\"r\">E_<\/th><td class=\"\" data-n=\"224\"><b>à<\/b><i>224<\/i><\/td><td class=\"\" data-n=\"225\"><b>á<\/b><i>225<\/i><\/td><td class=\"\" data-n=\"226\"><b>â<\/b><i>226<\/i><\/td><td class=\"\" data-n=\"227\"><b>ã<\/b><i>227<\/i><\/td><td class=\"\" data-n=\"228\"><b>ä<\/b><i>228<\/i><\/td><td class=\"\" data-n=\"229\"><b>å<\/b><i>229<\/i><\/td><td class=\"\" data-n=\"230\"><b>æ<\/b><i>230<\/i><\/td><td class=\"\" data-n=\"231\"><b>ç<\/b><i>231<\/i><\/td><td class=\"\" data-n=\"232\"><b>è<\/b><i>232<\/i><\/td><td class=\"\" data-n=\"233\"><b>é<\/b><i>233<\/i><\/td><td class=\"\" data-n=\"234\"><b>ê<\/b><i>234<\/i><\/td><td class=\"\" data-n=\"235\"><b>ë<\/b><i>235<\/i><\/td><td class=\"\" data-n=\"236\"><b>ì<\/b><i>236<\/i><\/td><td class=\"\" data-n=\"237\"><b>í<\/b><i>237<\/i><\/td><td class=\"\" data-n=\"238\"><b>î<\/b><i>238<\/i><\/td><td class=\"\" data-n=\"239\"><b>ï<\/b><i>239<\/i><\/td><\/tr><tr><th class=\"r\">F_<\/th><td class=\"\" data-n=\"240\"><b>ð<\/b><i>240<\/i><\/td><td class=\"\" data-n=\"241\"><b>ñ<\/b><i>241<\/i><\/td><td class=\"\" data-n=\"242\"><b>ò<\/b><i>242<\/i><\/td><td class=\"\" data-n=\"243\"><b>ó<\/b><i>243<\/i><\/td><td class=\"\" data-n=\"244\"><b>ô<\/b><i>244<\/i><\/td><td class=\"\" data-n=\"245\"><b>õ<\/b><i>245<\/i><\/td><td class=\"\" data-n=\"246\"><b>ö<\/b><i>246<\/i><\/td><td class=\"\" data-n=\"247\"><b>÷<\/b><i>247<\/i><\/td><td class=\"\" data-n=\"248\"><b>ø<\/b><i>248<\/i><\/td><td class=\"\" data-n=\"249\"><b>ù<\/b><i>249<\/i><\/td><td class=\"\" data-n=\"250\"><b>ú<\/b><i>250<\/i><\/td><td class=\"\" data-n=\"251\"><b>û<\/b><i>251<\/i><\/td><td class=\"\" data-n=\"252\"><b>ü<\/b><i>252<\/i><\/td><td class=\"\" data-n=\"253\"><b>ý<\/b><i>253<\/i><\/td><td class=\"\" data-n=\"254\"><b>þ<\/b><i>254<\/i><\/td><td class=\"\" data-n=\"255\"><b>ÿ<\/b><i>255<\/i><\/td><\/tr><\/table><\/div><\/section><section class=\"pn\" id=\"p_koi\"><p class=\"nt\">Коди 0–127 — як у ASCII. Байт DF (223) тут — «ъ». Таблиця для української.<\/p><div class=\"tw\"><table class=\"ct\"><tr><th class=\"r\"><\/th><th>_0<\/th><th>_1<\/th><th>_2<\/th><th>_3<\/th><th>_4<\/th><th>_5<\/th><th>_6<\/th><th>_7<\/th><th>_8<\/th><th>_9<\/th><th>_A<\/th><th>_B<\/th><th>_C<\/th><th>_D<\/th><th>_E<\/th><th>_F<\/th><\/tr><tr><th class=\"r\">8_<\/th><td class=\"\" data-n=\"128\"><b>─<\/b><i>128<\/i><\/td><td class=\"\" data-n=\"129\"><b>│<\/b><i>129<\/i><\/td><td class=\"\" data-n=\"130\"><b>┌<\/b><i>130<\/i><\/td><td class=\"\" data-n=\"131\"><b>┐<\/b><i>131<\/i><\/td><td class=\"\" data-n=\"132\"><b>└<\/b><i>132<\/i><\/td><td class=\"\" data-n=\"133\"><b>┘<\/b><i>133<\/i><\/td><td class=\"\" data-n=\"134\"><b>├<\/b><i>134<\/i><\/td><td class=\"\" data-n=\"135\"><b>┤<\/b><i>135<\/i><\/td><td class=\"\" data-n=\"136\"><b>┬<\/b><i>136<\/i><\/td><td class=\"\" data-n=\"137\"><b>┴<\/b><i>137<\/i><\/td><td class=\"\" data-n=\"138\"><b>┼<\/b><i>138<\/i><\/td><td class=\"\" data-n=\"139\"><b>▀<\/b><i>139<\/i><\/td><td class=\"\" data-n=\"140\"><b>▄<\/b><i>140<\/i><\/td><td class=\"\" data-n=\"141\"><b>█<\/b><i>141<\/i><\/td><td class=\"\" data-n=\"142\"><b>▌<\/b><i>142<\/i><\/td><td class=\"\" data-n=\"143\"><b>▐<\/b><i>143<\/i><\/td><\/tr><tr><th class=\"r\">9_<\/th><td class=\"\" data-n=\"144\"><b>░<\/b><i>144<\/i><\/td><td class=\"\" data-n=\"145\"><b>▒<\/b><i>145<\/i><\/td><td class=\"\" data-n=\"146\"><b>▓<\/b><i>146<\/i><\/td><td class=\"\" data-n=\"147\"><b>⌠<\/b><i>147<\/i><\/td><td class=\"\" data-n=\"148\"><b>■<\/b><i>148<\/i><\/td><td class=\"\" data-n=\"149\"><b>∙<\/b><i>149<\/i><\/td><td class=\"\" data-n=\"150\"><b>√<\/b><i>150<\/i><\/td><td class=\"\" data-n=\"151\"><b>≈<\/b><i>151<\/i><\/td><td class=\"\" data-n=\"152\"><b>≤<\/b><i>152<\/i><\/td><td class=\"\" data-n=\"153\"><b>≥<\/b><i>153<\/i><\/td><td class=\"\" data-n=\"154\"><b>—<\/b><i>154<\/i><\/td><td class=\"\" data-n=\"155\"><b>⌡<\/b><i>155<\/i><\/td><td class=\"\" data-n=\"156\"><b>°<\/b><i>156<\/i><\/td><td class=\"\" data-n=\"157\"><b>²<\/b><i>157<\/i><\/td><td class=\"\" data-n=\"158\"><b>·<\/b><i>158<\/i><\/td><td class=\"\" data-n=\"159\"><b>÷<\/b><i>159<\/i><\/td><\/tr><tr><th class=\"r\">A_<\/th><td class=\"\" data-n=\"160\"><b>═<\/b><i>160<\/i><\/td><td class=\"\" data-n=\"161\"><b>║<\/b><i>161<\/i><\/td><td class=\"\" data-n=\"162\"><b>╒<\/b><i>162<\/i><\/td><td class=\"\" data-n=\"163\"><b>ё<\/b><i>163<\/i><\/td><td class=\"\" data-n=\"164\"><b>є<\/b><i>164<\/i><\/td><td class=\"\" data-n=\"165\"><b>╔<\/b><i>165<\/i><\/td><td class=\"\" data-n=\"166\"><b>і<\/b><i>166<\/i><\/td><td class=\"\" data-n=\"167\"><b>ї<\/b><i>167<\/i><\/td><td class=\"\" data-n=\"168\"><b>╗<\/b><i>168<\/i><\/td><td class=\"\" data-n=\"169\"><b>╘<\/b><i>169<\/i><\/td><td class=\"\" data-n=\"170\"><b>╙<\/b><i>170<\/i><\/td><td class=\"\" data-n=\"171\"><b>╚<\/b><i>171<\/i><\/td><td class=\"\" data-n=\"172\"><b>╛<\/b><i>172<\/i><\/td><td class=\"\" data-n=\"173\"><b>ґ<\/b><i>173<\/i><\/td><td class=\"\" data-n=\"174\"><b>╝<\/b><i>174<\/i><\/td><td class=\"\" data-n=\"175\"><b>╞<\/b><i>175<\/i><\/td><\/tr><tr><th class=\"r\">B_<\/th><td class=\"\" data-n=\"176\"><b>╟<\/b><i>176<\/i><\/td><td class=\"\" data-n=\"177\"><b>╠<\/b><i>177<\/i><\/td><td class=\"\" data-n=\"178\"><b>╡<\/b><i>178<\/i><\/td><td class=\"\" data-n=\"179\"><b>Ё<\/b><i>179<\/i><\/td><td class=\"\" data-n=\"180\"><b>Є<\/b><i>180<\/i><\/td><td class=\"\" data-n=\"181\"><b>╣<\/b><i>181<\/i><\/td><td class=\"\" data-n=\"182\"><b>І<\/b><i>182<\/i><\/td><td class=\"\" data-n=\"183\"><b>Ї<\/b><i>183<\/i><\/td><td class=\"\" data-n=\"184\"><b>╦<\/b><i>184<\/i><\/td><td class=\"\" data-n=\"185\"><b>╧<\/b><i>185<\/i><\/td><td class=\"\" data-n=\"186\"><b>╨<\/b><i>186<\/i><\/td><td class=\"\" data-n=\"187\"><b>╩<\/b><i>187<\/i><\/td><td class=\"\" data-n=\"188\"><b>╪<\/b><i>188<\/i><\/td><td class=\"\" data-n=\"189\"><b>Ґ<\/b><i>189<\/i><\/td><td class=\"\" data-n=\"190\"><b>╬<\/b><i>190<\/i><\/td><td class=\"\" data-n=\"191\"><b>©<\/b><i>191<\/i><\/td><\/tr><tr><th class=\"r\">C_<\/th><td class=\"\" data-n=\"192\"><b>ю<\/b><i>192<\/i><\/td><td class=\"\" data-n=\"193\"><b>а<\/b><i>193<\/i><\/td><td class=\"\" data-n=\"194\"><b>б<\/b><i>194<\/i><\/td><td class=\"\" data-n=\"195\"><b>ц<\/b><i>195<\/i><\/td><td class=\"\" data-n=\"196\"><b>д<\/b><i>196<\/i><\/td><td class=\"\" data-n=\"197\"><b>е<\/b><i>197<\/i><\/td><td class=\"\" data-n=\"198\"><b>ф<\/b><i>198<\/i><\/td><td class=\"\" data-n=\"199\"><b>г<\/b><i>199<\/i><\/td><td class=\"\" data-n=\"200\"><b>х<\/b><i>200<\/i><\/td><td class=\"\" data-n=\"201\"><b>и<\/b><i>201<\/i><\/td><td class=\"\" data-n=\"202\"><b>й<\/b><i>202<\/i><\/td><td class=\"\" data-n=\"203\"><b>к<\/b><i>203<\/i><\/td><td class=\"\" data-n=\"204\"><b>л<\/b><i>204<\/i><\/td><td class=\"\" data-n=\"205\"><b>м<\/b><i>205<\/i><\/td><td class=\"\" data-n=\"206\"><b>н<\/b><i>206<\/i><\/td><td class=\"\" data-n=\"207\"><b>о<\/b><i>207<\/i><\/td><\/tr><tr><th class=\"r\">D_<\/th><td class=\"\" data-n=\"208\"><b>п<\/b><i>208<\/i><\/td><td class=\"\" data-n=\"209\"><b>я<\/b><i>209<\/i><\/td><td class=\"\" data-n=\"210\"><b>р<\/b><i>210<\/i><\/td><td class=\"\" data-n=\"211\"><b>с<\/b><i>211<\/i><\/td><td class=\"\" data-n=\"212\"><b>т<\/b><i>212<\/i><\/td><td class=\"\" data-n=\"213\"><b>у<\/b><i>213<\/i><\/td><td class=\"\" data-n=\"214\"><b>ж<\/b><i>214<\/i><\/td><td class=\"\" data-n=\"215\"><b>в<\/b><i>215<\/i><\/td><td class=\"\" data-n=\"216\"><b>ь<\/b><i>216<\/i><\/td><td class=\"\" data-n=\"217\"><b>ы<\/b><i>217<\/i><\/td><td class=\"\" data-n=\"218\"><b>з<\/b><i>218<\/i><\/td><td class=\"\" data-n=\"219\"><b>ш<\/b><i>219<\/i><\/td><td class=\"\" data-n=\"220\"><b>э<\/b><i>220<\/i><\/td><td class=\"\" data-n=\"221\"><b>щ<\/b><i>221<\/i><\/td><td class=\"\" data-n=\"222\"><b>ч<\/b><i>222<\/i><\/td><td class=\" hl\" data-n=\"223\"><b>ъ<\/b><i>223<\/i><\/td><\/tr><tr><th class=\"r\">E_<\/th><td class=\"\" data-n=\"224\"><b>Ю<\/b><i>224<\/i><\/td><td class=\"\" data-n=\"225\"><b>А<\/b><i>225<\/i><\/td><td class=\"\" data-n=\"226\"><b>Б<\/b><i>226<\/i><\/td><td class=\"\" data-n=\"227\"><b>Ц<\/b><i>227<\/i><\/td><td class=\"\" data-n=\"228\"><b>Д<\/b><i>228<\/i><\/td><td class=\"\" data-n=\"229\"><b>Е<\/b><i>229<\/i><\/td><td class=\"\" data-n=\"230\"><b>Ф<\/b><i>230<\/i><\/td><td class=\"\" data-n=\"231\"><b>Г<\/b><i>231<\/i><\/td><td class=\"\" data-n=\"232\"><b>Х<\/b><i>232<\/i><\/td><td class=\"\" data-n=\"233\"><b>И<\/b><i>233<\/i><\/td><td class=\"\" data-n=\"234\"><b>Й<\/b><i>234<\/i><\/td><td class=\"\" data-n=\"235\"><b>К<\/b><i>235<\/i><\/td><td class=\"\" data-n=\"236\"><b>Л<\/b><i>236<\/i><\/td><td class=\"\" data-n=\"237\"><b>М<\/b><i>237<\/i><\/td><td class=\"\" data-n=\"238\"><b>Н<\/b><i>238<\/i><\/td><td class=\"\" data-n=\"239\"><b>О<\/b><i>239<\/i><\/td><\/tr><tr><th class=\"r\">F_<\/th><td class=\"\" data-n=\"240\"><b>П<\/b><i>240<\/i><\/td><td class=\"\" data-n=\"241\"><b>Я<\/b><i>241<\/i><\/td><td class=\"\" data-n=\"242\"><b>Р<\/b><i>242<\/i><\/td><td class=\"\" data-n=\"243\"><b>С<\/b><i>243<\/i><\/td><td class=\"\" data-n=\"244\"><b>Т<\/b><i>244<\/i><\/td><td class=\"\" data-n=\"245\"><b>У<\/b><i>245<\/i><\/td><td class=\"\" data-n=\"246\"><b>Ж<\/b><i>246<\/i><\/td><td class=\"\" data-n=\"247\"><b>В<\/b><i>247<\/i><\/td><td class=\"\" data-n=\"248\"><b>Ь<\/b><i>248<\/i><\/td><td class=\"\" data-n=\"249\"><b>Ы<\/b><i>249<\/i><\/td><td class=\"\" data-n=\"250\"><b>З<\/b><i>250<\/i><\/td><td class=\"\" data-n=\"251\"><b>Ш<\/b><i>251<\/i><\/td><td class=\"\" data-n=\"252\"><b>Э<\/b><i>252<\/i><\/td><td class=\"\" data-n=\"253\"><b>Щ<\/b><i>253<\/i><\/td><td class=\"\" data-n=\"254\"><b>Ч<\/b><i>254<\/i><\/td><td class=\"\" data-n=\"255\"><b>Ъ<\/b><i>255<\/i><\/td><\/tr><\/table><\/div><\/section><section class=\"pn\" id=\"p_uni1\"><p class=\"nt\">Код літери Юнікоду = рядок + стовпець: Я → 042_ і _F → U+042F.<\/p><div class=\"tw\"><table class=\"ct\"><tr><th class=\"r\"><\/th><th>_0<\/th><th>_1<\/th><th>_2<\/th><th>_3<\/th><th>_4<\/th><th>_5<\/th><th>_6<\/th><th>_7<\/th><th>_8<\/th><th>_9<\/th><th>_A<\/th><th>_B<\/th><th>_C<\/th><th>_D<\/th><th>_E<\/th><th>_F<\/th><\/tr><tr><th class=\"r\">040_<\/th><td class=\"\" data-n=\"1024\"><b>Ѐ<\/b><i><\/i><\/td><td class=\"\" data-n=\"1025\"><b>Ё<\/b><i><\/i><\/td><td class=\"\" data-n=\"1026\"><b>Ђ<\/b><i><\/i><\/td><td class=\"\" data-n=\"1027\"><b>Ѓ<\/b><i><\/i><\/td><td class=\"\" data-n=\"1028\"><b>Є<\/b><i><\/i><\/td><td class=\"\" data-n=\"1029\"><b>Ѕ<\/b><i><\/i><\/td><td class=\"\" data-n=\"1030\"><b>І<\/b><i><\/i><\/td><td class=\"\" data-n=\"1031\"><b>Ї<\/b><i><\/i><\/td><td class=\"\" data-n=\"1032\"><b>Ј<\/b><i><\/i><\/td><td class=\"\" data-n=\"1033\"><b>Љ<\/b><i><\/i><\/td><td class=\"\" data-n=\"1034\"><b>Њ<\/b><i><\/i><\/td><td class=\"\" data-n=\"1035\"><b>Ћ<\/b><i><\/i><\/td><td class=\"\" data-n=\"1036\"><b>Ќ<\/b><i><\/i><\/td><td class=\"\" data-n=\"1037\"><b>Ѝ<\/b><i><\/i><\/td><td class=\"\" data-n=\"1038\"><b>Ў<\/b><i><\/i><\/td><td class=\"\" data-n=\"1039\"><b>Џ<\/b><i><\/i><\/td><\/tr><tr><th class=\"r\">041_<\/th><td class=\"\" data-n=\"1040\"><b>А<\/b><i><\/i><\/td><td class=\"\" data-n=\"1041\"><b>Б<\/b><i><\/i><\/td><td class=\"\" data-n=\"1042\"><b>В<\/b><i><\/i><\/td><td class=\"\" data-n=\"1043\"><b>Г<\/b><i><\/i><\/td><td class=\"\" data-n=\"1044\"><b>Д<\/b><i><\/i><\/td><td class=\"\" data-n=\"1045\"><b>Е<\/b><i><\/i><\/td><td class=\"\" data-n=\"1046\"><b>Ж<\/b><i><\/i><\/td><td class=\"\" data-n=\"1047\"><b>З<\/b><i><\/i><\/td><td class=\"\" data-n=\"1048\"><b>И<\/b><i><\/i><\/td><td class=\"\" data-n=\"1049\"><b>Й<\/b><i><\/i><\/td><td class=\"\" data-n=\"1050\"><b>К<\/b><i><\/i><\/td><td class=\"\" data-n=\"1051\"><b>Л<\/b><i><\/i><\/td><td class=\"\" data-n=\"1052\"><b>М<\/b><i><\/i><\/td><td class=\"\" data-n=\"1053\"><b>Н<\/b><i><\/i><\/td><td class=\"\" data-n=\"1054\"><b>О<\/b><i><\/i><\/td><td class=\"\" data-n=\"1055\"><b>П<\/b><i><\/i><\/td><\/tr><tr><th class=\"r\">042_<\/th><td class=\"\" data-n=\"1056\"><b>Р<\/b><i><\/i><\/td><td class=\"\" data-n=\"1057\"><b>С<\/b><i><\/i><\/td><td class=\"\" data-n=\"1058\"><b>Т<\/b><i><\/i><\/td><td class=\"\" data-n=\"1059\"><b>У<\/b><i><\/i><\/td><td class=\"\" data-n=\"1060\"><b>Ф<\/b><i><\/i><\/td><td class=\"\" data-n=\"1061\"><b>Х<\/b><i><\/i><\/td><td class=\"\" data-n=\"1062\"><b>Ц<\/b><i><\/i><\/td><td class=\"\" data-n=\"1063\"><b>Ч<\/b><i><\/i><\/td><td class=\"\" data-n=\"1064\"><b>Ш<\/b><i><\/i><\/td><td class=\"\" data-n=\"1065\"><b>Щ<\/b><i><\/i><\/td><td class=\"\" data-n=\"1066\"><b>Ъ<\/b><i><\/i><\/td><td class=\"\" data-n=\"1067\"><b>Ы<\/b><i><\/i><\/td><td class=\"\" data-n=\"1068\"><b>Ь<\/b><i><\/i><\/td><td class=\"\" data-n=\"1069\"><b>Э<\/b><i><\/i><\/td><td class=\"\" data-n=\"1070\"><b>Ю<\/b><i><\/i><\/td><td class=\" hl\" data-n=\"1071\"><b>Я<\/b><i><\/i><\/td><\/tr><tr><th class=\"r\">043_<\/th><td class=\"\" data-n=\"1072\"><b>а<\/b><i><\/i><\/td><td class=\"\" data-n=\"1073\"><b>б<\/b><i><\/i><\/td><td class=\"\" data-n=\"1074\"><b>в<\/b><i><\/i><\/td><td class=\"\" data-n=\"1075\"><b>г<\/b><i><\/i><\/td><td class=\"\" data-n=\"1076\"><b>д<\/b><i><\/i><\/td><td class=\"\" data-n=\"1077\"><b>е<\/b><i><\/i><\/td><td class=\"\" data-n=\"1078\"><b>ж<\/b><i><\/i><\/td><td class=\"\" data-n=\"1079\"><b>з<\/b><i><\/i><\/td><td class=\"\" data-n=\"1080\"><b>и<\/b><i><\/i><\/td><td class=\"\" data-n=\"1081\"><b>й<\/b><i><\/i><\/td><td class=\"\" data-n=\"1082\"><b>к<\/b><i><\/i><\/td><td class=\"\" data-n=\"1083\"><b>л<\/b><i><\/i><\/td><td class=\"\" data-n=\"1084\"><b>м<\/b><i><\/i><\/td><td class=\"\" data-n=\"1085\"><b>н<\/b><i><\/i><\/td><td class=\"\" data-n=\"1086\"><b>о<\/b><i><\/i><\/td><td class=\"\" data-n=\"1087\"><b>п<\/b><i><\/i><\/td><\/tr><tr><th class=\"r\">044_<\/th><td class=\"\" data-n=\"1088\"><b>р<\/b><i><\/i><\/td><td class=\"\" data-n=\"1089\"><b>с<\/b><i><\/i><\/td><td class=\"\" data-n=\"1090\"><b>т<\/b><i><\/i><\/td><td class=\"\" data-n=\"1091\"><b>у<\/b><i><\/i><\/td><td class=\"\" data-n=\"1092\"><b>ф<\/b><i><\/i><\/td><td class=\"\" data-n=\"1093\"><b>х<\/b><i><\/i><\/td><td class=\"\" data-n=\"1094\"><b>ц<\/b><i><\/i><\/td><td class=\"\" data-n=\"1095\"><b>ч<\/b><i><\/i><\/td><td class=\"\" data-n=\"1096\"><b>ш<\/b><i><\/i><\/td><td class=\"\" data-n=\"1097\"><b>щ<\/b><i><\/i><\/td><td class=\"\" data-n=\"1098\"><b>ъ<\/b><i><\/i><\/td><td class=\"\" data-n=\"1099\"><b>ы<\/b><i><\/i><\/td><td class=\"\" data-n=\"1100\"><b>ь<\/b><i><\/i><\/td><td class=\"\" data-n=\"1101\"><b>э<\/b><i><\/i><\/td><td class=\"\" data-n=\"1102\"><b>ю<\/b><i><\/i><\/td><td class=\"\" data-n=\"1103\"><b>я<\/b><i><\/i><\/td><\/tr><tr><th class=\"r\">045_<\/th><td class=\"\" data-n=\"1104\"><b>ѐ<\/b><i><\/i><\/td><td class=\"\" data-n=\"1105\"><b>ё<\/b><i><\/i><\/td><td class=\"\" data-n=\"1106\"><b>ђ<\/b><i><\/i><\/td><td class=\"\" data-n=\"1107\"><b>ѓ<\/b><i><\/i><\/td><td class=\"\" data-n=\"1108\"><b>є<\/b><i><\/i><\/td><td class=\"\" data-n=\"1109\"><b>ѕ<\/b><i><\/i><\/td><td class=\"\" data-n=\"1110\"><b>і<\/b><i><\/i><\/td><td class=\"\" data-n=\"1111\"><b>ї<\/b><i><\/i><\/td><td class=\"\" data-n=\"1112\"><b>ј<\/b><i><\/i><\/td><td class=\"\" data-n=\"1113\"><b>љ<\/b><i><\/i><\/td><td class=\"\" data-n=\"1114\"><b>њ<\/b><i><\/i><\/td><td class=\"\" data-n=\"1115\"><b>ћ<\/b><i><\/i><\/td><td class=\"\" data-n=\"1116\"><b>ќ<\/b><i><\/i><\/td><td class=\"\" data-n=\"1117\"><b>ѝ<\/b><i><\/i><\/td><td class=\"\" data-n=\"1118\"><b>ў<\/b><i><\/i><\/td><td class=\"\" data-n=\"1119\"><b>џ<\/b><i><\/i><\/td><\/tr><tr><th class=\"r\">046_<\/th><td class=\"\" data-n=\"1120\"><b>Ѡ<\/b><i><\/i><\/td><td class=\"\" data-n=\"1121\"><b>ѡ<\/b><i><\/i><\/td><td class=\"\" data-n=\"1122\"><b>Ѣ<\/b><i><\/i><\/td><td class=\"\" data-n=\"1123\"><b>ѣ<\/b><i><\/i><\/td><td class=\"\" data-n=\"1124\"><b>Ѥ<\/b><i><\/i><\/td><td class=\"\" data-n=\"1125\"><b>ѥ<\/b><i><\/i><\/td><td class=\"\" data-n=\"1126\"><b>Ѧ<\/b><i><\/i><\/td><td class=\"\" data-n=\"1127\"><b>ѧ<\/b><i><\/i><\/td><td class=\"\" data-n=\"1128\"><b>Ѩ<\/b><i><\/i><\/td><td class=\"\" data-n=\"1129\"><b>ѩ<\/b><i><\/i><\/td><td class=\"\" data-n=\"1130\"><b>Ѫ<\/b><i><\/i><\/td><td class=\"\" data-n=\"1131\"><b>ѫ<\/b><i><\/i><\/td><td class=\"\" data-n=\"1132\"><b>Ѭ<\/b><i><\/i><\/td><td class=\"\" data-n=\"1133\"><b>ѭ<\/b><i><\/i><\/td><td class=\"\" data-n=\"1134\"><b>Ѯ<\/b><i><\/i><\/td><td class=\"\" data-n=\"1135\"><b>ѯ<\/b><i><\/i><\/td><\/tr><tr><th class=\"r\">047_<\/th><td class=\"\" data-n=\"1136\"><b>Ѱ<\/b><i><\/i><\/td><td class=\"\" data-n=\"1137\"><b>ѱ<\/b><i><\/i><\/td><td class=\"\" data-n=\"1138\"><b>Ѳ<\/b><i><\/i><\/td><td class=\"\" data-n=\"1139\"><b>ѳ<\/b><i><\/i><\/td><td class=\"\" data-n=\"1140\"><b>Ѵ<\/b><i><\/i><\/td><td class=\"\" data-n=\"1141\"><b>ѵ<\/b><i><\/i><\/td><td class=\"\" data-n=\"1142\"><b>Ѷ<\/b><i><\/i><\/td><td class=\"\" data-n=\"1143\"><b>ѷ<\/b><i><\/i><\/td><td class=\"\" data-n=\"1144\"><b>Ѹ<\/b><i><\/i><\/td><td class=\"\" data-n=\"1145\"><b>ѹ<\/b><i><\/i><\/td><td class=\"\" data-n=\"1146\"><b>Ѻ<\/b><i><\/i><\/td><td class=\"\" data-n=\"1147\"><b>ѻ<\/b><i><\/i><\/td><td class=\"\" data-n=\"1148\"><b>Ѽ<\/b><i><\/i><\/td><td class=\"\" data-n=\"1149\"><b>ѽ<\/b><i><\/i><\/td><td class=\"\" data-n=\"1150\"><b>Ѿ<\/b><i><\/i><\/td><td class=\"\" data-n=\"1151\"><b>ѿ<\/b><i><\/i><\/td><\/tr><\/table><\/div><\/section><section class=\"pn\" id=\"p_uni2\"><p class=\"nt\">Тут є Ґ (U+0490). Українські Є, І, Ї — у першій частині таблиці (U+0404, U+0406, U+0407).<\/p><div class=\"tw\"><table class=\"ct\"><tr><th class=\"r\"><\/th><th>_0<\/th><th>_1<\/th><th>_2<\/th><th>_3<\/th><th>_4<\/th><th>_5<\/th><th>_6<\/th><th>_7<\/th><th>_8<\/th><th>_9<\/th><th>_A<\/th><th>_B<\/th><th>_C<\/th><th>_D<\/th><th>_E<\/th><th>_F<\/th><\/tr><tr><th class=\"r\">048_<\/th><td class=\"\" data-n=\"1152\"><b>Ҁ<\/b><i><\/i><\/td><td class=\"\" data-n=\"1153\"><b>ҁ<\/b><i><\/i><\/td><td class=\"\" data-n=\"1154\"><b>҂<\/b><i><\/i><\/td><td class=\"\" data-n=\"1155\"><b>҃<\/b><i><\/i><\/td><td class=\"\" data-n=\"1156\"><b>҄<\/b><i><\/i><\/td><td class=\"\" data-n=\"1157\"><b>҅<\/b><i><\/i><\/td><td class=\"\" data-n=\"1158\"><b>҆<\/b><i><\/i><\/td><td class=\"\" data-n=\"1159\"><b>҇<\/b><i><\/i><\/td><td class=\"\" data-n=\"1160\"><b>҈<\/b><i><\/i><\/td><td class=\"\" data-n=\"1161\"><b>҉<\/b><i><\/i><\/td><td class=\"\" data-n=\"1162\"><b>Ҋ<\/b><i><\/i><\/td><td class=\"\" data-n=\"1163\"><b>ҋ<\/b><i><\/i><\/td><td class=\"\" data-n=\"1164\"><b>Ҍ<\/b><i><\/i><\/td><td class=\"\" data-n=\"1165\"><b>ҍ<\/b><i><\/i><\/td><td class=\"\" data-n=\"1166\"><b>Ҏ<\/b><i><\/i><\/td><td class=\"\" data-n=\"1167\"><b>ҏ<\/b><i><\/i><\/td><\/tr><tr><th class=\"r\">049_<\/th><td class=\" hl\" data-n=\"1168\"><b>Ґ<\/b><i><\/i><\/td><td class=\"\" data-n=\"1169\"><b>ґ<\/b><i><\/i><\/td><td class=\"\" data-n=\"1170\"><b>Ғ<\/b><i><\/i><\/td><td class=\"\" data-n=\"1171\"><b>ғ<\/b><i><\/i><\/td><td class=\"\" data-n=\"1172\"><b>Ҕ<\/b><i><\/i><\/td><td class=\"\" data-n=\"1173\"><b>ҕ<\/b><i><\/i><\/td><td class=\"\" data-n=\"1174\"><b>Җ<\/b><i><\/i><\/td><td class=\"\" data-n=\"1175\"><b>җ<\/b><i><\/i><\/td><td class=\"\" data-n=\"1176\"><b>Ҙ<\/b><i><\/i><\/td><td class=\"\" data-n=\"1177\"><b>ҙ<\/b><i><\/i><\/td><td class=\"\" data-n=\"1178\"><b>Қ<\/b><i><\/i><\/td><td class=\"\" data-n=\"1179\"><b>қ<\/b><i><\/i><\/td><td class=\"\" data-n=\"1180\"><b>Ҝ<\/b><i><\/i><\/td><td class=\"\" data-n=\"1181\"><b>ҝ<\/b><i><\/i><\/td><td class=\"\" data-n=\"1182\"><b>Ҟ<\/b><i><\/i><\/td><td class=\"\" data-n=\"1183\"><b>ҟ<\/b><i><\/i><\/td><\/tr><tr><th class=\"r\">04A_<\/th><td class=\"\" data-n=\"1184\"><b>Ҡ<\/b><i><\/i><\/td><td class=\"\" data-n=\"1185\"><b>ҡ<\/b><i><\/i><\/td><td class=\"\" data-n=\"1186\"><b>Ң<\/b><i><\/i><\/td><td class=\"\" data-n=\"1187\"><b>ң<\/b><i><\/i><\/td><td class=\"\" data-n=\"1188\"><b>Ҥ<\/b><i><\/i><\/td><td class=\"\" data-n=\"1189\"><b>ҥ<\/b><i><\/i><\/td><td class=\"\" data-n=\"1190\"><b>Ҧ<\/b><i><\/i><\/td><td class=\"\" data-n=\"1191\"><b>ҧ<\/b><i><\/i><\/td><td class=\"\" data-n=\"1192\"><b>Ҩ<\/b><i><\/i><\/td><td class=\"\" data-n=\"1193\"><b>ҩ<\/b><i><\/i><\/td><td class=\"\" data-n=\"1194\"><b>Ҫ<\/b><i><\/i><\/td><td class=\"\" data-n=\"1195\"><b>ҫ<\/b><i><\/i><\/td><td class=\"\" data-n=\"1196\"><b>Ҭ<\/b><i><\/i><\/td><td class=\"\" data-n=\"1197\"><b>ҭ<\/b><i><\/i><\/td><td class=\"\" data-n=\"1198\"><b>Ү<\/b><i><\/i><\/td><td class=\"\" data-n=\"1199\"><b>ү<\/b><i><\/i><\/td><\/tr><tr><th class=\"r\">04B_<\/th><td class=\"\" data-n=\"1200\"><b>Ұ<\/b><i><\/i><\/td><td class=\"\" data-n=\"1201\"><b>ұ<\/b><i><\/i><\/td><td class=\"\" data-n=\"1202\"><b>Ҳ<\/b><i><\/i><\/td><td class=\"\" data-n=\"1203\"><b>ҳ<\/b><i><\/i><\/td><td class=\"\" data-n=\"1204\"><b>Ҵ<\/b><i><\/i><\/td><td class=\"\" data-n=\"1205\"><b>ҵ<\/b><i><\/i><\/td><td class=\"\" data-n=\"1206\"><b>Ҷ<\/b><i><\/i><\/td><td class=\"\" data-n=\"1207\"><b>ҷ<\/b><i><\/i><\/td><td class=\"\" data-n=\"1208\"><b>Ҹ<\/b><i><\/i><\/td><td class=\"\" data-n=\"1209\"><b>ҹ<\/b><i><\/i><\/td><td class=\"\" data-n=\"1210\"><b>Һ<\/b><i><\/i><\/td><td class=\"\" data-n=\"1211\"><b>һ<\/b><i><\/i><\/td><td class=\"\" data-n=\"1212\"><b>Ҽ<\/b><i><\/i><\/td><td class=\"\" data-n=\"1213\"><b>ҽ<\/b><i><\/i><\/td><td class=\"\" data-n=\"1214\"><b>Ҿ<\/b><i><\/i><\/td><td class=\"\" data-n=\"1215\"><b>ҿ<\/b><i><\/i><\/td><\/tr><tr><th class=\"r\">04C_<\/th><td class=\"\" data-n=\"1216\"><b>Ӏ<\/b><i><\/i><\/td><td class=\"\" data-n=\"1217\"><b>Ӂ<\/b><i><\/i><\/td><td class=\"\" data-n=\"1218\"><b>ӂ<\/b><i><\/i><\/td><td class=\"\" data-n=\"1219\"><b>Ӄ<\/b><i><\/i><\/td><td class=\"\" data-n=\"1220\"><b>ӄ<\/b><i><\/i><\/td><td class=\"\" data-n=\"1221\"><b>Ӆ<\/b><i><\/i><\/td><td class=\"\" data-n=\"1222\"><b>ӆ<\/b><i><\/i><\/td><td class=\"\" data-n=\"1223\"><b>Ӈ<\/b><i><\/i><\/td><td class=\"\" data-n=\"1224\"><b>ӈ<\/b><i><\/i><\/td><td class=\"\" data-n=\"1225\"><b>Ӊ<\/b><i><\/i><\/td><td class=\"\" data-n=\"1226\"><b>ӊ<\/b><i><\/i><\/td><td class=\"\" data-n=\"1227\"><b>Ӌ<\/b><i><\/i><\/td><td class=\"\" data-n=\"1228\"><b>ӌ<\/b><i><\/i><\/td><td class=\"\" data-n=\"1229\"><b>Ӎ<\/b><i><\/i><\/td><td class=\"\" data-n=\"1230\"><b>ӎ<\/b><i><\/i><\/td><td class=\"\" data-n=\"1231\"><b>ӏ<\/b><i><\/i><\/td><\/tr><tr><th class=\"r\">04D_<\/th><td class=\"\" data-n=\"1232\"><b>Ӑ<\/b><i><\/i><\/td><td class=\"\" data-n=\"1233\"><b>ӑ<\/b><i><\/i><\/td><td class=\"\" data-n=\"1234\"><b>Ӓ<\/b><i><\/i><\/td><td class=\"\" data-n=\"1235\"><b>ӓ<\/b><i><\/i><\/td><td class=\"\" data-n=\"1236\"><b>Ӕ<\/b><i><\/i><\/td><td class=\"\" data-n=\"1237\"><b>ӕ<\/b><i><\/i><\/td><td class=\"\" data-n=\"1238\"><b>Ӗ<\/b><i><\/i><\/td><td class=\"\" data-n=\"1239\"><b>ӗ<\/b><i><\/i><\/td><td class=\"\" data-n=\"1240\"><b>Ә<\/b><i><\/i><\/td><td class=\"\" data-n=\"1241\"><b>ә<\/b><i><\/i><\/td><td class=\"\" data-n=\"1242\"><b>Ӛ<\/b><i><\/i><\/td><td class=\"\" data-n=\"1243\"><b>ӛ<\/b><i><\/i><\/td><td class=\"\" data-n=\"1244\"><b>Ӝ<\/b><i><\/i><\/td><td class=\"\" data-n=\"1245\"><b>ӝ<\/b><i><\/i><\/td><td class=\"\" data-n=\"1246\"><b>Ӟ<\/b><i><\/i><\/td><td class=\"\" data-n=\"1247\"><b>ӟ<\/b><i><\/i><\/td><\/tr><tr><th class=\"r\">04E_<\/th><td class=\"\" data-n=\"1248\"><b>Ӡ<\/b><i><\/i><\/td><td class=\"\" data-n=\"1249\"><b>ӡ<\/b><i><\/i><\/td><td class=\"\" data-n=\"1250\"><b>Ӣ<\/b><i><\/i><\/td><td class=\"\" data-n=\"1251\"><b>ӣ<\/b><i><\/i><\/td><td class=\"\" data-n=\"1252\"><b>Ӥ<\/b><i><\/i><\/td><td class=\"\" data-n=\"1253\"><b>ӥ<\/b><i><\/i><\/td><td class=\"\" data-n=\"1254\"><b>Ӧ<\/b><i><\/i><\/td><td class=\"\" data-n=\"1255\"><b>ӧ<\/b><i><\/i><\/td><td class=\"\" data-n=\"1256\"><b>Ө<\/b><i><\/i><\/td><td class=\"\" data-n=\"1257\"><b>ө<\/b><i><\/i><\/td><td class=\"\" data-n=\"1258\"><b>Ӫ<\/b><i><\/i><\/td><td class=\"\" data-n=\"1259\"><b>ӫ<\/b><i><\/i><\/td><td class=\"\" data-n=\"1260\"><b>Ӭ<\/b><i><\/i><\/td><td class=\"\" data-n=\"1261\"><b>ӭ<\/b><i><\/i><\/td><td class=\"\" data-n=\"1262\"><b>Ӯ<\/b><i><\/i><\/td><td class=\"\" data-n=\"1263\"><b>ӯ<\/b><i><\/i><\/td><\/tr><tr><th class=\"r\">04F_<\/th><td class=\"\" data-n=\"1264\"><b>Ӱ<\/b><i><\/i><\/td><td class=\"\" data-n=\"1265\"><b>ӱ<\/b><i><\/i><\/td><td class=\"\" data-n=\"1266\"><b>Ӳ<\/b><i><\/i><\/td><td class=\"\" data-n=\"1267\"><b>ӳ<\/b><i><\/i><\/td><td class=\"\" data-n=\"1268\"><b>Ӵ<\/b><i><\/i><\/td><td class=\"\" data-n=\"1269\"><b>ӵ<\/b><i><\/i><\/td><td class=\"\" data-n=\"1270\"><b>Ӷ<\/b><i><\/i><\/td><td class=\"\" data-n=\"1271\"><b>ӷ<\/b><i><\/i><\/td><td class=\"\" data-n=\"1272\"><b>Ӹ<\/b><i><\/i><\/td><td class=\"\" data-n=\"1273\"><b>ӹ<\/b><i><\/i><\/td><td class=\"\" data-n=\"1274\"><b>Ӻ<\/b><i><\/i><\/td><td class=\"\" data-n=\"1275\"><b>ӻ<\/b><i><\/i><\/td><td class=\"\" data-n=\"1276\"><b>Ӽ<\/b><i><\/i><\/td><td class=\"\" data-n=\"1277\"><b>ӽ<\/b><i><\/i><\/td><td class=\"\" data-n=\"1278\"><b>Ӿ<\/b><i><\/i><\/td><td class=\"\" data-n=\"1279\"><b>ӿ<\/b><i><\/i><\/td><\/tr><\/table><\/div><\/section>\n<\/div><script>\nvar S={\" \": {\"a\": 32, \"w\": 32, \"k\": 32, \"u\": 32}, \"!\": {\"a\": 33, \"w\": 33, \"k\": 33, \"u\": 33}, \"\\\"\": {\"a\": 34, \"w\": 34, \"k\": 34, \"u\": 34}, \"#\": {\"a\": 35, \"w\": 35, \"k\": 35, \"u\": 35}, \"$\": {\"a\": 36, \"w\": 36, \"k\": 36, \"u\": 36}, \"%\": {\"a\": 37, \"w\": 37, \"k\": 37, \"u\": 37}, \"&\": {\"a\": 38, \"w\": 38, \"k\": 38, \"u\": 38}, \"'\": {\"a\": 39, \"w\": 39, \"k\": 39, \"u\": 39}, \"(\": {\"a\": 40, \"w\": 40, \"k\": 40, \"u\": 40}, \")\": {\"a\": 41, \"w\": 41, \"k\": 41, \"u\": 41}, \"*\": {\"a\": 42, \"w\": 42, \"k\": 42, \"u\": 42}, \"+\": {\"a\": 43, \"w\": 43, \"k\": 43, \"u\": 43}, \",\": {\"a\": 44, \"w\": 44, \"k\": 44, \"u\": 44}, \"-\": {\"a\": 45, \"w\": 45, \"k\": 45, \"u\": 45}, \".\": {\"a\": 46, \"w\": 46, \"k\": 46, \"u\": 46}, \"/\": {\"a\": 47, \"w\": 47, \"k\": 47, \"u\": 47}, \"0\": {\"a\": 48, \"w\": 48, \"k\": 48, \"u\": 48}, \"1\": {\"a\": 49, \"w\": 49, \"k\": 49, \"u\": 49}, \"2\": {\"a\": 50, \"w\": 50, \"k\": 50, \"u\": 50}, \"3\": {\"a\": 51, \"w\": 51, \"k\": 51, \"u\": 51}, \"4\": {\"a\": 52, \"w\": 52, \"k\": 52, \"u\": 52}, \"5\": {\"a\": 53, \"w\": 53, \"k\": 53, \"u\": 53}, \"6\": {\"a\": 54, \"w\": 54, \"k\": 54, \"u\": 54}, \"7\": {\"a\": 55, \"w\": 55, \"k\": 55, \"u\": 55}, \"8\": {\"a\": 56, \"w\": 56, \"k\": 56, \"u\": 56}, \"9\": {\"a\": 57, \"w\": 57, \"k\": 57, \"u\": 57}, \":\": {\"a\": 58, \"w\": 58, \"k\": 58, \"u\": 58}, \";\": {\"a\": 59, \"w\": 59, \"k\": 59, \"u\": 59}, \"<\": {\"a\": 60, \"w\": 60, \"k\": 60, \"u\": 60}, \"=\": {\"a\": 61, \"w\": 61, \"k\": 61, \"u\": 61}, \">\": {\"a\": 62, \"w\": 62, \"k\": 62, \"u\": 62}, \"?\": {\"a\": 63, \"w\": 63, \"k\": 63, \"u\": 63}, \"@\": {\"a\": 64, \"w\": 64, \"k\": 64, \"u\": 64}, \"A\": {\"a\": 65, \"w\": 65, \"k\": 65, \"u\": 65}, \"B\": {\"a\": 66, \"w\": 66, \"k\": 66, \"u\": 66}, \"C\": {\"a\": 67, \"w\": 67, \"k\": 67, \"u\": 67}, \"D\": {\"a\": 68, \"w\": 68, \"k\": 68, \"u\": 68}, \"E\": {\"a\": 69, \"w\": 69, \"k\": 69, \"u\": 69}, \"F\": {\"a\": 70, \"w\": 70, \"k\": 70, \"u\": 70}, \"G\": {\"a\": 71, \"w\": 71, \"k\": 71, \"u\": 71}, \"H\": {\"a\": 72, \"w\": 72, \"k\": 72, \"u\": 72}, \"I\": {\"a\": 73, \"w\": 73, \"k\": 73, \"u\": 73}, \"J\": {\"a\": 74, \"w\": 74, \"k\": 74, \"u\": 74}, \"K\": {\"a\": 75, \"w\": 75, \"k\": 75, \"u\": 75}, \"L\": {\"a\": 76, \"w\": 76, \"k\": 76, \"u\": 76}, \"M\": {\"a\": 77, \"w\": 77, \"k\": 77, \"u\": 77}, \"N\": {\"a\": 78, \"w\": 78, \"k\": 78, \"u\": 78}, \"O\": {\"a\": 79, \"w\": 79, \"k\": 79, \"u\": 79}, \"P\": {\"a\": 80, \"w\": 80, \"k\": 80, \"u\": 80}, \"Q\": {\"a\": 81, \"w\": 81, \"k\": 81, \"u\": 81}, \"R\": {\"a\": 82, \"w\": 82, \"k\": 82, \"u\": 82}, \"S\": {\"a\": 83, \"w\": 83, \"k\": 83, \"u\": 83}, \"T\": {\"a\": 84, \"w\": 84, \"k\": 84, \"u\": 84}, \"U\": {\"a\": 85, \"w\": 85, \"k\": 85, \"u\": 85}, \"V\": {\"a\": 86, \"w\": 86, \"k\": 86, \"u\": 86}, \"W\": {\"a\": 87, \"w\": 87, \"k\": 87, \"u\": 87}, \"X\": {\"a\": 88, \"w\": 88, \"k\": 88, \"u\": 88}, \"Y\": {\"a\": 89, \"w\": 89, \"k\": 89, \"u\": 89}, \"Z\": {\"a\": 90, \"w\": 90, \"k\": 90, \"u\": 90}, \"[\": {\"a\": 91, \"w\": 91, \"k\": 91, \"u\": 91}, \"\\\\\": {\"a\": 92, \"w\": 92, \"k\": 92, \"u\": 92}, \"]\": {\"a\": 93, \"w\": 93, \"k\": 93, \"u\": 93}, \"^\": {\"a\": 94, \"w\": 94, \"k\": 94, \"u\": 94}, \"_\": {\"a\": 95, \"w\": 95, \"k\": 95, \"u\": 95}, \"`\": {\"a\": 96, \"w\": 96, \"k\": 96, \"u\": 96}, \"a\": {\"a\": 97, \"w\": 97, \"k\": 97, \"u\": 97}, \"b\": {\"a\": 98, \"w\": 98, \"k\": 98, \"u\": 98}, \"c\": {\"a\": 99, \"w\": 99, \"k\": 99, \"u\": 99}, \"d\": {\"a\": 100, \"w\": 100, \"k\": 100, \"u\": 100}, \"e\": {\"a\": 101, \"w\": 101, \"k\": 101, \"u\": 101}, \"f\": {\"a\": 102, \"w\": 102, \"k\": 102, \"u\": 102}, \"g\": {\"a\": 103, \"w\": 103, \"k\": 103, \"u\": 103}, \"h\": {\"a\": 104, \"w\": 104, \"k\": 104, \"u\": 104}, \"i\": {\"a\": 105, \"w\": 105, \"k\": 105, \"u\": 105}, \"j\": {\"a\": 106, \"w\": 106, \"k\": 106, \"u\": 106}, \"k\": {\"a\": 107, \"w\": 107, \"k\": 107, \"u\": 107}, \"l\": {\"a\": 108, \"w\": 108, \"k\": 108, \"u\": 108}, \"m\": {\"a\": 109, \"w\": 109, \"k\": 109, \"u\": 109}, \"n\": {\"a\": 110, \"w\": 110, \"k\": 110, \"u\": 110}, \"o\": {\"a\": 111, \"w\": 111, \"k\": 111, \"u\": 111}, \"p\": {\"a\": 112, \"w\": 112, \"k\": 112, \"u\": 112}, \"q\": {\"a\": 113, \"w\": 113, \"k\": 113, \"u\": 113}, \"r\": {\"a\": 114, \"w\": 114, \"k\": 114, \"u\": 114}, \"s\": {\"a\": 115, \"w\": 115, \"k\": 115, \"u\": 115}, \"t\": {\"a\": 116, \"w\": 116, \"k\": 116, \"u\": 116}, \"u\": {\"a\": 117, \"w\": 117, \"k\": 117, \"u\": 117}, \"v\": {\"a\": 118, \"w\": 118, \"k\": 118, \"u\": 118}, \"w\": {\"a\": 119, \"w\": 119, \"k\": 119, \"u\": 119}, \"x\": {\"a\": 120, \"w\": 120, \"k\": 120, \"u\": 120}, \"y\": {\"a\": 121, \"w\": 121, \"k\": 121, \"u\": 121}, \"z\": {\"a\": 122, \"w\": 122, \"k\": 122, \"u\": 122}, \"{\": {\"a\": 123, \"w\": 123, \"k\": 123, \"u\": 123}, \"|\": {\"a\": 124, \"w\": 124, \"k\": 124, \"u\": 124}, \"}\": {\"a\": 125, \"w\": 125, \"k\": 125, \"u\": 125}, \"~\": {\"a\": 126, \"w\": 126, \"k\": 126, \"u\": 126}, \"А\": {\"a\": null, \"w\": 192, \"k\": 225, \"u\": 1040}, \"Б\": {\"a\": null, \"w\": 193, \"k\": 226, \"u\": 1041}, \"В\": {\"a\": null, \"w\": 194, \"k\": 247, \"u\": 1042}, \"Г\": {\"a\": null, \"w\": 195, \"k\": 231, \"u\": 1043}, \"Ґ\": {\"a\": null, \"w\": 165, \"k\": 189, \"u\": 1168}, \"Д\": {\"a\": null, \"w\": 196, \"k\": 228, \"u\": 1044}, \"Е\": {\"a\": null, \"w\": 197, \"k\": 229, \"u\": 1045}, \"Є\": {\"a\": null, \"w\": 170, \"k\": 180, \"u\": 1028}, \"Ж\": {\"a\": null, \"w\": 198, \"k\": 246, \"u\": 1046}, \"З\": {\"a\": null, \"w\": 199, \"k\": 250, \"u\": 1047}, \"И\": {\"a\": null, \"w\": 200, \"k\": 233, \"u\": 1048}, \"І\": {\"a\": null, \"w\": 178, \"k\": 182, \"u\": 1030}, \"Ї\": {\"a\": null, \"w\": 175, \"k\": 183, \"u\": 1031}, \"Й\": {\"a\": null, \"w\": 201, \"k\": 234, \"u\": 1049}, \"К\": {\"a\": null, \"w\": 202, \"k\": 235, \"u\": 1050}, \"Л\": {\"a\": null, \"w\": 203, \"k\": 236, \"u\": 1051}, \"М\": {\"a\": null, \"w\": 204, \"k\": 237, \"u\": 1052}, \"Н\": {\"a\": null, \"w\": 205, \"k\": 238, \"u\": 1053}, \"О\": {\"a\": null, \"w\": 206, \"k\": 239, \"u\": 1054}, \"П\": {\"a\": null, \"w\": 207, \"k\": 240, \"u\": 1055}, \"Р\": {\"a\": null, \"w\": 208, \"k\": 242, \"u\": 1056}, \"С\": {\"a\": null, \"w\": 209, \"k\": 243, \"u\": 1057}, \"Т\": {\"a\": null, \"w\": 210, \"k\": 244, \"u\": 1058}, \"У\": {\"a\": null, \"w\": 211, \"k\": 245, \"u\": 1059}, \"Ф\": {\"a\": null, \"w\": 212, \"k\": 230, \"u\": 1060}, \"Х\": {\"a\": null, \"w\": 213, \"k\": 232, \"u\": 1061}, \"Ц\": {\"a\": null, \"w\": 214, \"k\": 227, \"u\": 1062}, \"Ч\": {\"a\": null, \"w\": 215, \"k\": 254, \"u\": 1063}, \"Ш\": {\"a\": null, \"w\": 216, \"k\": 251, \"u\": 1064}, \"Щ\": {\"a\": null, \"w\": 217, \"k\": 253, \"u\": 1065}, \"Ь\": {\"a\": null, \"w\": 220, \"k\": 248, \"u\": 1068}, \"Ю\": {\"a\": null, \"w\": 222, \"k\": 224, \"u\": 1070}, \"Я\": {\"a\": null, \"w\": 223, \"k\": 241, \"u\": 1071}, \"а\": {\"a\": null, \"w\": 224, \"k\": 193, \"u\": 1072}, \"б\": {\"a\": null, \"w\": 225, \"k\": 194, \"u\": 1073}, \"в\": {\"a\": null, \"w\": 226, \"k\": 215, \"u\": 1074}, \"г\": {\"a\": null, \"w\": 227, \"k\": 199, \"u\": 1075}, \"ґ\": {\"a\": null, \"w\": 180, \"k\": 173, \"u\": 1169}, \"д\": {\"a\": null, \"w\": 228, \"k\": 196, \"u\": 1076}, \"е\": {\"a\": null, \"w\": 229, \"k\": 197, \"u\": 1077}, \"є\": {\"a\": null, \"w\": 186, \"k\": 164, \"u\": 1108}, \"ж\": {\"a\": null, \"w\": 230, \"k\": 214, \"u\": 1078}, \"з\": {\"a\": null, \"w\": 231, \"k\": 218, \"u\": 1079}, \"и\": {\"a\": null, \"w\": 232, \"k\": 201, \"u\": 1080}, \"і\": {\"a\": null, \"w\": 179, \"k\": 166, \"u\": 1110}, \"ї\": {\"a\": null, \"w\": 191, \"k\": 167, \"u\": 1111}, \"й\": {\"a\": null, \"w\": 233, \"k\": 202, \"u\": 1081}, \"к\": {\"a\": null, \"w\": 234, \"k\": 203, \"u\": 1082}, \"л\": {\"a\": null, \"w\": 235, \"k\": 204, \"u\": 1083}, \"м\": {\"a\": null, \"w\": 236, \"k\": 205, \"u\": 1084}, \"н\": {\"a\": null, \"w\": 237, \"k\": 206, \"u\": 1085}, \"о\": {\"a\": null, \"w\": 238, \"k\": 207, \"u\": 1086}, \"п\": {\"a\": null, \"w\": 239, \"k\": 208, \"u\": 1087}, \"р\": {\"a\": null, \"w\": 240, \"k\": 210, \"u\": 1088}, \"с\": {\"a\": null, \"w\": 241, \"k\": 211, \"u\": 1089}, \"т\": {\"a\": null, \"w\": 242, \"k\": 212, \"u\": 1090}, \"у\": {\"a\": null, \"w\": 243, \"k\": 213, \"u\": 1091}, \"ф\": {\"a\": null, \"w\": 244, \"k\": 198, \"u\": 1092}, \"х\": {\"a\": null, \"w\": 245, \"k\": 200, \"u\": 1093}, \"ц\": {\"a\": null, \"w\": 246, \"k\": 195, \"u\": 1094}, \"ч\": {\"a\": null, \"w\": 247, \"k\": 222, \"u\": 1095}, \"ш\": {\"a\": null, \"w\": 248, \"k\": 219, \"u\": 1096}, \"щ\": {\"a\": null, \"w\": 249, \"k\": 221, \"u\": 1097}, \"ь\": {\"a\": null, \"w\": 252, \"k\": 216, \"u\": 1100}, \"ю\": {\"a\": null, \"w\": 254, \"k\": 192, \"u\": 1102}, \"я\": {\"a\": null, \"w\": 255, \"k\": 209, \"u\": 1103}};\nfunction H(n,l){return n.toString(16).toUpperCase().padStart(l,'0')}\nfunction B(n,l){return n.toString(2).padStart(l,'0')}\n[].forEach.call(document.querySelectorAll('.tb'),function(b){b.onclick=function(){[].forEach.call(document.querySelectorAll('.tb,.pn'),function(x){x.classList.remove('on')});b.classList.add('on');document.getElementById('p_'+b.dataset.k).classList.add('on');document.getElementById('inf').textContent='Натисни на клітинку — побачиш код символу.'}});\n[].forEach.call(document.querySelectorAll('.ct td'),function(td){td.onclick=function(){[].forEach.call(document.querySelectorAll('td.sel'),function(x){x.classList.remove('sel')});td.classList.add('sel');var n=+td.dataset.n,uni=td.closest('.pn').id.indexOf('uni')>=0,t=td.firstChild.textContent;\ndocument.getElementById('inf').textContent=uni?('Символ «'+t+'» · U+'+H(n,4)+' = '+n+' = '+B(n,16)):(td.classList.contains('ctl')?('Керувальний символ '+t+' · код '+n+' = '+H(n,2)+'₁₆ — це команда, а не літера.'):('Символ «'+t+'» · код '+H(n,2)+'₁₆ = '+n+' = '+B(n,8)))}});\nfunction find(){var c=document.getElementById('q').value,r=document.getElementById('res'),s=S[c];if(!c){r.innerHTML='';return}\nif(!s){r.innerHTML='<p>Цього символу немає в цих таблицях.<\/p>';return}\nfunction cell(n,l){return n==null?'—':(H(n,l)+'₁₆ = '+n)}\nr.innerHTML='<table><tr><th>ASCII<\/th><th>Win-1251<\/th><th>KOI8-U<\/th><th>Юнікод<\/th><\/tr><tr><td>'+cell(s.a,2)+'<\/td><td>'+cell(s.w,2)+'<\/td><td>'+cell(s.k,2)+'<\/td><td>U+'+H(s.u,4)+'<\/td><\/tr><\/table>'}\ndocument.getElementById('q').oninput=find;find();\n<\/script><\/body><\/html>";
+var ov=document.getElementById('tbl-ov'),fr=document.getElementById('tbl-fr');
+function open_(){fr.srcdoc=SRC;ov.style.display='flex';}
+function close_(){ov.style.display='none';}
+[].forEach.call(document.querySelectorAll('.tbl-open'),function(b){b.addEventListener('click',function(e){e.stopPropagation();open_();});});
+document.getElementById('tbl-x').onclick=close_;
+document.getElementById('tbl-tab').onclick=function(){try{var u=URL.createObjectURL(new Blob([SRC],{type:'text/html'}));var w=window.open(u,'_blank');if(!w)alert('Браузер заблокував нову вкладку — користуйся вікном тут.');}catch(e){}};
+document.addEventListener('keydown',function(e){if(e.key==='Escape')close_();});
+})();
+</script>
+</body>
+</html>
